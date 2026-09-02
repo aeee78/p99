@@ -5,6 +5,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SYNC="$ROOT_DIR/ops/mirror/sync-openwrt.sh"
 PUBLISH="$ROOT_DIR/ops/mirror/publish-p99-feed.sh"
 
+if [ ! -f "$SYNC" ] || [ ! -f "$PUBLISH" ]; then
+  printf 'SKIP: mirror scripts removed in p99 (no custom mirror required)\n'
+  exit 0
+fi
+
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
   exit 1

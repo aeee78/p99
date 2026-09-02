@@ -175,6 +175,25 @@ function read_section_metadata(section_name, source_section, source_index) {
     return selected;
 }
 
+function find_matching_source_section(source_entry) {
+    let parsed = parse_source_entry(source_entry);
+    if (parsed.url == "")
+        return "";
+    let entries = fs.dir(TMP_SUBSCRIPTION_FOLDER) || [];
+    for (let entry in entries) {
+        if (match(entry, /\.url$/)) {
+            let path = TMP_SUBSCRIPTION_FOLDER + "/" + entry;
+            if (file_first_line(path) == parsed.url) {
+                let id = substr(entry, 0, length(entry) - 4);
+                let json_path = TMP_SUBSCRIPTION_FOLDER + "/" + id + ".json";
+                if (fs.stat(json_path) != null)
+                    return id;
+            }
+        }
+    }
+    return "";
+}
+
 function read_source_metadata(section_name, source_section, source_index, source_entry) {
     let metadata = read_section_metadata(section_name, source_section, source_index);
     if (length(metadata) == 0)
@@ -347,25 +366,6 @@ function hwid_matches_config(configured_hwid, cached_hwid) {
     if (configured_hwid != "")
         return cached_hwid == configured_hwid;
     return true;
-}
-
-function find_matching_source_section(source_entry) {
-    let parsed = parse_source_entry(source_entry);
-    if (parsed.url == "")
-        return "";
-    let entries = fs.dir(TMP_SUBSCRIPTION_FOLDER) || [];
-    for (let entry in entries) {
-        if (match(entry, /\.url$/)) {
-            let path = TMP_SUBSCRIPTION_FOLDER + "/" + entry;
-            if (file_first_line(path) == parsed.url) {
-                let id = substr(entry, 0, length(entry) - 4);
-                let json_path = TMP_SUBSCRIPTION_FOLDER + "/" + id + ".json";
-                if (fs.stat(json_path) != null)
-                    return id;
-            }
-        }
-    }
-    return "";
 }
 
 function source_cache_is_current(source_section, source_entry, expected_user_agent, expected_hwid) {

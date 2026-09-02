@@ -179,7 +179,7 @@ function find_matching_source_section(source_entry) {
     let parsed = parse_source_entry(source_entry);
     if (parsed.url == "")
         return "";
-    let entries = fs.dir(TMP_SUBSCRIPTION_FOLDER) || [];
+    let entries = fs.lsdir(TMP_SUBSCRIPTION_FOLDER) || [];
     for (let entry in entries) {
         if (match(entry, /\.url$/)) {
             let path = TMP_SUBSCRIPTION_FOLDER + "/" + entry;

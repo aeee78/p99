@@ -174,7 +174,6 @@ build_backend_root() {
   install -m 0755 "$ROOT_DIR/p99/files/etc/init.d/p99" "$output_root/etc/init.d/p99"
   install -m 0644 "$ROOT_DIR/p99/files/etc/config/p99" "$output_root/etc/config/p99"
   install -m 0644 "$ROOT_DIR/p99/files/etc/config/p99" "$output_root/usr/share/p99/defaults/p99"
-  install -m 0755 "$ROOT_DIR/p99/files/usr/share/p99/mirror-migration.sh" "$output_root/usr/share/p99/mirror-migration.sh"
   install -m 0755 "$ROOT_DIR/p99/files/usr/bin/p99" "$output_root/usr/bin/p99"
   cp -a "$ROOT_DIR/p99/files/usr/lib/." "$output_root/usr/lib/p99/"
 
@@ -184,8 +183,7 @@ build_backend_root() {
   normalize_package_root_modes "$output_root"
   chmod 0755 \
     "$output_root/etc/init.d/p99" \
-    "$output_root/usr/bin/p99" \
-    "$output_root/usr/share/p99/mirror-migration.sh"
+    "$output_root/usr/bin/p99"
 }
 
 build_app_root() {

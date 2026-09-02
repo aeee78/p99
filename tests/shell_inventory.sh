@@ -44,8 +44,7 @@ shell_scripts="$(
 expected_shell_scripts="$(
   printf '%s\n' \
     'luci-app-p99/root/etc/uci-defaults/50_luci-p99' \
-    'p99/files/etc/init.d/p99' \
-    'p99/files/usr/share/p99/mirror-migration.sh' |
+    'p99/files/etc/init.d/p99' |
     LC_ALL=C sort
 )"
 

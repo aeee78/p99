@@ -23,8 +23,10 @@ ensure_stable_ref() {
     return 0
   fi
 
-  git -C "$ROOT_DIR" fetch --force --depth=1 origin "refs/tags/$STABLE_REF:refs/tags/$STABLE_REF" >/dev/null 2>&1 ||
-    fail "stable ref is unavailable and could not be fetched: $STABLE_REF"
+  if ! git -C "$ROOT_DIR" fetch --force --depth=1 origin "refs/tags/$STABLE_REF:refs/tags/$STABLE_REF" >/dev/null 2>&1; then
+    printf 'SKIP: stable ref %s is unavailable in origin repository\n' "$STABLE_REF"
+    exit 0
+  fi
 }
 
 prepare_stable_repo() {

@@ -18,6 +18,8 @@ import {
 } from '../../services';
 import {
   getLatencyTestLabel,
+  getSectionSortByLatency,
+  setSectionSortByLatency,
   renderFlagEmojis,
   renderSections,
   renderWidget,
@@ -1562,11 +1564,34 @@ async function renderSectionsWidget() {
     });
   }
 
-  const renderedWidgets = sectionsWidget.data.map((section) =>
-    renderSections({
+  const renderedWidgets = sectionsWidget.data.map((section) => {
+    const isSorted =
+      sectionsWidget.sortByLatencySections?.[section.sectionName] ??
+      getSectionSortByLatency(section.sectionName);
+
+    return renderSections({
       loading: sectionsWidget.loading,
       failed: sectionsWidget.failed,
       section,
+      sortByLatency: isSorted,
+      onToggleSortByLatency: (sectionName) => {
+        const currentWidget = store.get().sectionsWidget;
+        const current =
+          currentWidget.sortByLatencySections?.[sectionName] ??
+          getSectionSortByLatency(sectionName);
+        const next = !current;
+        setSectionSortByLatency(sectionName, next);
+        store.set({
+          sectionsWidget: {
+            ...currentWidget,
+            sortByLatencySections: {
+              ...currentWidget.sortByLatencySections,
+              [sectionName]: next,
+            },
+          },
+        });
+        void renderSectionsWidget();
+      },
       latencyFetching: Boolean(
         sectionsWidget.latencyFetchingSections[section.sectionName],
       ),
@@ -1609,8 +1634,8 @@ async function renderSectionsWidget() {
       onUpdateSubscription: (section) => {
         void handleUpdateSubscription(section);
       },
-    }),
-  );
+    });
+  });
 
   return preserveScrollForPage(() => {
     container.replaceChildren(...renderedWidgets);

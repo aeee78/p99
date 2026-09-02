@@ -179,6 +179,11 @@ function read_source_metadata(section_name, source_section, source_index, source
     let metadata = read_section_metadata(section_name, source_section, source_index);
     if (length(metadata) == 0)
         metadata = read_persistent_source_metadata(source_section, source_entry);
+    if (length(metadata) == 0 && source_entry != "") {
+        let matching = find_matching_source_section(source_entry);
+        if (matching != "" && matching != source_section)
+            metadata = read_persistent_source_metadata(matching, source_entry);
+    }
 
     let result = [];
     for (let item in metadata) {
@@ -344,6 +349,25 @@ function hwid_matches_config(configured_hwid, cached_hwid) {
     return true;
 }
 
+function find_matching_source_section(source_entry) {
+    let parsed = parse_source_entry(source_entry);
+    if (parsed.url == "")
+        return "";
+    let entries = fs.dir(TMP_SUBSCRIPTION_FOLDER) || [];
+    for (let entry in entries) {
+        if (match(entry, /\.url$/)) {
+            let path = TMP_SUBSCRIPTION_FOLDER + "/" + entry;
+            if (file_first_line(path) == parsed.url) {
+                let id = substr(entry, 0, length(entry) - 4);
+                let json_path = TMP_SUBSCRIPTION_FOLDER + "/" + id + ".json";
+                if (fs.stat(json_path) != null)
+                    return id;
+            }
+        }
+    }
+    return "";
+}
+
 function source_cache_is_current(source_section, source_entry, expected_user_agent, expected_hwid) {
     let parsed = parse_source_entry(source_entry);
     let cached_url = file_first_line(TMP_SUBSCRIPTION_FOLDER + "/" + source_section + ".url");
@@ -353,25 +377,39 @@ function source_cache_is_current(source_section, source_entry, expected_user_age
     if (configured_user_agent != "")
         parsed.user_agent = configured_user_agent;
 
-    if (cached_url != parsed.url)
-        return false;
+    if (cached_url == parsed.url) {
+        if (parsed.user_agent != "" && cached_user_agent != parsed.user_agent)
+            return false;
 
-    if (parsed.user_agent != "" && cached_user_agent != parsed.user_agent)
-        return false;
+        if (!hwid_matches_config(expected_hwid, cached_hwid))
+            return false;
 
-    if (!hwid_matches_config(expected_hwid, cached_hwid))
-        return false;
+        return true;
+    }
 
-    return true;
+    let matching = find_matching_source_section(source_entry);
+    return matching != "";
 }
 
 function source_json_path(source_section) {
     return TMP_SUBSCRIPTION_FOLDER + "/" + source_section + ".json";
 }
 
-function read_source_outbounds(source_section) {
+function read_source_outbounds(source_section, source_entry) {
     let subscription = object_or_empty(read_json_file(source_json_path(source_section)));
-    return array_or_empty(subscription.outbounds);
+    let outbounds = array_or_empty(subscription.outbounds);
+    if (length(outbounds) > 0)
+        return outbounds;
+
+    if (source_entry != null && source_entry != "") {
+        let matching = find_matching_source_section(source_entry);
+        if (matching != "" && matching != source_section) {
+            subscription = object_or_empty(read_json_file(source_json_path(matching)));
+            return array_or_empty(subscription.outbounds);
+        }
+    }
+
+    return [];
 }
 
 function new_section_state(section_name) {

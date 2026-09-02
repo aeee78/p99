@@ -1,9 +1,14 @@
-import { renderLoaderCircleIcon24, renderInfoIcon24 } from '../../../../icons';
+import {
+  renderLoaderCircleIcon24,
+  renderInfoIcon24,
+  renderArrowUpDownIcon24,
+} from '../../../../icons';
 import { svgEl } from '../../../../helpers';
 import { prettyBytes } from '../../../../helpers/prettyBytes';
 import { P99 } from '../../../types';
 import { renderFlagEmojis } from './renderFlagEmojis';
 import { getOutboundFooterLabel } from './getOutboundFooterLabel';
+import { sortOutboundsByLatency } from './sortOutboundsByLatency';
 
 interface IRenderSectionsProps {
   loading: boolean;
@@ -22,6 +27,8 @@ interface IRenderSectionsProps {
   latencyProgress?: P99.LatencyActionProgress;
   subscriptionUpdating: boolean;
   selectorSwitchingTag?: string;
+  sortByLatency?: boolean;
+  onToggleSortByLatency?: (sectionName: string) => void;
 }
 
 function renderFailedState() {
@@ -251,6 +258,8 @@ function renderDefaultState({
   latencyProgress,
   subscriptionUpdating,
   selectorSwitchingTag,
+  sortByLatency = true,
+  onToggleSortByLatency,
 }: IRenderSectionsProps) {
   function testLatency() {
     if (section.withTagSelect) {
@@ -403,6 +412,44 @@ function renderDefaultState({
     subscriptionUpdating,
     onUpdateSubscription,
   );
+  const sortAction =
+    section.outbounds.length > 1
+      ? E(
+          'button',
+          {
+            type: 'button',
+            class: [
+              'btn',
+              'dashboard-sections-sort-latency-toggle',
+              sortByLatency
+                ? 'dashboard-sections-sort-latency-toggle--active'
+                : '',
+            ]
+              .filter(Boolean)
+              .join(' '),
+            'data-sort-section': section.sectionName,
+            title: _('Sort by latency'),
+            'aria-label': _('Sort by latency'),
+            click: (event: MouseEvent) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onToggleSortByLatency?.(section.sectionName);
+            },
+          },
+          [
+            renderArrowUpDownIcon24(),
+            E(
+              'span',
+              { class: 'dashboard-sections-sort-latency-toggle__label' },
+              _('Sort'),
+            ),
+          ],
+        )
+      : undefined;
+
+  const outboundsList = sortByLatency
+    ? sortOutboundsByLatency(section.outbounds)
+    : section.outbounds;
 
   return E('div', { class: 'fkp_dashboard-page__outbound-section' }, [
     // Title with test latency
@@ -421,6 +468,7 @@ function renderDefaultState({
         },
         [
           ...(subscriptionUpdateAction ? [subscriptionUpdateAction] : []),
+          ...(sortAction ? [sortAction] : []),
           E(
             'button',
             {
@@ -462,7 +510,7 @@ function renderDefaultState({
     ]),
     E('div', { class: 'fkp_dashboard-page__outbound-grid' }, [
       ...metadataNodes,
-      ...section.outbounds.map((outbound) => renderOutbound(outbound)),
+      ...outboundsList.map((outbound) => renderOutbound(outbound)),
     ]),
   ]);
 }

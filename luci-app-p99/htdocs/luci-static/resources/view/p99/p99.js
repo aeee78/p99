@@ -12,6 +12,9 @@
 // Sections
 "require view.p99.section as section";
 
+// Subscriptions
+"require view.p99.subscriptions as subscriptions";
+
 // Dashboard
 "require view.p99.dashboard as dashboard";
 
@@ -349,6 +352,21 @@ const EntryPoint = {
       loadActionProvidersAvailability: loadUiCapabilities,
     });
     section.createSectionContent(rulesSection);
+
+    const subscriptionsSection = p99Map.section(
+      form.GridSection,
+      "subscription",
+      _("Subscriptions"),
+      _("Manage remote subscriptions. Configure subscriptions once and select them in any section."),
+    );
+    configureGridSection(
+      subscriptionsSection,
+      "subscription",
+      _("Subscription"),
+      _("Add a subscription"),
+    );
+    subscriptions.configureSubscriptionsSection(subscriptionsSection);
+    subscriptions.createSubscriptionsContent(subscriptionsSection);
 
     const settingsSection = p99Map.section(
       form.TypedSection,

@@ -171,6 +171,7 @@ export interface StoreType {
     latencyProgressSections: Record<string, P99.LatencyActionProgress>;
     selectorSwitchingSections: Record<string, string>;
     subscriptionUpdatingSections: Record<string, boolean>;
+    sortByLatencySections: Record<string, boolean>;
   };
   diagnosticsRunAction: {
     loading: boolean;
@@ -278,6 +279,7 @@ const initialStore: StoreType = {
     latencyProgressSections: {},
     selectorSwitchingSections: {},
     subscriptionUpdatingSections: {},
+    sortByLatencySections: {},
     data: [],
   },
   ...initialDiagnosticStore,

@@ -760,7 +760,7 @@ function fixture_get_section(section_name) {
     if (section_name == "settings" && type(fixture.settings) == "object")
         return fixture.settings;
 
-    for (let type_name in [ "settings", "server", "section", "subscription_url", "section_interface", "urltest", "priority_group", "priority_level" ]) {
+    for (let type_name in [ "settings", "server", "section", "subscription", "subscription_url", "section_interface", "urltest", "priority_group", "priority_level" ]) {
         for (let section in fixture_section_list(type_name)) {
             if (as_string(section[".name"]) == section_name)
                 return section;
@@ -1496,6 +1496,11 @@ function validate_rule(section, sections, context) {
         for (let group_id in connections.priority_groups(section))
             validate_priority_group(section, group_id);
 
+        let direct_urls = connections.child_values(section, "subscription_url", "url", "subscription_urls");
+        let global_subs = connections.section_subscriptions(section);
+        if (length(direct_urls) > 0 && length(global_subs) > 0)
+            fail_validation("Rule '" + name + "': direct Subscription URLs and global Subscriptions cannot be configured at the same time. Aborted.");
+
         if (rule_has_subscription_urls(section)) {
             for (let value in connections.subscription_urls(section)) {
                 validate_subscription_source_entry_value(value, name);
@@ -1729,6 +1734,17 @@ function validate_runtime_config(context) {
 
     for (let section in sections)
         validate_rule(section, sections, context);
+
+    for (let sub in connections.all_subscriptions()) {
+        let sub_name = section_name(sub);
+        let sub_url = option(sub, "url", "");
+        if (sub_url == "")
+            fail_validation("Subscription '" + sub_name + "': url cannot be empty. Aborted.");
+        validate_subscription_source_entry_value(sub_url, sub_name);
+        let interval = option(sub, "subscription_update_interval", "4h");
+        if (interval != "")
+            validate_required_duration_option(interval, "subscription." + sub_name + ".subscription_update_interval");
+    }
 }
 
 function context_from_runtime() {

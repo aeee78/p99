@@ -55,7 +55,16 @@ config settings 'settings'
 #        option outbound_detour_enabled '0'
 #        #option outbound_detour_section 'main'
 #        option sort_by_latency '0'
+#        #list subscription 'sub_example'
 #        #list fully_routed_ips '192.168.1.2'
+
+#config subscription 'sub_example'
+#        option label 'Primary Subscription'
+#        option url 'https://example.com/sub'
+#        option enabled '1'
+#        option subscription_update_enabled '1'
+#        option subscription_update_interval '4h'
+#        option show_dashboard_metadata '1'
 
 #config section_interface
 #        option section 'subscription_example'

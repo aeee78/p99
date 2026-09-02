@@ -185,6 +185,37 @@ export const styles = `
     opacity: 0.65;
 }
 
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle {
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    flex: 0 0 auto;
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle--active {
+    background-color: var(--primary-color, #108ee9);
+    color: #fff;
+    border-color: var(--primary-color, #108ee9);
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle--active:hover {
+    background-color: var(--primary-color-hover, #40a9ff);
+    border-color: var(--primary-color-hover, #40a9ff);
+    color: #fff;
+}
+
 .fkp_dashboard-page__outbound-grid {
     margin-top: 5px;
     display: grid;

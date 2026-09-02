@@ -1734,6 +1734,30 @@ function renderInfoIcon24() {
   );
 }
 
+// src/icons/renderArrowUpDownIcon24.ts
+function renderArrowUpDownIcon24() {
+  const NS = "http://www.w3.org/2000/svg";
+  return svgEl(
+    "svg",
+    {
+      xmlns: NS,
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      class: "lucide lucide-arrow-up-down"
+    },
+    [
+      svgEl("path", { d: "m21 16-4 4-4-4" }),
+      svgEl("path", { d: "M17 20V4" }),
+      svgEl("path", { d: "m3 8 4-4 4 4" }),
+      svgEl("path", { d: "M7 4v16" })
+    ]
+  );
+}
+
 // src/helpers/prettyBytes.ts
 function prettyBytes(n) {
   const UNITS = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
@@ -1749,6 +1773,52 @@ function prettyBytes(n) {
 // src/p99/tabs/dashboard/partials/getOutboundFooterLabel.ts
 function getOutboundFooterLabel(outbound) {
   return outbound.urlTestInfo?.selectedName || outbound.description || outbound.type;
+}
+
+// src/p99/tabs/dashboard/partials/sortOutboundsByLatency.ts
+function getStorage() {
+  if (typeof window !== "undefined" && window.localStorage) {
+    return window.localStorage;
+  }
+  if (typeof globalThis !== "undefined" && "localStorage" in globalThis && globalThis.localStorage) {
+    return globalThis.localStorage;
+  }
+  return void 0;
+}
+function getSectionSortByLatency(sectionKey) {
+  const storage = getStorage();
+  if (!storage) {
+    return true;
+  }
+  try {
+    const item = storage.getItem(`p99_sort_latency_${sectionKey}`);
+    if (item === null) {
+      return true;
+    }
+    return item === "1" || item === "true";
+  } catch {
+    return true;
+  }
+}
+function setSectionSortByLatency(sectionKey, enabled) {
+  const storage = getStorage();
+  if (!storage) {
+    return;
+  }
+  try {
+    storage.setItem(`p99_sort_latency_${sectionKey}`, enabled ? "1" : "0");
+  } catch {
+  }
+}
+function sortOutboundsByLatency(outbounds) {
+  return [...outbounds].sort((a, b) => {
+    const latA = typeof a.latency === "number" && a.latency > 0 ? a.latency : Infinity;
+    const latB = typeof b.latency === "number" && b.latency > 0 ? b.latency : Infinity;
+    if (latA === latB) {
+      return 0;
+    }
+    return latA - latB;
+  });
 }
 
 // src/p99/tabs/dashboard/partials/renderSections.ts
@@ -1928,7 +1998,9 @@ function renderDefaultState({
   latencyFetching,
   latencyProgress,
   subscriptionUpdating,
-  selectorSwitchingTag
+  selectorSwitchingTag,
+  sortByLatency = true,
+  onToggleSortByLatency
 }) {
   function testLatency() {
     if (section.withTagSelect) {
@@ -2045,6 +2117,34 @@ function renderDefaultState({
     subscriptionUpdating,
     onUpdateSubscription
   );
+  const sortAction = section.outbounds.length > 1 ? E(
+    "button",
+    {
+      type: "button",
+      class: [
+        "btn",
+        "dashboard-sections-sort-latency-toggle",
+        sortByLatency ? "dashboard-sections-sort-latency-toggle--active" : ""
+      ].filter(Boolean).join(" "),
+      "data-sort-section": section.sectionName,
+      title: _("Sort by latency"),
+      "aria-label": _("Sort by latency"),
+      click: (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onToggleSortByLatency?.(section.sectionName);
+      }
+    },
+    [
+      renderArrowUpDownIcon24(),
+      E(
+        "span",
+        { class: "dashboard-sections-sort-latency-toggle__label" },
+        _("Sort")
+      )
+    ]
+  ) : void 0;
+  const outboundsList = sortByLatency ? sortOutboundsByLatency(section.outbounds) : section.outbounds;
   return E("div", { class: "fkp_dashboard-page__outbound-section" }, [
     // Title with test latency
     E("div", { class: "fkp_dashboard-page__outbound-section__title-section" }, [
@@ -2062,6 +2162,7 @@ function renderDefaultState({
         },
         [
           ...subscriptionUpdateAction ? [subscriptionUpdateAction] : [],
+          ...sortAction ? [sortAction] : [],
           E(
             "button",
             {
@@ -2100,7 +2201,7 @@ function renderDefaultState({
     ]),
     E("div", { class: "fkp_dashboard-page__outbound-grid" }, [
       ...metadataNodes,
-      ...section.outbounds.map((outbound) => renderOutbound(outbound))
+      ...outboundsList.map((outbound) => renderOutbound(outbound))
     ])
   ]);
 }
@@ -4481,6 +4582,7 @@ var initialStore = {
     latencyProgressSections: {},
     selectorSwitchingSections: {},
     subscriptionUpdatingSections: {},
+    sortByLatencySections: {},
     data: []
   },
   ...initialDiagnosticStore
@@ -6673,11 +6775,29 @@ async function renderSectionsWidget() {
       container.replaceChildren(renderedWidget);
     });
   }
-  const renderedWidgets = sectionsWidget.data.map(
-    (section) => renderSections({
+  const renderedWidgets = sectionsWidget.data.map((section) => {
+    const isSorted = sectionsWidget.sortByLatencySections?.[section.sectionName] ?? getSectionSortByLatency(section.sectionName);
+    return renderSections({
       loading: sectionsWidget.loading,
       failed: sectionsWidget.failed,
       section,
+      sortByLatency: isSorted,
+      onToggleSortByLatency: (sectionName) => {
+        const currentWidget = store.get().sectionsWidget;
+        const current = currentWidget.sortByLatencySections?.[sectionName] ?? getSectionSortByLatency(sectionName);
+        const next = !current;
+        setSectionSortByLatency(sectionName, next);
+        store.set({
+          sectionsWidget: {
+            ...currentWidget,
+            sortByLatencySections: {
+              ...currentWidget.sortByLatencySections,
+              [sectionName]: next
+            }
+          }
+        });
+        void renderSectionsWidget();
+      },
       latencyFetching: Boolean(
         sectionsWidget.latencyFetchingSections[section.sectionName]
       ),
@@ -6716,8 +6836,8 @@ async function renderSectionsWidget() {
       onUpdateSubscription: (section2) => {
         void handleUpdateSubscription(section2);
       }
-    })
-  );
+    });
+  });
   return preserveScrollForPage(() => {
     container.replaceChildren(...renderedWidgets);
   });
@@ -7146,6 +7266,37 @@ var styles = `
 .fkp_dashboard-page .btn.dashboard-sections-grid-item-test-latency[disabled] {
     cursor: not-allowed;
     opacity: 0.65;
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle {
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    flex: 0 0 auto;
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle--active {
+    background-color: var(--primary-color, #108ee9);
+    color: #fff;
+    border-color: var(--primary-color, #108ee9);
+}
+
+.fkp_dashboard-page .btn.dashboard-sections-sort-latency-toggle--active:hover {
+    background-color: var(--primary-color-hover, #40a9ff);
+    border-color: var(--primary-color-hover, #40a9ff);
+    color: #fff;
 }
 
 .fkp_dashboard-page__outbound-grid {

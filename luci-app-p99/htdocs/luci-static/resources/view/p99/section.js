@@ -1765,6 +1765,13 @@ function subscriptionDownloadTargetChoices(section_id) {
     }));
 }
 
+function globalSubscriptionChoices() {
+  return (uci.sections(UCI_PACKAGE, "subscription") || []).map((sub) => ({
+    value: getUciSectionName(sub),
+    label: sub.label || sub.url || getUciSectionName(sub),
+  }));
+}
+
 function dnsTypeChoices() {
   return [
     { value: "doh", label: _("DNS over HTTPS (DoH)") },
@@ -7264,11 +7271,41 @@ function createSectionContent(section) {
   };
   o.validate = validateSubscriptionUrlEntry;
   o.validate = function (section_id, value) {
+    const globalSubs = optionMapValue(this, section_id, "subscription");
+    if (globalSubs && (Array.isArray(globalSubs) ? globalSubs.length > 0 : `${globalSubs}`.trim() !== "")) {
+      return _("Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first.");
+    }
     return validateSubscriptionUrlEntry(
       section_id,
       childItemInputValue(section_id, value, "subscription_url", "url"),
     );
   };
+
+  o = section.taboption(
+    "settings",
+    form.DynamicList,
+    "subscription",
+    _("Subscriptions"),
+    _("Select pre-configured subscriptions from the Subscriptions tab"),
+  );
+  o.depends("action", "connection");
+  o.rmempty = true;
+  o.modalonly = true;
+  o.load = function (section_id) {
+    refreshOptionChoices(this, globalSubscriptionChoices());
+    return form.DynamicList.prototype.load.apply(this, [section_id]);
+  };
+  o.onchange = function (_event, section_id) {
+    refreshDashboardFilterChoiceWidgets(section_id);
+  };
+  o.validate = function (section_id, value) {
+    const directUrls = optionMapValue(this, section_id, "subscription_url");
+    if (directUrls && (Array.isArray(directUrls) ? directUrls.length > 0 : `${directUrls}`.trim() !== "")) {
+      return _("Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first.");
+    }
+    return true;
+  };
+  outboundNameSourceOptions.set("subscription", o);
 
   o = section.taboption(
     "settings",

@@ -736,7 +736,7 @@ function assert_unique_outbound_tags(config) {
     }
 }
 
-function add_subscription_source_with_state(config, section, source_index, source_entry, taken, selector_tags, urltest_candidate_tags, state, show_metadata, include_urltest_groups, hide_urltest_group_outbounds, hide_detour_outbounds, node_prefix) {
+function add_subscription_source_with_state(config, section, source_index, source_entry, taken, selector_tags, urltest_candidate_tags, state, show_metadata, include_urltest_groups, hide_urltest_group_outbounds, hide_detour_outbounds, node_prefix, dedup_cache) {
     let section_name = section[".name"];
     let source_section = runtime_subscription.source_id(section_name, source_index);
     if (!runtime_subscription.source_cache_is_current(
@@ -747,9 +747,39 @@ function add_subscription_source_with_state(config, section, source_index, sourc
     ))
         return 0;
 
-    let source_outbounds = runtime_subscription.read_source_outbounds(source_section);
+    let source_outbounds = runtime_subscription.read_source_outbounds(source_section, source_entry);
     if (length(source_outbounds) == 0)
         return 0;
+
+    node_prefix = trim(as_string(node_prefix));
+    let detour_tag = bool_option(section, "outbound_detour_enabled", false) ? option(section, "outbound_detour_section", "") : "";
+    let dedup_key = source_entry + "|||" + node_prefix + "|||" + as_string(include_urltest_groups) + "|||" + detour_tag;
+
+    if (dedup_cache != null && dedup_cache[dedup_key] != null) {
+        let cached = dedup_cache[dedup_key];
+        if (show_metadata !== false)
+            runtime_subscription.merge_source_metadata(state, section_name, source_section, source_index, source_entry);
+
+        for (let i = 0; i < length(cached.prepared); i++) {
+            let outbound = cached.prepared[i];
+            let is_group = cached.group_flags[i] === true;
+            if (!is_group)
+                push(urltest_candidate_tags, outbound.tag);
+            runtime_subscription.remember_source_outbound(
+                state,
+                outbound.tag,
+                cached.display_names[i],
+                outbound,
+                cached.source_links[i],
+                cached.outbound_descriptions[i]
+            );
+            if (cached.hidden_flags[i] !== true) {
+                push(selector_tags, outbound.tag);
+                runtime_subscription.remember_urltest_group(state, outbound.tag, cached.display_names[i], outbound);
+            }
+        }
+        return length(cached.prepared);
+    }
 
     let skipped = {};
     for (let outbound in source_outbounds) {
@@ -768,7 +798,6 @@ function add_subscription_source_with_state(config, section, source_index, sourc
         hide_urltest_group_outbounds = false;
     let exclude_flintnet_urltest_members =
         include_urltest_groups === false && flintnet_subscription_source(source_entry);
-    node_prefix = trim(as_string(node_prefix));
     let prepared = [];
     let display_names = [];
     let source_links = [];
@@ -838,6 +867,17 @@ function add_subscription_source_with_state(config, section, source_index, sourc
             push(selector_tags, outbound.tag);
             runtime_subscription.remember_urltest_group(state, outbound.tag, display_names[i], outbound);
         }
+    }
+
+    if (dedup_cache != null) {
+        dedup_cache[dedup_key] = {
+            prepared,
+            display_names,
+            source_links,
+            group_flags,
+            hidden_flags,
+            outbound_descriptions
+        };
     }
     return added;
 }
@@ -2077,7 +2117,7 @@ function add_connection_manual_links(config, state, section, taken, selector_tag
     }
 }
 
-function add_connection_subscriptions(config, state, section, taken, selector_tags, urltest_candidate_tags) {
+function add_connection_subscriptions(config, state, section, taken, selector_tags, urltest_candidate_tags, dedup_cache) {
     let subscription_urls = connections.subscription_urls(section);
 
     for (let i = 0; i < length(subscription_urls); i++)
@@ -2094,7 +2134,8 @@ function add_connection_subscriptions(config, state, section, taken, selector_ta
             connections.subscription_include_urltest_groups(section, subscription_urls[i]),
             connections.subscription_hide_urltest_group_outbounds(section, subscription_urls[i]),
             connections.subscription_hide_detour_outbounds(section, subscription_urls[i]),
-            connections.subscription_node_prefix(section, subscription_urls[i])
+            connections.subscription_node_prefix(section, subscription_urls[i]),
+            dedup_cache
         );
 }
 
@@ -2226,7 +2267,7 @@ function add_connection_json_outbounds(config, state, section, taken, selector_t
     }
 }
 
-function add_connections_outbound(config, section, taken) {
+function add_connections_outbound(config, section, taken, dedup_cache) {
     let section_name = section[".name"];
     let selector_tags = [];
     let urltest_candidate_tags = [];
@@ -2234,7 +2275,7 @@ function add_connections_outbound(config, section, taken) {
     let cascade_start = length(array_or_empty(config.outbounds));
 
     add_connection_manual_links(config, state, section, taken, selector_tags, urltest_candidate_tags);
-    add_connection_subscriptions(config, state, section, taken, selector_tags, urltest_candidate_tags);
+    add_connection_subscriptions(config, state, section, taken, selector_tags, urltest_candidate_tags, dedup_cache);
     // Apply before interface and JSON items are added: those source kinds are intentionally excluded.
     apply_section_detour_to_connection_outbounds(
         config,
@@ -2864,7 +2905,7 @@ function unsupported_matcher_key(section) {
     return "";
 }
 
-function add_outbound_for_section(config, section, taken, sections) {
+function add_outbound_for_section(config, section, taken, sections, dedup_cache) {
     let action = option(section, "action", "");
     let section_name = section[".name"];
     if (!valid_section_name(section_name))
@@ -2874,7 +2915,7 @@ function add_outbound_for_section(config, section, taken, sections) {
         runtime_generate_unsupported("section has unsupported matcher " + unsupported_matcher);
 
     if (connections.is_connections_action(action))
-        add_connections_outbound(config, section, taken);
+        add_connections_outbound(config, section, taken, dedup_cache);
     else if (action == "zapret")
         add_zapret_outbound(config, section, sections);
     else if (action == "zapret2")
@@ -2992,9 +3033,10 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
     });
     add_source_aware_dns_support(config, source_aware_dns);
     let taken = reserved_runtime_tag_set(config.outbounds);
+    let dedup_cache = {};
     reserve_section_outbound_tags(sections, taken);
     for (let section in sections)
-        add_outbound_for_section(config, section, taken, sections);
+        add_outbound_for_section(config, section, taken, sections, dedup_cache);
     add_service_route_rules(config, sections);
     for (let section in sections)
         add_route_for_section(config, section);

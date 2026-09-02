@@ -1496,7 +1496,7 @@ function validate_rule(section, sections, context) {
         for (let group_id in connections.priority_groups(section))
             validate_priority_group(section, group_id);
 
-        let direct_urls = connections.child_values(section, "subscription_url", "url", "subscription_urls");
+        let direct_urls = connections.direct_subscription_urls(section);
         let global_subs = connections.section_subscriptions(section);
         if (length(direct_urls) > 0 && length(global_subs) > 0)
             fail_validation("Rule '" + name + "': direct Subscription URLs and global Subscriptions cannot be configured at the same time. Aborted.");

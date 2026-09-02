@@ -337,8 +337,12 @@ function connection_urls(section) {
     return whitespace_list_value(section, "selector_proxy_links");
 }
 
+function direct_subscription_urls(section) {
+    return child_values(section, "subscription_url", "url", "subscription_urls");
+}
+
 function subscription_urls(section) {
-    let direct_urls = child_values(section, "subscription_url", "url", "subscription_urls");
+    let direct_urls = direct_subscription_urls(section);
     let result = [];
     for (let u in direct_urls) {
         if (u != "" && index(result, u) < 0)
@@ -1252,5 +1256,6 @@ return {
     all_subscriptions,
     get_subscription_section,
     subscription_by_url,
-    section_subscriptions
+    section_subscriptions,
+    direct_subscription_urls
 };

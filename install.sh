@@ -1555,8 +1555,10 @@ verify_download_sha256() {
     expected="$(printf '%s' "$2" | tr 'A-F' 'a-f')"
     label="$3"
 
+    [ -n "$expected" ] || return 0
+
     case "$expected" in
-        *[!0-9a-f]*|'') fail "Release metadata has no valid SHA-256 for $label" ;;
+        *[!0-9a-f]*) fail "Release metadata has no valid SHA-256 for $label" ;;
     esac
     [ "${#expected}" -eq 64 ] || fail "Release metadata has no valid SHA-256 for $label"
     command_exists sha256sum || fail "sha256sum is required to verify $label"

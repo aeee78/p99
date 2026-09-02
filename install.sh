@@ -1,0 +1,2637 @@
+#!/bin/sh
+# shellcheck shell=dash
+
+REPO_OWNER="aeee78"
+REPO_NAME="p99"
+MIRROR_BASE_URL="${P99_MIRROR_BASE_URL:-}"
+
+FLASH_RESERVE_KB=1024
+PACKAGE_INSTALL_OVERHEAD_KB=512
+PACKAGE_ARCHIVE_SPACE_FACTOR=2
+MISSING_DEPENDENCY_ALLOWANCE_KB=256
+APK_WORLD_FILE="${P99_APK_WORLD_FILE:-/etc/apk/world}"
+OPKG_DISTFEEDS_FILE="${P99_OPKG_DISTFEEDS_FILE:-/etc/opkg/distfeeds.conf}"
+CONNECT_TIMEOUT_SECONDS=15
+METADATA_TIMEOUT_SECONDS=60
+DOWNLOAD_TIMEOUT_SECONDS=600
+
+PKG_IS_APK=0
+MIRROR_TRANSACTION_ACTIVE=0
+MIRROR_BACKUP_COUNT=0
+MIRROR_BACKUP_MANIFEST=""
+FETCHER=""
+TMP_DIR=""
+P99_WAS_ENABLED=0
+P99_WAS_RUNNING=0
+P99_LEGACY_DETECTED=0
+LEGACY_CLEANUP_DONE=0
+LEGACY_CLEANUP_STARTED=0
+P99_I18N_REQUESTED=0
+INSTALLER_LANG="en"
+SING_BOX_INSTALL_VARIANT=""
+SING_BOX_TINY_FILE=""
+SING_BOX_TINY_SWITCHED=0
+SING_BOX_CHANGE_STARTED=0
+ALLOW_LOW_SPACE_TINY=0
+CONFIRM_LEGACY_MIGRATION=0
+
+P99_RELEASE_JSON=""
+P99_RELEASE_TAG=""
+P99_BACKEND_URL=""
+P99_BACKEND_SHA256=""
+P99_BACKEND_NAME=""
+P99_BACKEND_FILE=""
+P99_APP_URL=""
+P99_APP_SHA256=""
+P99_APP_NAME=""
+P99_APP_FILE=""
+P99_I18N_URL=""
+P99_I18N_SHA256=""
+P99_I18N_NAME=""
+P99_I18N_FILE=""
+P99_INSTALL_REQUIRED_KB=0
+P99_PACKAGE_VERSION=""
+P99_CONFIG_READY=1
+P99_CONFIG_VALIDATION_ERROR=""
+INSTALL_MODE="clean"
+LEGACY_BRAND="$(printf '\160\157\144\153\157\160')"
+LEGACY_BACKEND_PACKAGE="${LEGACY_BRAND}-plus"
+LEGACY_CONFIG_PACKAGE_ALT="${LEGACY_BRAND}_plus"
+LEGACY_CONFIG_BACKUP=""
+LEGACY_CONFIG_PATH=""
+
+command -v apk >/dev/null 2>&1 && PKG_IS_APK=1
+
+msg() {
+    printf '\033[32;1m%s\033[0m\n' "$1"
+}
+
+warn() {
+    printf '\033[33;1m%s\033[0m\n' "$1"
+}
+
+fail() {
+    rollback_legacy_config_on_failure
+    restore_current_p99_on_failure
+    printf '\033[31;1m%s\033[0m\n' "$1" >&2
+    exit 1
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 [options]
+
+Installs or updates P99 packages:
+  - p99
+  - luci-app-p99
+  - luci-i18n-p99-ru when requested or when LuCI language is Russian
+
+Can also install or switch sing-box variant:
+  - sing-box-tiny from the mirrored OpenWrt feeds (default)
+  - stable sing-box from the mirrored OpenWrt feeds
+  - sing-box-extended from GitHub OpenWrt packages (for xHTTP support)
+
+Automation options (must be explicitly requested):
+  --allow-low-space-tiny       Allow stable/extended sing-box to be replaced
+                               with tiny when no interactive terminal exists
+  --confirm-legacy-migration   Confirm removal and migration of a detected
+                               legacy installation without an interactive terminal
+EOF
+}
+
+parse_args() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            --allow-low-space-tiny)
+                ALLOW_LOW_SPACE_TINY=1
+                ;;
+            --confirm-legacy-migration)
+                CONFIRM_LEGACY_MIGRATION=1
+                ;;
+            *)
+                fail "Unknown installer option: $1"
+                ;;
+        esac
+        shift
+    done
+}
+
+cleanup() {
+    rollback_package_mirror
+    [ -n "$TMP_DIR" ] && rm -rf "$TMP_DIR"
+}
+
+read_openwrt_release_value() {
+    key="$1"
+
+    [ -f /etc/openwrt_release ] || return 0
+    sed -n "s/^${key}='\(.*\)'/\1/p" /etc/openwrt_release 2>/dev/null | head -n 1
+}
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+interactive_terminal_available() {
+    [ -r /dev/tty ] && [ -w /dev/tty ] && (: </dev/tty) 2>/dev/null
+}
+
+init_tmp_dir() {
+    TMP_DIR="$(mktemp -d /tmp/p99.XXXXXX 2>/dev/null || true)"
+
+    if [ -z "$TMP_DIR" ]; then
+        TMP_DIR="/tmp/p99.$$"
+        mkdir -p "$TMP_DIR" || fail "Failed to create temporary directory: $TMP_DIR"
+    fi
+}
+
+detect_fetcher() {
+    if command_exists wget; then
+        FETCHER="wget"
+        return 0
+    fi
+
+    if command_exists curl; then
+        FETCHER="curl"
+        return 0
+    fi
+
+    fail "wget or curl is required to download P99"
+}
+
+run_with_deadline() {
+    p99_deadline_seconds="$1"
+    shift
+
+    p99_deadline_helper="${P99_DEADLINE_HELPER_PATH:-}"
+    if [ -z "$p99_deadline_helper" ]; then
+        p99_deadline_helper="$(install_deadline_helper_path)" || return 1
+    fi
+
+    p99_deadline_result="$TMP_DIR/deadline-result.$$"
+    "$p99_deadline_helper" run "$p99_deadline_seconds" "$p99_deadline_result" "$@"
+    p99_deadline_status=$?
+    rm -f "$p99_deadline_result.output" "$p99_deadline_result.error" \
+        "$p99_deadline_result.status" "$p99_deadline_result.timeout"
+    return "$p99_deadline_status"
+}
+
+install_deadline_helper_path() {
+    deadline_helper_path="$TMP_DIR/install-deadline.sh"
+
+    if [ ! -s "$deadline_helper_path" ]; then
+        cat > "$deadline_helper_path" <<'EOF'
+#!/bin/sh
+
+process_starttime() {
+    local pid="$1"
+    local stat rest
+
+    [ -r "/proc/$pid/stat" ] || return 1
+    IFS= read -r stat < "/proc/$pid/stat" || return 1
+    rest="${stat##*) }"
+    set -- $rest
+    [ "$#" -ge 20 ] || return 1
+    shift 19
+    printf '%s\n' "$1"
+}
+
+child_pids() {
+    local parent="$1"
+    local status key value pid ppid
+
+    for status in /proc/[0-9]*/status; do
+        [ -r "$status" ] || continue
+        pid=""
+        ppid=""
+        while IFS=: read -r key value; do
+            case "$key" in
+                Pid)
+                    set -- $value
+                    pid="${1:-}"
+                    ;;
+                PPid)
+                    set -- $value
+                    ppid="${1:-}"
+                    ;;
+            esac
+        done < "$status"
+        [ "$ppid" = "$parent" ] && [ -n "$pid" ] && printf '%s\n' "$pid"
+    done
+}
+
+kill_descendants() {
+    local parent="$1"
+    local signal="$2"
+    local child
+
+    for child in $(child_pids "$parent"); do
+        kill_descendants "$child" "$signal"
+        kill "-$signal" "$child" 2>/dev/null || true
+    done
+}
+
+kill_process_tree() {
+    local root="$1"
+    local expected_starttime="$2"
+    local current_starttime
+
+    current_starttime="$(process_starttime "$root" 2>/dev/null || true)"
+    [ -n "$current_starttime" ] && [ "$current_starttime" = "$expected_starttime" ] || return 0
+
+    kill -STOP "$root" 2>/dev/null || return 0
+    kill_descendants "$root" TERM
+    sleep 1
+    kill_descendants "$root" KILL
+    kill -KILL "$root" 2>/dev/null || true
+}
+
+run_command() {
+    local seconds="$1"
+    local result="$2"
+    local command_pid command_starttime watchdog_pid status
+    shift 2
+
+    rm -f "$result.output" "$result.error" "$result.status" "$result.timeout"
+    umask 077
+    "$@" >"$result.output" 2>"$result.error" &
+    command_pid=$!
+    command_starttime="$(process_starttime "$command_pid" 2>/dev/null || true)"
+
+    (
+        local sleep_pid current_starttime
+        trap 'kill "$sleep_pid" 2>/dev/null || true; wait "$sleep_pid" 2>/dev/null || true; exit 0' TERM INT
+        sleep "$seconds" &
+        sleep_pid=$!
+        wait "$sleep_pid" || exit 0
+        current_starttime="$(process_starttime "$command_pid" 2>/dev/null || true)"
+        [ -n "$command_starttime" ] && [ "$current_starttime" = "$command_starttime" ] || exit 0
+        : > "$result.timeout"
+        kill_process_tree "$command_pid" "$command_starttime"
+    ) >/dev/null 2>&1 &
+    watchdog_pid=$!
+
+    wait "$command_pid"
+    status=$?
+    kill "$watchdog_pid" 2>/dev/null || true
+    wait "$watchdog_pid" 2>/dev/null || true
+    [ ! -e "$result.timeout" ] || status=124
+    printf '%s\n' "$status" > "$result.status"
+    cat "$result.output"
+    cat "$result.error" >&2
+    return "$status"
+}
+
+case "${1:-}" in
+    run)
+        shift
+        run_command "$@"
+        ;;
+    kill-tree)
+        shift
+        kill_process_tree "$1" "$2"
+        ;;
+    *)
+        exit 2
+        ;;
+esac
+EOF
+        chmod 0700 "$deadline_helper_path" || return 1
+    fi
+
+    printf '%s\n' "$deadline_helper_path"
+}
+
+http_get() {
+    case "$FETCHER" in
+        wget)
+            run_with_deadline "$METADATA_TIMEOUT_SECONDS" wget -T "$CONNECT_TIMEOUT_SECONDS" -qO- "$1"
+            ;;
+        curl)
+            curl --connect-timeout "$CONNECT_TIMEOUT_SECONDS" --max-time "$METADATA_TIMEOUT_SECONDS" -fsSL "$1"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+install_json_helper_path() {
+    helper_path="$TMP_DIR/install-json.uc"
+
+    if [ ! -s "$helper_path" ]; then
+        cat > "$helper_path" <<'EOF'
+#!/usr/bin/env ucode
+
+let fs = require("fs");
+
+function as_string(value) {
+    return value == null ? "" : "" + value;
+}
+
+function read_stdin() {
+    let input = fs.open("/dev/stdin", "r");
+    if (!input)
+        return "";
+    let data = input.read("all");
+    input.close();
+    return data == null ? "" : data;
+}
+
+function read_stdin_json() {
+    try {
+        return json(read_stdin());
+    }
+    catch (e) {
+        return null;
+    }
+}
+
+function starts_with(value, prefix) {
+    value = as_string(value);
+    prefix = as_string(prefix);
+    return substr(value, 0, length(prefix)) == prefix;
+}
+
+function ends_with(value, suffix) {
+    value = as_string(value);
+    suffix = as_string(suffix);
+    return length(value) >= length(suffix) && substr(value, length(value) - length(suffix)) == suffix;
+}
+
+let uci_cursor_state = false;
+
+function words(value) {
+    value = trim(as_string(value));
+    return value == "" ? [] : split(value, /[ \t\r\n]+/);
+}
+
+function truthy(value) {
+    value = lc(as_string(value));
+    return value == "1" || value == "true" || value == "yes" || value == "on";
+}
+
+function path_parts(path) {
+    path = as_string(path);
+    let first = index(path, ".");
+    if (first < 0)
+        return null;
+
+    let package_name = substr(path, 0, first);
+    let rest = substr(path, first + 1);
+    let second = index(rest, ".");
+    if (second < 0)
+        return { package: package_name, section: rest, option: "" };
+
+    return {
+        package: package_name,
+        section: substr(rest, 0, second),
+        option: substr(rest, second + 1)
+    };
+}
+
+function uci_cursor() {
+    if (uci_cursor_state !== false)
+        return uci_cursor_state;
+
+    try {
+        uci_cursor_state = require("uci").cursor();
+    }
+    catch (e) {
+        uci_cursor_state = null;
+    }
+
+    return uci_cursor_state;
+}
+
+function uci_available() {
+    return uci_cursor() != null;
+}
+
+function uci_load(package_name) {
+    let c = uci_cursor();
+    if (c == null)
+        return false;
+
+    try {
+        c.load(as_string(package_name));
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function uci_value_to_string(value) {
+    if (value == null)
+        return "";
+    if (type(value) == "array")
+        return join(" ", value);
+    return as_string(value);
+}
+
+function uci_value_to_list(value) {
+    if (value == null)
+        return [];
+    if (type(value) == "array")
+        return value;
+    return words(value);
+}
+
+function uci_get(path) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null || parts.option == "")
+        return "";
+    if (!uci_load(parts.package))
+        return "";
+
+    return uci_value_to_string(c.get(parts.package, parts.section, parts.option));
+}
+
+function uci_exists(path) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null)
+        return false;
+    if (!uci_load(parts.package))
+        return false;
+
+    if (parts.option == "")
+        return c.get_all(parts.package, parts.section) != null;
+    return c.get(parts.package, parts.section, parts.option) != null;
+}
+
+function uci_delete(path) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null)
+        return false;
+
+    try {
+        if (parts.option == "")
+            c.delete(parts.package, parts.section);
+        else
+            c.delete(parts.package, parts.section, parts.option);
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function uci_set(path, value) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null || parts.option == "")
+        return false;
+
+    try {
+        c.set(parts.package, parts.section, parts.option, type(value) == "array" ? value : as_string(value));
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function uci_add_list(path, value) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null || parts.option == "")
+        return false;
+
+    try {
+        let values = uci_value_to_list(c.get(parts.package, parts.section, parts.option));
+        push(values, as_string(value));
+        c.set(parts.package, parts.section, parts.option, values);
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function uci_del_list(path, value) {
+    let parts = path_parts(path);
+    let c = uci_cursor();
+    if (c == null || parts == null || parts.option == "")
+        return false;
+
+    let values = [];
+    let removed = false;
+    for (let item in uci_value_to_list(c.get(parts.package, parts.section, parts.option))) {
+        if (item == value) {
+            removed = true;
+            continue;
+        }
+        push(values, item);
+    }
+
+    if (!removed)
+        return false;
+
+    try {
+        if (length(values) == 0)
+            c.delete(parts.package, parts.section, parts.option);
+        else
+            c.set(parts.package, parts.section, parts.option, values);
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function uci_commit(package_name) {
+    let c = uci_cursor();
+    if (c == null)
+        return false;
+
+    try {
+        return c.commit(package_name) != false;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function run(command) {
+    return system(command) == 0;
+}
+
+function shell_quote(value) {
+    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
+}
+
+function command_from_args(args) {
+    let parts = [];
+    for (let arg in args)
+        push(parts, shell_quote(arg));
+    return join(" ", parts);
+}
+
+function normalize_status(status) {
+    status = int(status);
+    return status > 255 ? int(status / 256) : status;
+}
+
+function run_args(args) {
+    return normalize_status(system(command_from_args(args) + " >/dev/null 2>&1")) == 0;
+}
+
+function command_output(args) {
+    let pipe = fs.popen(command_from_args(args) + " 2>/dev/null", "r");
+    if (!pipe)
+        return "";
+
+    let data = pipe.read("all");
+    pipe.close();
+    return data == null ? "" : data;
+}
+
+function read_text_file(path) {
+    let handle = fs.open(as_string(path), "r");
+    if (!handle)
+        return "";
+
+    let data = handle.read("all");
+    handle.close();
+    return data == null ? "" : data;
+}
+
+function unlink_file(path) {
+    try {
+        fs.unlink(as_string(path));
+    }
+    catch (e) {
+    }
+}
+
+function env(name, fallback) {
+    let value = getenv(name);
+    if (value == null || value == "")
+        return as_string(fallback);
+    return as_string(value);
+}
+
+const INSTALLER_P99_INIT = env("P99_INSTALLER_INIT", "/etc/init.d/p99");
+const INSTALLER_P99_BIN = env("P99_INSTALLER_BIN", "/usr/bin/p99");
+const INSTALLER_P99_LIB = env("P99_INSTALLER_LIB", "/usr/lib/p99");
+const INSTALLER_P99_PERSISTENT_DIR = env("P99_INSTALLER_PERSISTENT_DIR", "/etc/p99");
+const INSTALLER_P99_UCI_DEFAULTS = env("P99_INSTALLER_UCI_DEFAULTS", "/etc/uci-defaults/50_luci-p99");
+const INSTALLER_P99_LUCI_VIEW = env("P99_INSTALLER_LUCI_VIEW", "/www/luci-static/resources/view/p99");
+const INSTALLER_MENU_JSON = env("P99_INSTALLER_MENU_JSON", "/usr/share/luci/menu.d/luci-app-p99.json");
+const INSTALLER_ACL_JSON = env("P99_INSTALLER_ACL_JSON", "/usr/share/rpcd/acl.d/luci-app-p99.json");
+const INSTALLER_RU_LMO = env("P99_INSTALLER_RU_LMO", "/usr/lib/lua/luci/i18n/p99.ru.lmo");
+const INSTALLER_EN_LMO = env("P99_INSTALLER_EN_LMO", "/usr/lib/lua/luci/i18n/p99.en.lmo");
+const INSTALLER_RU_LUA = env("P99_INSTALLER_RU_LUA", "/usr/lib/lua/luci/i18n/p99.ru.lua");
+const INSTALLER_EN_LUA = env("P99_INSTALLER_EN_LUA", "/usr/lib/lua/luci/i18n/p99.en.lua");
+const INSTALLER_RPCD_INIT = env("P99_INSTALLER_RPCD_INIT", "/etc/init.d/rpcd");
+const LEGACY_BRAND = env("P99_INSTALLER_LEGACY_BRAND", "");
+const LEGACY_BACKEND_PACKAGE = env("P99_INSTALLER_LEGACY_BACKEND", LEGACY_BRAND + "-plus");
+const LEGACY_CONFIG_PACKAGE_ALT = env("P99_INSTALLER_LEGACY_CONFIG_ALT", LEGACY_BRAND + "_plus");
+const INSTALLER_LEGACY_INIT = env("P99_INSTALLER_LEGACY_INIT", "/etc/init.d/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_BASE_INIT = env("P99_INSTALLER_LEGACY_BASE_INIT", "/etc/init.d/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_BIN = env("P99_INSTALLER_LEGACY_BASE_BIN", "/usr/bin/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_LIB = env("P99_INSTALLER_LEGACY_BASE_LIB", "/usr/lib/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_UCI_DEFAULTS = env("P99_INSTALLER_LEGACY_BASE_UCI_DEFAULTS", "/etc/uci-defaults/50_luci-" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_LUCI_VIEW = env("P99_INSTALLER_LEGACY_BASE_LUCI_VIEW", "/www/luci-static/resources/view/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_MENU_JSON = env("P99_INSTALLER_LEGACY_BASE_MENU_JSON", "/usr/share/luci/menu.d/luci-app-" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_ACL_JSON = env("P99_INSTALLER_LEGACY_BASE_ACL_JSON", "/usr/share/rpcd/acl.d/luci-app-" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_I18N = env("P99_INSTALLER_LEGACY_BASE_I18N", "/usr/lib/lua/luci/i18n/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_CONFIG = env("P99_INSTALLER_LEGACY_BASE_CONFIG", "/etc/config/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_PERSISTENT_DIR = env("P99_INSTALLER_LEGACY_BASE_PERSISTENT_DIR", "/etc/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_RUNTIME_DIR = env("P99_INSTALLER_LEGACY_BASE_RUNTIME_DIR", "/var/run/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_BASE_TMP_DIR = env("P99_INSTALLER_LEGACY_BASE_TMP_DIR", "/tmp/" + LEGACY_BRAND);
+const INSTALLER_LEGACY_TMP_PACKAGE_GLOB = env("P99_INSTALLER_LEGACY_TMP_PACKAGE_GLOB", "/tmp/*" + LEGACY_BRAND + "*");
+const INSTALLER_LEGACY_SCAN_ROOTS = env("P99_INSTALLER_LEGACY_SCAN_ROOTS", "/tmp /var/run /etc /usr/lib /usr/share/luci /usr/share/rpcd /www/luci-static/resources/view");
+const INSTALLER_LEGACY_BIN = env("P99_INSTALLER_LEGACY_BIN", "/usr/bin/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_LIB = env("P99_INSTALLER_LEGACY_LIB", "/usr/lib/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_UCI_DEFAULTS = env("P99_INSTALLER_LEGACY_UCI_DEFAULTS", "/etc/uci-defaults/50_luci-" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_LUCI_VIEW = env("P99_INSTALLER_LEGACY_LUCI_VIEW", "/www/luci-static/resources/view/" + LEGACY_CONFIG_PACKAGE_ALT);
+const INSTALLER_LEGACY_MENU_JSON = env("P99_INSTALLER_LEGACY_MENU_JSON", "/usr/share/luci/menu.d/luci-app-" + LEGACY_BACKEND_PACKAGE + ".json");
+const INSTALLER_LEGACY_ACL_JSON = env("P99_INSTALLER_LEGACY_ACL_JSON", "/usr/share/rpcd/acl.d/luci-app-" + LEGACY_BACKEND_PACKAGE + ".json");
+const INSTALLER_LEGACY_CONFIG = env("P99_INSTALLER_LEGACY_CONFIG", "/etc/config/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_CONFIG_ALT = env("P99_INSTALLER_LEGACY_CONFIG_FILE_ALT", "/etc/config/" + LEGACY_CONFIG_PACKAGE_ALT);
+const INSTALLER_LEGACY_PERSISTENT_DIR = env("P99_INSTALLER_LEGACY_PERSISTENT_DIR", "/etc/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_RUNTIME_DIR = env("P99_INSTALLER_LEGACY_RUNTIME_DIR", "/var/run/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_TMP_DIR = env("P99_INSTALLER_LEGACY_TMP_DIR", "/tmp/" + LEGACY_BACKEND_PACKAGE);
+const INSTALLER_LEGACY_TMP_ALT_DIR = env("P99_INSTALLER_LEGACY_TMP_ALT_DIR", "/tmp/" + LEGACY_CONFIG_PACKAGE_ALT);
+const INSTALLER_DEADLINE_HELPER = env("P99_INSTALLER_DEADLINE_HELPER", "");
+const INSTALLER_COMMAND_RESULT = env("P99_INSTALLER_COMMAND_RESULT", "/tmp/p99-installer-command");
+const INSTALLER_RC_DIR = env("P99_INSTALLER_RC_DIR", "/etc/rc.d");
+const INSTALLER_START_RETRY_FILE = env("P99_INSTALLER_START_RETRY_FILE", "/var/run/p99/start.retry");
+const INSTALLER_START_RETRY_PID_FILE = env("P99_INSTALLER_START_RETRY_PID_FILE", "/var/run/p99/start-retry.pid");
+const INSTALLER_ORPHAN_PPID = env("P99_INSTALLER_ORPHAN_PPID", "1");
+const INSTALLER_SERVICE_PROBE_TIMEOUT = int(env("P99_INSTALLER_SERVICE_PROBE_TIMEOUT", "6")) || 6;
+const INSTALLER_SERVICE_ACTION_TIMEOUT = int(env("P99_INSTALLER_SERVICE_ACTION_TIMEOUT", "60")) || 60;
+
+let installer_command_sequence = 0;
+
+function installer_command_result(args, timeout_seconds) {
+    installer_command_sequence++;
+    let result = INSTALLER_COMMAND_RESULT + "." + installer_command_sequence;
+    let helper_args = [
+        INSTALLER_DEADLINE_HELPER,
+        "run",
+        as_string(timeout_seconds),
+        result
+    ];
+    for (let arg in args)
+        push(helper_args, arg);
+
+    let shell_status = normalize_status(system(command_from_args(helper_args) + " >/dev/null 2>&1"));
+    let status_text = trim(read_text_file(result + ".status"));
+    let complete = match(status_text, /^[0-9]+$/) != null;
+    let status = complete ? int(status_text) : shell_status;
+    let output = read_text_file(result + ".output");
+    for (let suffix in [ ".output", ".error", ".status", ".timeout" ])
+        unlink_file(result + suffix);
+
+    return {
+        status,
+        output,
+        complete,
+        timed_out: status == 124
+    };
+}
+
+let dns_owner_config = "p99";
+let dns_owner_section = "p99";
+let dns_owner_option_prefix = "p99_";
+
+function path_exists(path) {
+    return fs.stat(as_string(path)) != null;
+}
+
+function path_executable(path) {
+    return run_args([ "test", "-x", path ]);
+}
+
+function remove_path(path) {
+    if (as_string(path) == "" || !path_exists(path))
+        return true;
+    return run_args([ "rm", "-rf", path ]);
+}
+
+function remove_glob(pattern) {
+    pattern = as_string(pattern);
+    if (pattern == "")
+        return true;
+    let removed = true;
+    for (let path in fs.glob(pattern))
+        if (!remove_path(path))
+            removed = false;
+    return removed;
+}
+
+function remove_globs(patterns) {
+    let removed = true;
+    for (let pattern in words(patterns))
+        if (!remove_glob(pattern))
+            removed = false;
+    return removed;
+}
+
+function remove_legacy_named_children(root) {
+    root = as_string(root);
+    if (root == "" || LEGACY_BRAND == "")
+        return true;
+
+    let entries = fs.lsdir(root);
+    if (type(entries) != "array")
+        return true;
+
+    let removed = true;
+    let brand = lc(LEGACY_BRAND);
+    for (let entry in entries) {
+        entry = as_string(entry);
+        let path = root + "/" + entry;
+        if (index(lc(entry), brand) >= 0) {
+            if (!remove_path(path))
+                removed = false;
+            continue;
+        }
+
+        let stat = fs.stat(path);
+        if (stat != null && stat.type == "directory" && !remove_legacy_named_children(path))
+            removed = false;
+    }
+    return removed;
+}
+
+function restart_dnsmasq() {
+    return run("[ -x /etc/init.d/dnsmasq ] && /etc/init.d/dnsmasq restart");
+}
+
+function installer_package_manager() {
+    return run_args([ "apk", "--version" ]) ? "apk" : "opkg";
+}
+
+function installer_installed_package_names() {
+    let manager = installer_package_manager();
+    let output = manager == "apk" ?
+        command_output([ "apk", "info" ]) :
+        command_output([ "opkg", "list-installed" ]);
+    let names = [];
+
+    for (let line in split(output, "\n")) {
+        line = trim(as_string(line));
+        if (line == "")
+            continue;
+        if (manager == "opkg") {
+            let parts = split(line, /[ \t]+/);
+            line = parts[0] || "";
+        }
+        if (line != "")
+            push(names, line);
+    }
+
+    return names;
+}
+
+function installer_package_installed(name) {
+    name = as_string(name);
+    if (name == "")
+        return false;
+
+    if (installer_package_manager() == "apk")
+        return run_args([ "apk", "info", "-e", name ]);
+
+    for (let installed in installer_installed_package_names())
+        if (installed == name)
+            return true;
+    return false;
+}
+
+function installer_remove_package(name) {
+    name = as_string(name);
+    if (name == "" || !installer_package_installed(name))
+        return true;
+
+    if (installer_package_manager() == "apk")
+        return run_args([ "apk", "del", name ]);
+    return run_args([ "opkg", "remove", "--force-depends", name ]);
+}
+
+function installer_remove_package_prefix(prefix) {
+    prefix = as_string(prefix);
+    if (prefix == "")
+        return true;
+
+    let removed = true;
+    for (let name in installer_installed_package_names())
+        if (starts_with(name, prefix) && !installer_remove_package(name))
+            removed = false;
+    return removed;
+}
+
+function installer_confirm_remove_https_dns_proxy() {
+    if (!installer_package_installed("https-dns-proxy"))
+        return true;
+
+    warn("Detected conflicting package: https-dns-proxy\n");
+
+    if (run("[ ! -t 0 ]")) {
+        warn("Remove the conflicting https-dns-proxy package and continue?: 1 (yes, non-interactive)\n");
+        return true;
+    }
+
+    while (true) {
+        warn("\nRemove the conflicting https-dns-proxy package and continue?\n");
+        warn("  1) yes\n");
+        warn("  2) no\n");
+        warn("Select [2]: ");
+
+        let input = fs.open("/dev/stdin", "r");
+        let answer = input ? trim(as_string(input.read("line"))) : "";
+        if (input)
+            input.close();
+
+        if (answer == "1")
+            return true;
+        if (answer == "" || answer == "2")
+            return false;
+        warn("Invalid choice\n");
+    }
+}
+
+function path_basename(path) {
+    let parts = split(as_string(path), "/");
+    return length(parts) > 0 ? parts[length(parts) - 1] : "";
+}
+
+function installer_process_starttime(pid) {
+    let stat = read_text_file("/proc/" + as_string(pid) + "/stat");
+    let matched = match(stat, /^[0-9]+ \(.*\) [^ ]+ (.*)$/);
+    if (!matched)
+        return "";
+
+    let fields = words(matched[1]);
+    return length(fields) > 18 ? as_string(fields[18]) : "";
+}
+
+function installer_process_ppid(pid) {
+    let matched = match(read_text_file("/proc/" + as_string(pid) + "/status"), /(^|\n)PPid:[ \t]*([0-9]+)/);
+    return matched ? as_string(matched[2]) : "";
+}
+
+function installer_process_args(pid) {
+    let args = [];
+    for (let arg in split(read_text_file("/proc/" + as_string(pid) + "/cmdline"), "\0"))
+        if (arg != "")
+            push(args, arg);
+    return args;
+}
+
+function installer_args_have_exact(args, value) {
+    for (let arg in args)
+        if (arg == value)
+            return true;
+    return false;
+}
+
+function installer_args_contain(args, value) {
+    for (let arg in args)
+        if (index(arg, value) >= 0)
+            return true;
+    return false;
+}
+
+function installer_kill_process_tree(pid) {
+    let starttime = installer_process_starttime(pid);
+    if (starttime == "" || INSTALLER_DEADLINE_HELPER == "")
+        return false;
+    return normalize_status(system(command_from_args([
+        INSTALLER_DEADLINE_HELPER,
+        "kill-tree",
+        as_string(pid),
+        starttime
+    ]) + " >/dev/null 2>&1")) == 0;
+}
+
+function installer_cancel_stale_start_retry() {
+    let pid = trim(read_text_file(INSTALLER_START_RETRY_PID_FILE));
+    if (match(pid, /^[0-9]+$/)) {
+        let args = installer_process_args(pid);
+        if (installer_args_contain(args, INSTALLER_P99_INIT) &&
+            installer_args_contain(args, "retry_start_on_wan_up"))
+            installer_kill_process_tree(pid);
+    }
+    unlink_file(INSTALLER_START_RETRY_PID_FILE);
+    unlink_file(INSTALLER_START_RETRY_FILE);
+}
+
+function installer_recover_interrupted_cleanup(init_scripts) {
+    installer_cancel_stale_start_retry();
+
+    for (let status_path in fs.glob("/proc/[0-9]*/status")) {
+        let parts = split(status_path, "/");
+        let pid = length(parts) > 2 ? parts[2] : "";
+        if (pid == "" || installer_process_ppid(pid) != INSTALLER_ORPHAN_PPID)
+            continue;
+
+        let args = installer_process_args(pid);
+        if (length(args) == 0)
+            continue;
+        let action = args[length(args) - 1];
+        let stale = false;
+
+        if (action == "installer-cleanup-legacy") {
+            for (let arg in args)
+                if (ends_with(arg, "/install-json.uc") || arg == "install-json.uc")
+                    stale = true;
+        }
+        else if (action == "enabled" || action == "status" || action == "running") {
+            for (let init_script in init_scripts)
+                if (init_script != "" && installer_args_have_exact(args, init_script))
+                    stale = true;
+        }
+
+        if (stale)
+            installer_kill_process_tree(pid);
+    }
+}
+
+function installer_service_enabled_state(init_script) {
+    if (!path_executable(init_script))
+        return { known: true, value: false };
+
+    let result = installer_command_result([ init_script, "enabled" ], INSTALLER_SERVICE_PROBE_TIMEOUT);
+    if (result.complete && !result.timed_out)
+        return { known: true, value: result.status == 0 };
+
+    let service_name = path_basename(init_script);
+    if (service_name != "" && length(fs.glob(INSTALLER_RC_DIR + "/S??" + service_name)) > 0)
+        return { known: true, value: true };
+
+    return { known: false, value: false };
+}
+
+function installer_service_running_state(init_script) {
+    if (!path_executable(init_script))
+        return { known: true, value: false };
+
+    let status = installer_command_result([ init_script, "status" ], INSTALLER_SERVICE_PROBE_TIMEOUT);
+    if (status.complete && !status.timed_out && trim(status.output) == "running")
+        return { known: true, value: true };
+
+    let running = installer_command_result([ init_script, "running" ], INSTALLER_SERVICE_PROBE_TIMEOUT);
+    if (running.complete && !running.timed_out)
+        return { known: true, value: running.status == 0 };
+
+    return { known: false, value: false };
+}
+
+function installer_backend_status_running_state(bin_path) {
+    if (!path_executable(bin_path))
+        return { known: true, value: false };
+
+    let result = installer_command_result([ bin_path, "get_status" ], INSTALLER_SERVICE_PROBE_TIMEOUT);
+    if (!result.complete || result.timed_out)
+        return { known: false, value: false };
+    return { known: true, value: index(result.output, "\"running\":1") >= 0 };
+}
+
+function installer_service_action(init_script, action) {
+    let result = installer_command_result([ init_script, action ], INSTALLER_SERVICE_ACTION_TIMEOUT);
+    if (!result.complete || result.timed_out) {
+        warn("Timed out while running " + init_script + " " + action + ".\n");
+        return false;
+    }
+    return true;
+}
+
+function select_dns_owner(legacy) {
+    if (legacy) {
+        dns_owner_config = LEGACY_BACKEND_PACKAGE;
+        dns_owner_section = LEGACY_CONFIG_PACKAGE_ALT;
+        dns_owner_option_prefix = LEGACY_BRAND + "_";
+    }
+    else {
+        dns_owner_config = "p99";
+        dns_owner_section = "p99";
+        dns_owner_option_prefix = "p99_";
+    }
+}
+
+let dnsmasq_failsafe_restore;
+
+function installer_restore_dnsmasq(bin_path, legacy) {
+    if (path_executable(bin_path) && run_args([ bin_path, "restore_dnsmasq" ]))
+        return true;
+
+    select_dns_owner(legacy);
+    return dnsmasq_failsafe_restore();
+}
+
+function installer_deactivate_legacy_base() {
+    if (!path_executable(INSTALLER_LEGACY_BASE_INIT))
+        return true;
+
+    let running = installer_service_running_state(INSTALLER_LEGACY_BASE_INIT);
+    let enabled = installer_service_enabled_state(INSTALLER_LEGACY_BASE_INIT);
+    if (!running.known || !enabled.known) {
+        warn("Unable to determine the legacy service state before installation.\n");
+        return false;
+    }
+
+    if (running.value) {
+        warn("Detected a running legacy service. Stopping it before installing P99.\n");
+        if (!installer_service_action(INSTALLER_LEGACY_BASE_INIT, "stop"))
+            return false;
+    }
+
+    if (enabled.value) {
+        warn("Detected an enabled legacy autostart. Disabling it before installing P99.\n");
+        if (!installer_service_action(INSTALLER_LEGACY_BASE_INIT, "disable"))
+            return false;
+    }
+    return true;
+}
+
+function installer_cleanup_legacy() {
+    let p99_installed = installer_package_installed("p99");
+    let legacy_installed = LEGACY_BRAND != "" && installer_package_installed(LEGACY_BACKEND_PACKAGE);
+    let active_init = legacy_installed ? INSTALLER_LEGACY_INIT : INSTALLER_P99_INIT;
+    let active_bin = legacy_installed ? INSTALLER_LEGACY_BIN : INSTALLER_P99_BIN;
+
+    installer_recover_interrupted_cleanup([
+        active_init,
+        INSTALLER_P99_INIT,
+        INSTALLER_LEGACY_INIT,
+        INSTALLER_LEGACY_BASE_INIT
+    ]);
+
+    let enabled = installer_service_enabled_state(active_init);
+    let running = installer_service_running_state(active_init);
+    let backend_running = running.known && running.value ?
+        { known: true, value: false } :
+        installer_backend_status_running_state(active_bin);
+    if (!enabled.known || (!running.known && !backend_running.known)) {
+        warn("Unable to determine the P99 service state before installation.\n");
+        return false;
+    }
+    let was_enabled = enabled.value;
+    let was_running = running.value || backend_running.value;
+
+    if (!installer_confirm_remove_https_dns_proxy())
+        return false;
+
+    if (legacy_installed && !installer_deactivate_legacy_base())
+        return false;
+
+    if (path_executable(active_init)) {
+        if (!installer_service_action(active_init, "stop"))
+            return false;
+        installer_restore_dnsmasq(active_bin, legacy_installed);
+        if (!installer_service_action(active_init, "disable"))
+            return false;
+    }
+
+    let packages_removed = true;
+    for (let package_name in [ "luci-app-https-dns-proxy", "https-dns-proxy" ])
+        if (!installer_remove_package(package_name))
+            packages_removed = false;
+    if (!installer_remove_package_prefix("luci-i18n-https-dns-proxy"))
+        packages_removed = false;
+
+    if (legacy_installed) {
+        if (!installer_remove_package_prefix("luci-i18n-" + LEGACY_BACKEND_PACKAGE))
+            packages_removed = false;
+        if (!installer_remove_package("luci-app-" + LEGACY_BACKEND_PACKAGE))
+            packages_removed = false;
+        if (!installer_remove_package(LEGACY_BACKEND_PACKAGE))
+            packages_removed = false;
+    }
+
+    if (!p99_installed) {
+        if (!installer_remove_package_prefix("luci-i18n-p99"))
+            packages_removed = false;
+        if (!installer_remove_package("luci-app-p99"))
+            packages_removed = false;
+    }
+
+    if (!packages_removed) {
+        warn("Failed to remove one or more conflicting or legacy packages.\n");
+        return false;
+    }
+
+    if (legacy_installed) {
+        remove_path(INSTALLER_LEGACY_LIB);
+        remove_path(INSTALLER_LEGACY_INIT);
+        remove_path(INSTALLER_LEGACY_BIN);
+        for (let path in [
+            INSTALLER_LEGACY_LUCI_VIEW,
+            INSTALLER_LEGACY_MENU_JSON,
+            INSTALLER_LEGACY_ACL_JSON,
+            INSTALLER_LEGACY_UCI_DEFAULTS
+        ])
+            remove_path(path);
+    }
+
+    if (!p99_installed) {
+        remove_path(INSTALLER_P99_LIB);
+        remove_path(INSTALLER_P99_INIT);
+        remove_path(INSTALLER_P99_BIN);
+        for (let path in [
+            INSTALLER_P99_LUCI_VIEW,
+            INSTALLER_MENU_JSON,
+            INSTALLER_ACL_JSON,
+            INSTALLER_P99_UCI_DEFAULTS,
+            INSTALLER_RU_LMO,
+            INSTALLER_EN_LMO,
+            INSTALLER_RU_LUA,
+            INSTALLER_EN_LUA
+        ])
+            remove_path(path);
+    }
+
+    print("P99_WAS_ENABLED=", was_enabled ? "1" : "0", "\n");
+    print("P99_WAS_RUNNING=", was_running ? "1" : "0", "\n");
+    print("P99_LEGACY_DETECTED=", legacy_installed ? "1" : "0", "\n");
+    return true;
+}
+
+function installer_finalize_legacy() {
+    if (LEGACY_BRAND == "")
+        return false;
+
+    let legacy_tailscale_dir = INSTALLER_LEGACY_PERSISTENT_DIR + "/tailscale";
+    if (path_exists(legacy_tailscale_dir)) {
+        let entries = fs.lsdir(legacy_tailscale_dir);
+        let p99_tailscale_dir = INSTALLER_P99_PERSISTENT_DIR + "/tailscale";
+        if (type(entries) != "array" || !run_args([ "mkdir", "-p", p99_tailscale_dir ])) {
+            warn("Failed to prepare legacy Tailscale state migration; the legacy directory was preserved.\n");
+            return false;
+        }
+
+        for (let entry in entries) {
+            entry = as_string(entry);
+            let source = legacy_tailscale_dir + "/" + entry;
+            let target = p99_tailscale_dir + "/" + entry;
+            if (path_exists(target))
+                continue;
+
+            let temporary = p99_tailscale_dir + "/." + entry + ".p99-migrate";
+            if (!remove_path(temporary) ||
+                !run_args([ "cp", "-a", source, temporary ]) ||
+                !run_args([ "mv", temporary, target ])) {
+                remove_path(temporary);
+                warn("Failed to migrate legacy Tailscale state; the legacy directory was preserved.\n");
+                return false;
+            }
+        }
+    }
+
+    let cleaned = true;
+    for (let path in [
+        INSTALLER_LEGACY_CONFIG,
+        INSTALLER_LEGACY_CONFIG_ALT,
+        INSTALLER_LEGACY_PERSISTENT_DIR,
+        INSTALLER_LEGACY_RUNTIME_DIR,
+        INSTALLER_LEGACY_TMP_DIR,
+        INSTALLER_LEGACY_TMP_ALT_DIR
+    ])
+        if (!remove_path(path))
+            cleaned = false;
+
+    for (let prefix in [
+        INSTALLER_LEGACY_CONFIG,
+        INSTALLER_LEGACY_CONFIG_ALT,
+        INSTALLER_LEGACY_PERSISTENT_DIR,
+        INSTALLER_LEGACY_RUNTIME_DIR,
+        INSTALLER_LEGACY_TMP_DIR,
+        INSTALLER_LEGACY_TMP_ALT_DIR,
+        INSTALLER_LEGACY_INIT,
+        INSTALLER_LEGACY_BIN,
+        INSTALLER_LEGACY_LIB,
+        INSTALLER_LEGACY_UCI_DEFAULTS,
+        INSTALLER_LEGACY_LUCI_VIEW,
+        INSTALLER_LEGACY_MENU_JSON,
+        INSTALLER_LEGACY_ACL_JSON,
+        INSTALLER_LEGACY_BASE_CONFIG,
+        INSTALLER_LEGACY_BASE_PERSISTENT_DIR,
+        INSTALLER_LEGACY_BASE_RUNTIME_DIR,
+        INSTALLER_LEGACY_BASE_TMP_DIR,
+        INSTALLER_LEGACY_BASE_INIT,
+        INSTALLER_LEGACY_BASE_BIN,
+        INSTALLER_LEGACY_BASE_LIB,
+        INSTALLER_LEGACY_BASE_UCI_DEFAULTS,
+        INSTALLER_LEGACY_BASE_LUCI_VIEW,
+        INSTALLER_LEGACY_BASE_MENU_JSON,
+        INSTALLER_LEGACY_BASE_ACL_JSON,
+        INSTALLER_LEGACY_BASE_I18N
+    ])
+        if (!remove_glob(prefix + "*"))
+            cleaned = false;
+
+    if (!remove_glob(INSTALLER_LEGACY_TMP_PACKAGE_GLOB))
+        cleaned = false;
+
+    for (let root in words(INSTALLER_LEGACY_SCAN_ROOTS))
+        if (!remove_legacy_named_children(root))
+            cleaned = false;
+
+    return cleaned;
+}
+
+function installer_post_install() {
+    remove_globs(env("P99_INSTALLER_LUCI_CACHE_GLOBS", "/var/luci-indexcache* /tmp/luci-indexcache*"));
+    for (let path in [
+        env("P99_INSTALLER_LATEST_VERSION_CACHE", "/tmp/p99.latest-version.cache"),
+        env("P99_INSTALLER_SYSTEM_INFO_CACHE", "/var/run/p99/system-info.json"),
+        env("P99_INSTALLER_SERVER_COUNTRY_CACHE", "/var/run/p99/server-country-cache.json"),
+        env("P99_INSTALLER_SING_BOX_VERSION_CACHE", "/var/run/p99/ui-state/sing-box-version"),
+        env("P99_INSTALLER_TMP_SYSTEM_INFO_CACHE", "/tmp/p99/system-info.json")
+    ])
+        remove_path(path);
+
+    if (path_executable(INSTALLER_RPCD_INIT))
+        run_args([ INSTALLER_RPCD_INIT, "reload" ]);
+
+    let config_ready = env("P99_CONFIG_READY", "1") == "1";
+
+    if (config_ready && env("P99_WAS_ENABLED", "0") == "1" && path_executable(INSTALLER_P99_INIT))
+        run_args([ INSTALLER_P99_INIT, "enable" ]);
+
+    if (config_ready && env("P99_WAS_RUNNING", "0") == "1" && path_executable(INSTALLER_P99_INIT)) {
+        if (!run_args([ INSTALLER_P99_INIT, "start" ]) &&
+            !run_args([ INSTALLER_P99_INIT, "restart" ]))
+            warn("Failed to start P99 after upgrade.\n");
+    }
+
+    return true;
+}
+
+function installer_restore_previous_service() {
+    if (env("P99_WAS_ENABLED", "0") == "1" && path_executable(INSTALLER_P99_INIT))
+        run_args([ INSTALLER_P99_INIT, "enable" ]);
+
+    if (env("P99_WAS_RUNNING", "0") == "1" && path_executable(INSTALLER_P99_INIT))
+        return run_args([ INSTALLER_P99_INIT, "start" ]) ||
+            run_args([ INSTALLER_P99_INIT, "restart" ]);
+
+    return true;
+}
+
+function list_has(values, needle) {
+    for (let value in words(values))
+        if (value == needle)
+            return true;
+    return false;
+}
+
+function dnsmasq_managed_instance_exists() {
+    return uci_exists("dhcp." + dns_owner_section);
+}
+
+function dnsmasq_default_servers() {
+    return uci_get("dhcp.@dnsmasq[0].server");
+}
+
+function dnsmasq_default_has_managed_dns() {
+    return list_has(dnsmasq_default_servers(), "127.0.0.42");
+}
+
+function dnsmasq_has_managed_dns() {
+    return dnsmasq_default_has_managed_dns() || dnsmasq_managed_instance_exists();
+}
+
+function dnsmasq_has_managed_state() {
+    return uci_get("dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "server") != "" ||
+        uci_get("dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "noresolv") != "" ||
+        uci_get("dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "cachesize") != "" ||
+        uci_get("dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "notinterface") != "" ||
+        dnsmasq_managed_instance_exists();
+}
+
+function dnsmasq_management_disabled() {
+    return truthy(uci_get(dns_owner_config + ".settings.dont_touch_dhcp"));
+}
+
+function dnsmasq_managed_interfaces() {
+    let interfaces = uci_get("dhcp." + dns_owner_section + ".interface");
+    if (interfaces == "")
+        interfaces = uci_get(dns_owner_config + ".settings.source_network_interfaces");
+    if (interfaces == "")
+        interfaces = "br-lan";
+
+    return interfaces;
+}
+
+function dnsmasq_cleanup_managed_instance() {
+    let managed_instance_present = dnsmasq_managed_instance_exists();
+    let managed_interfaces = managed_instance_present ? dnsmasq_managed_interfaces() : "";
+
+    uci_delete("dhcp." + dns_owner_section);
+
+    let backup_option = "dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "notinterface";
+    let backup_notinterfaces = uci_get(backup_option);
+    if (backup_notinterfaces != "") {
+        uci_delete("dhcp.@dnsmasq[0].notinterface");
+        for (let value in words(backup_notinterfaces))
+            uci_add_list("dhcp.@dnsmasq[0].notinterface", value);
+        uci_delete(backup_option);
+        return;
+    }
+
+    if (managed_instance_present) {
+        for (let value in words(managed_interfaces))
+            uci_del_list("dhcp.@dnsmasq[0].notinterface", value);
+    }
+
+    uci_delete(backup_option);
+}
+
+function dnsmasq_restore_default_instance() {
+    let server_list = dnsmasq_default_servers();
+    let server_backup_option = "dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "server";
+    let backup_servers = uci_get(server_backup_option);
+    let managed_global_dns = list_has(server_list, "127.0.0.42");
+
+    uci_delete("dhcp.@dnsmasq[0].server");
+    if (backup_servers != "") {
+        for (let value in words(backup_servers))
+            uci_add_list("dhcp.@dnsmasq[0].server", value);
+        uci_delete(server_backup_option);
+    }
+    else {
+        for (let value in words(server_list)) {
+            if (value != "127.0.0.42")
+                uci_add_list("dhcp.@dnsmasq[0].server", value);
+        }
+    }
+    uci_delete(server_backup_option);
+
+    let noresolv_backup_option = "dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "noresolv";
+    let noresolv = uci_get(noresolv_backup_option);
+    if (noresolv != "") {
+        uci_set("dhcp.@dnsmasq[0].noresolv", noresolv);
+        uci_delete(noresolv_backup_option);
+    }
+    else if (managed_global_dns) {
+        uci_set("dhcp.@dnsmasq[0].noresolv", "0");
+    }
+
+    let cachesize_backup_option = "dhcp.@dnsmasq[0]." + dns_owner_option_prefix + "cachesize";
+    let cachesize = uci_get(cachesize_backup_option);
+    if (cachesize != "") {
+        uci_set("dhcp.@dnsmasq[0].cachesize", cachesize);
+        uci_delete(cachesize_backup_option);
+    }
+    else if (managed_global_dns) {
+        uci_set("dhcp.@dnsmasq[0].cachesize", "150");
+    }
+}
+
+dnsmasq_failsafe_restore = function() {
+    if (!uci_available())
+        return true;
+
+    if (dnsmasq_management_disabled() && !dnsmasq_has_managed_state())
+        return true;
+
+    if (!dnsmasq_has_managed_dns() && !dnsmasq_has_managed_state())
+        return true;
+
+    dnsmasq_cleanup_managed_instance();
+    dnsmasq_restore_default_instance();
+    uci_commit("dhcp");
+    restart_dnsmasq();
+    return true;
+};
+
+function release_version_valid(value) {
+    return match(as_string(value), /^v?[0-9]+[.][0-9]+[.][0-9]+$/) != null;
+}
+
+function asset_matches(name, kind, ext, version) {
+    version = replace(as_string(version), /^v/, "");
+    if (!match(version, /^[0-9]+[.][0-9]+[.][0-9]+$/))
+        return false;
+
+    if (kind == "backend")
+        return name == "p99_" + version + "." + ext;
+    if (kind == "app")
+        return name == "luci-app-p99_" + version + "." + ext;
+    if (kind == "i18n")
+        return name == "luci-i18n-p99-ru_" + version + "." + ext;
+    return false;
+}
+
+function github_message() {
+    let value = read_stdin_json();
+    if (value == null)
+        exit(2);
+    if (type(value) == "object" && value.message != null)
+        print(as_string(value.message), "\n");
+}
+
+function release_tag() {
+    let release = read_stdin_json();
+    if (type(release) == "object" && release.tag_name != null)
+        print(as_string(release.tag_name), "\n");
+}
+
+function release_asset_url(kind, ext) {
+    let release = read_stdin_json();
+    if (type(release) != "object" || type(release.assets) != "array")
+        return;
+    let version = as_string(release.tag_name || "");
+    if (!release_version_valid(version))
+        return;
+    for (let asset in release.assets) {
+        if (type(asset) == "object" && asset_matches(asset.name, kind, ext, version)) {
+            print(as_string(asset.browser_download_url || ""), "\n");
+            return;
+        }
+    }
+}
+
+function release_asset_sha256(kind, ext) {
+    let release = read_stdin_json();
+    if (type(release) != "object" || type(release.assets) != "array")
+        return;
+    let version = as_string(release.tag_name || "");
+    if (!release_version_valid(version))
+        return;
+    for (let asset in release.assets) {
+        if (type(asset) != "object" || !asset_matches(asset.name, kind, ext, version))
+            continue;
+        let digest = lc(as_string(asset.sha256 || ""));
+        if (match(digest, /^[0-9a-f]{64}$/) != null)
+            print(digest, "\n");
+        return;
+    }
+}
+
+let mode = ARGV[0] || "";
+
+if (mode == "github-message")
+    github_message();
+else if (mode == "release-tag")
+    release_tag();
+else if (mode == "release-asset-url")
+    release_asset_url(ARGV[1], ARGV[2]);
+else if (mode == "release-asset-sha256")
+    release_asset_sha256(ARGV[1], ARGV[2]);
+else if (mode == "uci-get") {
+    let value = uci_get(ARGV[1]);
+    if (value != "")
+        print(value, "\n");
+}
+else if (mode == "dnsmasq-failsafe-restore")
+    exit(dnsmasq_failsafe_restore() ? 0 : 1);
+else if (mode == "installer-cleanup-legacy")
+    exit(installer_cleanup_legacy() ? 0 : 1);
+else if (mode == "installer-finalize-legacy")
+    exit(installer_finalize_legacy() ? 0 : 1);
+else if (mode == "installer-post-install")
+    exit(installer_post_install() ? 0 : 1);
+else if (mode == "installer-restore-previous-service")
+    exit(installer_restore_previous_service() ? 0 : 1);
+else
+    exit(1);
+EOF
+    fi
+
+    printf '%s\n' "$helper_path"
+}
+
+
+install_json_ucode() {
+    P99_INSTALLER_LEGACY_BRAND="$LEGACY_BRAND" \
+    P99_INSTALLER_LEGACY_BACKEND="$LEGACY_BACKEND_PACKAGE" \
+    P99_INSTALLER_LEGACY_CONFIG_ALT="$LEGACY_CONFIG_PACKAGE_ALT" \
+    P99_INSTALLER_DEADLINE_HELPER="$(install_deadline_helper_path)" \
+    P99_INSTALLER_COMMAND_RESULT="$TMP_DIR/installer-command" \
+        ucode "$(install_json_helper_path)" "$@"
+}
+
+download_file_once() {
+    case "$FETCHER" in
+        wget)
+            run_with_deadline "$DOWNLOAD_TIMEOUT_SECONDS" wget -T "$CONNECT_TIMEOUT_SECONDS" -q -O "$2" "$1"
+            ;;
+        curl)
+            curl --connect-timeout "$CONNECT_TIMEOUT_SECONDS" --max-time "$DOWNLOAD_TIMEOUT_SECONDS" -fsSL "$1" -o "$2"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+download_with_retry() {
+    url="$1"
+    output_path="$2"
+    label="$3"
+    attempt=1
+    max_attempts=3
+
+    while [ "$attempt" -le "$max_attempts" ]; do
+        msg "Downloading $label ($attempt/$max_attempts)"
+
+        if download_file_once "$url" "$output_path" && [ -s "$output_path" ]; then
+            return 0
+        fi
+
+        rm -f "$output_path"
+        warn "Retrying $label"
+        attempt=$((attempt + 1))
+    done
+
+    return 1
+}
+
+verify_download_sha256() {
+    file_path="$1"
+    expected="$(printf '%s' "$2" | tr 'A-F' 'a-f')"
+    label="$3"
+
+    case "$expected" in
+        *[!0-9a-f]*|'') fail "Release metadata has no valid SHA-256 for $label" ;;
+    esac
+    [ "${#expected}" -eq 64 ] || fail "Release metadata has no valid SHA-256 for $label"
+    command_exists sha256sum || fail "sha256sum is required to verify $label"
+    actual="$(sha256sum "$file_path" | awk '{print $1}')"
+    [ "$actual" = "$expected" ] || fail "SHA-256 verification failed for $label"
+}
+
+pkg_is_installed() {
+    pkg_name="$1"
+
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk info -e "$pkg_name" 2>/dev/null | grep -Fxq "$pkg_name"
+    else
+        opkg list-installed 2>/dev/null | awk -v pkg="$pkg_name" '$1 == pkg { found = 1 } END { exit(found ? 0 : 1) }'
+    fi
+}
+
+pkg_list_update() {
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk update </dev/null
+    else
+        opkg update </dev/null
+    fi
+}
+
+rollback_package_mirror() {
+    [ "$MIRROR_TRANSACTION_ACTIVE" -eq 1 ] || return 0
+    [ -n "$MIRROR_BACKUP_MANIFEST" ] && [ -f "$MIRROR_BACKUP_MANIFEST" ] || return 0
+
+    while IFS='|' read -r repository_file backup_file; do
+        [ -n "$repository_file" ] && [ -f "$backup_file" ] || continue
+        cp "$backup_file" "$repository_file" 2>/dev/null || true
+    done < "$MIRROR_BACKUP_MANIFEST"
+    MIRROR_TRANSACTION_ACTIVE=0
+    warn "Package feed configuration was restored after an installation error"
+}
+
+begin_package_mirror_transaction() {
+    MIRROR_BACKUP_MANIFEST="$TMP_DIR/package-mirror-backups"
+    : > "$MIRROR_BACKUP_MANIFEST"
+    MIRROR_BACKUP_COUNT=0
+    MIRROR_TRANSACTION_ACTIVE=1
+}
+
+rewrite_package_repository_file() {
+    repository_file="$1"
+    [ -e "$repository_file" ] || return 0
+
+    rewritten="$TMP_DIR/repository.$MIRROR_BACKUP_COUNT.rewritten"
+    sed -E \
+        -e "s#https?://[^/]+/(pub/software/openwrt/)?releases/#${MIRROR_BASE_URL}/openwrt/releases/#" \
+        -e "s#${MIRROR_BASE_URL}/openwrt/releases/v[0-9]+\\.x/v([0-9]+\\.[0-9]+\\.[0-9]+)/([^/]+)/([^/]+)/packages/packages\\.adb#${MIRROR_BASE_URL}/openwrt/releases/\\1/targets/\\2/\\3/packages/packages.adb#" \
+        -e "s#${MIRROR_BASE_URL}/openwrt/releases/v[0-9]+\\.x/v([0-9]+\\.[0-9]+\\.[0-9]+)/([^/]+)/([^/]+)/packages\\.adb#${MIRROR_BASE_URL}/openwrt/releases/\\1/packages/\\2/\\3/packages.adb#" \
+        "$repository_file" > "$rewritten" || fail "Failed to prepare $repository_file"
+
+    if grep -E 'https?://[^/]+/(pub/software/openwrt/)?releases/' "$rewritten" |
+        grep -Fv "$MIRROR_BASE_URL/openwrt/releases/" >/dev/null; then
+        fail "Some OpenWrt feeds in $repository_file could not be redirected to $MIRROR_BASE_URL"
+    fi
+
+    if cmp -s "$repository_file" "$rewritten"; then
+        return 0
+    fi
+
+    backup_file="$TMP_DIR/repository.$MIRROR_BACKUP_COUNT.original"
+    cp "$repository_file" "$backup_file" || fail "Failed to back up $repository_file"
+    printf '%s|%s\n' "$repository_file" "$backup_file" >> "$MIRROR_BACKUP_MANIFEST"
+    persistent_backup="${repository_file}.pre-p99-mirror"
+    [ -e "$persistent_backup" ] || cp "$repository_file" "$persistent_backup" ||
+        fail "Failed to preserve the original $repository_file"
+    cp "$rewritten" "$repository_file" || fail "Failed to update $repository_file"
+    MIRROR_BACKUP_COUNT=$((MIRROR_BACKUP_COUNT + 1))
+}
+
+commit_package_mirror_transaction() {
+    MIRROR_TRANSACTION_ACTIVE=0
+}
+
+configure_apk_mirror() {
+    distfeeds="/etc/apk/repositories.d/distfeeds.list"
+
+    [ "$PKG_IS_APK" -eq 1 ] || return 0
+    [ -s "$distfeeds" ] || fail "$distfeeds is missing or empty"
+
+    case "$MIRROR_BASE_URL" in
+        https://*|http://*) ;;
+        *) fail "Invalid P99 mirror URL: $MIRROR_BASE_URL" ;;
+    esac
+    MIRROR_BASE_URL="${MIRROR_BASE_URL%/}"
+
+    begin_package_mirror_transaction
+    for repository_file in /etc/apk/repositories "$distfeeds"; do
+        rewrite_package_repository_file "$repository_file"
+    done
+
+    grep -Fq "$MIRROR_BASE_URL/openwrt/releases/" "$distfeeds" ||
+        fail "No mirrored OpenWrt release feeds were written to $distfeeds"
+    pkg_list_update || {
+        rollback_package_mirror
+        fail "Failed to update APK package lists from $MIRROR_BASE_URL; original feeds were restored"
+    }
+    commit_package_mirror_transaction
+    msg "OpenWrt package feeds now use $MIRROR_BASE_URL"
+}
+
+configure_opkg_mirror() {
+    distfeeds="$OPKG_DISTFEEDS_FILE"
+
+    [ "$PKG_IS_APK" -eq 0 ] || return 0
+    command_exists opkg || fail "OpenWrt opkg package manager is required"
+    [ -s "$distfeeds" ] || fail "$distfeeds is missing or empty"
+
+    if grep -Eq '^[[:space:]]*src/gz[[:space:]]+routerich(_[[:alnum:]_-]+)?[[:space:]]+https?://packages\.routerich\.ru/' "$distfeeds"; then
+        msg "Routerich OPKG feeds remain unchanged; only P99 release packages use $MIRROR_BASE_URL"
+        return 0
+    fi
+
+    case "$MIRROR_BASE_URL" in
+        https://*|http://*) ;;
+        *) fail "Invalid P99 mirror URL: $MIRROR_BASE_URL" ;;
+    esac
+    MIRROR_BASE_URL="${MIRROR_BASE_URL%/}"
+
+    begin_package_mirror_transaction
+    rewrite_package_repository_file "$distfeeds"
+    grep -Fq "$MIRROR_BASE_URL/openwrt/releases/" "$distfeeds" ||
+        fail "No mirrored OpenWrt release feeds were written to $distfeeds"
+    pkg_list_update || {
+        rollback_package_mirror
+        fail "Failed to update OPKG package lists from $MIRROR_BASE_URL; original feeds were restored"
+    }
+    commit_package_mirror_transaction
+    msg "OpenWrt package feeds now use $MIRROR_BASE_URL"
+}
+
+configure_package_mirror() {
+    if [ -n "$MIRROR_BASE_URL" ]; then
+        if [ "$PKG_IS_APK" -eq 1 ]; then
+            configure_apk_mirror
+        else
+            configure_opkg_mirror
+        fi
+    else
+        pkg_list_update || warn "Failed to update package lists; continuing with existing package feeds"
+    fi
+}
+
+pkg_install_name() {
+    pkg_name="$1"
+
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk add "$pkg_name" </dev/null
+    else
+        opkg install "$pkg_name" </dev/null
+    fi
+}
+
+pkg_install_files() {
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk add --allow-untrusted "$@" </dev/null
+    else
+        opkg install --force-overwrite --force-downgrade "$@" </dev/null
+    fi
+}
+
+ensure_bootstrap_tool() {
+    tool_name="$1"
+    package_name="$2"
+
+    if command_exists "$tool_name"; then
+        return 0
+    fi
+
+    msg "Installing bootstrap dependency: $package_name"
+    pkg_install_name "$package_name" || fail "Failed to install $package_name"
+}
+
+ensure_bootstrap_package() {
+    package_name="$1"
+
+    if pkg_is_installed "$package_name"; then
+        return 0
+    fi
+
+    msg "Installing bootstrap dependency: $package_name"
+    pkg_install_name "$package_name" || fail "Failed to install $package_name"
+}
+
+ensure_bootstrap_ucode_runtime() {
+    ensure_bootstrap_tool "ucode" "ucode"
+    ensure_bootstrap_package "ucode-mod-fs"
+    ensure_bootstrap_package "ucode-mod-uci"
+}
+
+sync_time() {
+    current_year=""
+
+    if ! command_exists ntpd; then
+        return 0
+    fi
+
+    current_year="$(date +%Y 2>/dev/null || true)"
+    case "$current_year" in
+        ''|*[!0-9]*) current_year=0 ;;
+    esac
+
+    if [ "$current_year" -ge 2024 ]; then
+        return 0
+    fi
+
+    ntpd -q \
+        -p 194.190.168.1 \
+        -p 216.239.35.0 \
+        -p 216.239.35.4 \
+        -p 162.159.200.1 \
+        -p 162.159.200.123 >/dev/null 2>&1 || true
+}
+
+check_root() {
+    if command_exists id && [ "$(id -u)" != "0" ]; then
+        fail "Please run this installer as root"
+    fi
+}
+
+check_system() {
+    release=""
+    major=""
+    model=""
+    target=""
+    architecture=""
+
+    [ -f /etc/openwrt_release ] || fail "This installer supports OpenWrt only"
+
+    model="$(cat /tmp/sysinfo/model 2>/dev/null || true)"
+    [ -n "$model" ] && msg "Router model: $model"
+
+    release="$(read_openwrt_release_value "DISTRIB_RELEASE")"
+    target="$(read_openwrt_release_value "DISTRIB_TARGET")"
+    architecture="$(read_openwrt_release_value "DISTRIB_ARCH")"
+    major="$(printf '%s' "$release" | sed 's/[^0-9].*$//' | cut -d. -f1)"
+
+    [ -n "$release" ] || fail "Unable to detect the OpenWrt release"
+    if [ -n "$major" ] && [ "$major" -lt 24 ]; then
+        fail "P99 requires OpenWrt 24.10 or newer"
+    fi
+    case "$release" in
+        24.10.*)
+            [ "$PKG_IS_APK" -eq 0 ] || fail "OpenWrt $release must use opkg/IPK packages"
+            ;;
+        24.*)
+            fail "The mirror supports OpenWrt 24.10.x, but not $release"
+            ;;
+        *)
+            [ "$PKG_IS_APK" -eq 1 ] || fail "OpenWrt $release is expected to use apk packages"
+            ;;
+    esac
+    [ "$target" = "mediatek/filogic" ] ||
+        fail "The mirror currently supports only the mediatek/filogic target (detected: ${target:-unknown})"
+    [ "$architecture" = "aarch64_cortex-a53" ] ||
+        fail "The mirror currently supports only aarch64_cortex-a53 (detected: ${architecture:-unknown})"
+
+    msg "OpenWrt $release, target $target, architecture $architecture"
+
+}
+
+available_flash_space_kb() {
+    available_space="$(df /overlay 2>/dev/null | awk 'NR==2 {print $4}')"
+    [ -n "$available_space" ] || available_space="$(df / 2>/dev/null | awk 'NR==2 {print $4}')"
+
+    case "$available_space" in
+        ''|*[!0-9]*) return 1 ;;
+    esac
+
+    printf '%s\n' "$available_space"
+}
+
+file_size_kb() {
+    file_size_bytes="$(wc -c <"$1" 2>/dev/null || true)"
+    case "$file_size_bytes" in
+        ''|*[!0-9]*) return 1 ;;
+    esac
+    printf '%s\n' "$(((file_size_bytes + 1023) / 1024))"
+}
+
+p99_install_required_space_kb() {
+    archive_kb=0
+    for package_file in "$P99_BACKEND_FILE" "$P99_APP_FILE" "$P99_I18N_FILE"; do
+        [ -n "$package_file" ] && [ -s "$package_file" ] || continue
+        package_kb="$(file_size_kb "$package_file")" || return 1
+        archive_kb=$((archive_kb + package_kb))
+    done
+
+    [ "$archive_kb" -gt 0 ] || return 1
+
+    missing_dependency_count=0
+    for dependency in \
+        ca-bundle kmod-inet-diag kmod-netlink-diag kmod-tun curl ucode \
+        ucode-mod-fs ucode-mod-uci kmod-nft-tproxy coreutils-base64 \
+        bind-dig nftables-json kmod-nft-nat ip-full luci-base; do
+        pkg_is_installed "$dependency" ||
+            missing_dependency_count=$((missing_dependency_count + 1))
+    done
+
+    # OpenWrt compresses the writable overlay, so package archive size is a
+    # useful baseline. Doubling it covers unpacking variance; missing direct
+    # dependencies get a separate conservative allowance.
+    printf '%s\n' "$((
+        archive_kb * PACKAGE_ARCHIVE_SPACE_FACTOR +
+        missing_dependency_count * MISSING_DEPENDENCY_ALLOWANCE_KB +
+        PACKAGE_INSTALL_OVERHEAD_KB + FLASH_RESERVE_KB
+    ))"
+}
+
+legacy_binary_managed_sing_box_present() {
+    [ "$P99_LEGACY_DETECTED" -eq 1 ] &&
+        [ -r /etc/init.d/sing-box ] &&
+        grep -Fq 'managed sing-box service for binary variants' /etc/init.d/sing-box &&
+        [ -x /usr/bin/sing-box ]
+}
+
+sing_box_tiny_is_active() {
+    pkg_is_installed "sing-box-tiny" &&
+        ! pkg_is_installed "sing-box" &&
+        ! pkg_is_installed "sing-box-extended" &&
+        [ -x /usr/bin/sing-box ]
+}
+
+apk_world_requests_sing_box_tiny() {
+    [ "$PKG_IS_APK" -eq 1 ] || return 1
+    [ -r "$APK_WORLD_FILE" ] || return 1
+    grep -Eq '^sing-box-tiny([<>=~].*)?$' "$APK_WORLD_FILE"
+}
+
+package_file_list() {
+    package_name="$1"
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk info -L "$package_name" 2>/dev/null
+    else
+        opkg files "$package_name" 2>/dev/null
+    fi
+}
+
+package_owns_path() {
+    package_name="$1"
+    owned_path="$2"
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk info -W "$owned_path" 2>/dev/null |
+            grep -Fq "$owned_path is owned by ${package_name}-"
+    else
+        package_file_list "$package_name" |
+            sed 's#^\([^/]\)#/\1#' |
+            grep -Fxq "$owned_path"
+    fi
+}
+
+installed_sing_box_package() {
+    owner=""
+    owner_count=0
+    for candidate in sing-box-tiny sing-box sing-box-extended; do
+        if pkg_is_installed "$candidate" && package_owns_path "$candidate" /usr/bin/sing-box; then
+            owner="$candidate"
+            owner_count=$((owner_count + 1))
+        fi
+    done
+    [ "$owner_count" -eq 1 ] || return 1
+    printf '%s\n' "$owner"
+}
+
+package_reclaimable_space_kb() {
+    package_name="$1"
+    archive_kb=""
+
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        current_package_dir="$TMP_DIR/current-sing-box-package"
+        mkdir -p "$current_package_dir" || return 1
+        apk fetch --output "$current_package_dir" "$package_name" </dev/null || return 1
+        current_package_file="$(find "$current_package_dir" -maxdepth 1 -type f -name '*.apk' | head -n 1)"
+        [ -n "$current_package_file" ] && [ -s "$current_package_file" ] || return 1
+        archive_kb="$(file_size_kb "$current_package_file")" || return 1
+    else
+        archive_size_bytes="$(opkg info "$package_name" 2>/dev/null |
+            awk '$1 == "Size:" && $2 ~ /^[0-9]+$/ { value = $2 } END { print value }')"
+        case "$archive_size_bytes" in
+            ''|*[!0-9]*) return 1 ;;
+        esac
+        archive_kb=$(((archive_size_bytes + 1023) / 1024))
+    fi
+
+    # Count only 90% of the current package archive as guaranteed reclaimable.
+    # This leaves room for package metadata and preserved configuration files.
+    printf '%s\n' "$((archive_kb * 9 / 10))"
+}
+
+download_sing_box_tiny_package() {
+    [ -n "$SING_BOX_TINY_FILE" ] && [ -s "$SING_BOX_TINY_FILE" ] && return 0
+
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk fetch --output "$TMP_DIR" sing-box-tiny </dev/null || return 1
+        SING_BOX_TINY_FILE="$(find "$TMP_DIR" -maxdepth 1 -type f -name 'sing-box-tiny-*.apk' | head -n 1)"
+    else
+        (cd "$TMP_DIR" && opkg download sing-box-tiny </dev/null) || return 1
+        SING_BOX_TINY_FILE="$(find "$TMP_DIR" -maxdepth 1 -type f -name 'sing-box-tiny_*.ipk' | head -n 1)"
+    fi
+    [ -n "$SING_BOX_TINY_FILE" ] && [ -s "$SING_BOX_TINY_FILE" ]
+}
+
+pkg_remove_name() {
+    if [ "$PKG_IS_APK" -eq 1 ]; then
+        apk del --force-broken-world "$1" </dev/null
+    else
+        opkg remove --force-depends "$1" </dev/null
+    fi
+}
+
+switch_sing_box_to_downloaded_tiny() {
+    previous_package="$1"
+    [ -s "$SING_BOX_TINY_FILE" ] || return 1
+
+    pkg_remove_name "$previous_package" || return 1
+    SING_BOX_CHANGE_STARTED=1
+    pkg_install_files "$SING_BOX_TINY_FILE" || return 1
+    validate_sing_box_tiny_install || return 1
+    SING_BOX_TINY_SWITCHED=1
+}
+
+validate_sing_box_tiny_install() {
+    sing_box_tiny_is_active || return 1
+    /usr/bin/sing-box version >/dev/null 2>&1 || return 1
+    [ -x /etc/init.d/sing-box ] || return 1
+}
+
+restore_current_p99_on_failure() {
+    [ "$INSTALL_MODE" = "update" ] || return 0
+    [ "$LEGACY_CLEANUP_DONE" -eq 1 ] || return 0
+
+    if P99_WAS_ENABLED="$P99_WAS_ENABLED" P99_WAS_RUNNING="$P99_WAS_RUNNING" \
+        install_json_ucode installer-restore-previous-service; then
+        warn "The previous P99 service state was restored after the installation failure"
+    else
+        warn "Failed to restore the previous P99 service state automatically"
+    fi
+}
+
+ensure_flash_space() {
+    required_space="$(p99_install_required_space_kb)" ||
+        fail "Failed to calculate the P99 package installation size"
+    P99_INSTALL_REQUIRED_KB="$required_space"
+    available_space="$(available_flash_space_kb 2>/dev/null || true)"
+
+    [ -n "$available_space" ] || fail "Unable to determine free flash space"
+    pending_world_tiny=0
+    if apk_world_requests_sing_box_tiny && ! sing_box_tiny_is_active; then
+        pending_world_tiny=1
+        warn "APK world requests sing-box-tiny, but the installed sing-box state does not satisfy it; repairing this before installing P99"
+    fi
+
+    if [ "$available_space" -ge "$required_space" ] && [ "$pending_world_tiny" -eq 0 ]; then
+        msg "Flash preflight passed. Available: ${available_space} KB, installation plan: ${required_space} KB"
+        return 0
+    fi
+
+    previous_package="$(installed_sing_box_package 2>/dev/null || true)"
+    [ -n "$previous_package" ] ||
+        fail "Not enough free flash space. Available: ${available_space} KB, installation plan: ${required_space} KB. /usr/bin/sing-box is not owned by one supported package."
+    if [ "$previous_package" = "sing-box-tiny" ] && [ "$pending_world_tiny" -eq 0 ]; then
+        fail "Not enough free flash space after accounting for the already installed sing-box-tiny. Available: ${available_space} KB, installation plan: ${required_space} KB."
+    fi
+
+    download_sing_box_tiny_package ||
+        fail "Failed to download sing-box-tiny before changing the installed sing-box package"
+    tiny_archive_kb="$(file_size_kb "$SING_BOX_TINY_FILE")" ||
+        fail "Failed to determine the downloaded sing-box-tiny package size"
+    tiny_required_kb=$(((tiny_archive_kb * 5 + 3) / 4 + PACKAGE_INSTALL_OVERHEAD_KB))
+    reclaimable_kb="$(package_reclaimable_space_kb "$previous_package" 2>/dev/null || true)"
+    [ -n "$TMP_DIR" ] && rm -rf "$TMP_DIR/current-sing-box-package"
+    case "$reclaimable_kb" in
+        ''|*[!0-9]*) fail "Failed to calculate space reclaimable from $previous_package" ;;
+    esac
+    expected_after_kb=$((available_space + reclaimable_kb - tiny_required_kb))
+    if [ "$expected_after_kb" -lt "$required_space" ]; then
+        fail "Not enough free flash space even after replacing $previous_package with sing-box-tiny. Available now: ${available_space} KB, reclaimable: ${reclaimable_kb} KB, tiny allowance: ${tiny_required_kb} KB, P99 plan: ${required_space} KB."
+    fi
+
+    msg "Low-space plan: ${available_space} KB free + ${reclaimable_kb} KB reclaimable - ${tiny_required_kb} KB for tiny = ${expected_after_kb} KB; P99 plan: ${required_space} KB"
+    warn "$(installer_text low_flash_space)"
+    if interactive_terminal_available; then
+        numbered_yes_no_prompt "$(installer_text tiny_recovery_prompt)" ||
+            fail "Installation was cancelled before changing sing-box"
+    elif [ "$ALLOW_LOW_SPACE_TINY" -eq 1 ]; then
+        msg "Low-space sing-box-tiny replacement was explicitly authorized by --allow-low-space-tiny"
+    else
+        fail "Not enough free flash space. Replacing sing-box with sing-box-tiny requires an interactive terminal or --allow-low-space-tiny."
+    fi
+
+    warn "$(installer_text tiny_recovery_warning)"
+    switch_sing_box_to_downloaded_tiny "$previous_package" ||
+        fail "Failed to replace $previous_package with the already downloaded sing-box-tiny package"
+    SING_BOX_INSTALL_VARIANT=""
+
+    available_space="$(available_flash_space_kb 2>/dev/null || true)"
+    if [ -n "$available_space" ] && [ "$available_space" -ge "$required_space" ]; then
+        msg "Flash preflight passed after switching to sing-box-tiny. Available: ${available_space} KB, installation plan: ${required_space} KB"
+        return 0
+    fi
+
+    fail "Free flash after installing sing-box-tiny is below the calculated P99 plan. Available: ${available_space:-unknown} KB, installation plan: ${required_space} KB. sing-box-tiny remains installed."
+}
+
+installer_is_ru() {
+    [ "$INSTALLER_LANG" = "ru" ]
+}
+
+installer_text() {
+    key="$1"
+
+    if installer_is_ru; then
+        case "$key" in
+            yes) printf '%s\n' "Да" ;;
+            no) printf '%s\n' "Нет" ;;
+            select) printf '%s\n' "Выберите номер" ;;
+            invalid_choice) printf '%s\n' "Введите номер из списка." ;;
+            i18n_installed) printf '%s\n' "Русский пакет интерфейса уже установлен и будет обновлен." ;;
+            i18n_prompt) printf '%s\n' "Установить русский пакет интерфейса?" ;;
+            i18n_skip) printf '%s\n' "Продолжаю без русского пакета интерфейса." ;;
+            luci_ru) printf '%s\n' "Русский пакет интерфейса будет установлен автоматически." ;;
+            sing_box_prompt) printf '%s\n' "Какую сборку singbox ставить?" ;;
+            sing_box_tiny) printf '%s\n' "singbox tiny (по умолчанию)" ;;
+            sing_box_stable) printf '%s\n' "singbox stable" ;;
+            sing_box_extended) printf '%s\n' "singbox extended (если нужен xhttp)" ;;
+            sing_box_skip_msg) printf '%s\n' "Пропускаю установку sing-box." ;;
+            low_flash_space) printf '%s\n' "Для установки P99 не хватает места, но предварительный расчет подтверждает, что переход на sing-box tiny освободит достаточно flash." ;;
+            tiny_recovery_prompt) printf '%s\n' "Заменить установленный пакет sing-box на sing-box tiny? Это постоянное изменение; расширенные возможности, включая xhttp, станут недоступны" ;;
+            tiny_recovery_warning) printf '%s\n' "Устанавливаю заранее скачанный sing-box tiny напрямую через системный пакетный менеджер." ;;
+            legacy_migration_prompt) printf '%s\n' "Перейти с legacy-версии на P99 X? Ее пакеты будут удалены только после сохранения конфигурации и успешной предварительной проверки" ;;
+            legacy_backup_ready) printf '%s\n' "Резервная копия legacy-конфигурации создана" ;;
+            legacy_cleanup_start) printf '%s\n' "Удаляю legacy-пакеты и начинаю миграцию конфигурации" ;;
+            *) printf '%s\n' "$key" ;;
+        esac
+        return 0
+    fi
+
+    case "$key" in
+        yes) printf '%s\n' "Yes" ;;
+        no) printf '%s\n' "No" ;;
+        select) printf '%s\n' "Select a number" ;;
+        invalid_choice) printf '%s\n' "Enter a number from the list." ;;
+        i18n_installed) printf '%s\n' "The Russian interface package is already installed and will be updated." ;;
+        i18n_prompt) printf '%s\n' "Install the Russian interface language package?" ;;
+        i18n_skip) printf '%s\n' "Continuing without the Russian interface language package." ;;
+        luci_ru) printf '%s\n' "The Russian interface package will be installed automatically." ;;
+        sing_box_prompt) printf '%s\n' "Which singbox build should be installed?" ;;
+        sing_box_tiny) printf '%s\n' "singbox tiny (default)" ;;
+        sing_box_stable) printf '%s\n' "singbox stable" ;;
+        sing_box_extended) printf '%s\n' "singbox extended (if xhttp is needed)" ;;
+        sing_box_skip_msg) printf '%s\n' "Skipping sing-box installation." ;;
+        low_flash_space) printf '%s\n' "The P99 installation plan needs more space, but preflight confirms that switching to sing-box tiny will free enough flash." ;;
+        tiny_recovery_prompt) printf '%s\n' "Replace the installed sing-box package with sing-box tiny? This is a permanent change; advanced features, including xhttp, will become unavailable" ;;
+        tiny_recovery_warning) printf '%s\n' "Installing the already downloaded sing-box tiny directly through the system package manager." ;;
+        legacy_migration_prompt) printf '%s\n' "Migrate the legacy installation to P99 X? Its packages will be removed only after configuration backup and successful preflight checks" ;;
+        legacy_backup_ready) printf '%s\n' "Legacy configuration backup created" ;;
+        legacy_cleanup_start) printf '%s\n' "Removing legacy packages and starting configuration migration" ;;
+        *) printf '%s\n' "$key" ;;
+    esac
+}
+
+detect_installer_language() {
+    luci_lang="$(get_luci_main_lang)"
+
+    INSTALLER_LANG="en"
+    if pkg_is_installed "luci-i18n-p99-ru"; then
+        INSTALLER_LANG="ru"
+        return 0
+    fi
+
+    case "$luci_lang" in
+        ru|ru_*|ru-*) INSTALLER_LANG="ru" ;;
+    esac
+}
+
+numbered_yes_no_prompt() {
+    prompt_text="$1"
+    answer=""
+
+    if ! interactive_terminal_available; then
+        msg "$prompt_text: 1 ($(installer_text yes), non-interactive)"
+        return 0
+    fi
+
+    while :; do
+        printf '\n%s\n' "$prompt_text"
+        printf '  1) %s\n' "$(installer_text yes)"
+        printf '  2) %s\n' "$(installer_text no)"
+        printf '%s [2]: ' "$(installer_text select)"
+        read -r answer </dev/tty || return 1
+
+        case "$answer" in
+            1)
+                return 0
+                ;;
+            2|"")
+                return 1
+                ;;
+            *)
+                warn "$(installer_text invalid_choice)"
+                ;;
+        esac
+    done
+}
+
+get_luci_main_lang() {
+    command_exists ucode || return 0
+    ucode -e 'require("fs"); require("uci");' >/dev/null 2>&1 || return 0
+    install_json_ucode uci-get luci.main.lang 2>/dev/null || true
+}
+
+fetch_github_latest_release_json() {
+    owner="$1"
+    repo="$2"
+    response=""
+    message=""
+    url="https://api.github.com/repos/${owner}/${repo}/releases/latest"
+
+    response="$(http_get "$url" 2>/dev/null || true)"
+    [ -n "$response" ] || fail "Failed to query GitHub latest release metadata for ${owner}/${repo}"
+
+    message="$(printf '%s' "$response" | install_json_ucode github-message 2>/dev/null)" ||
+        fail "GitHub returned an invalid latest release response for ${owner}/${repo}"
+    case "$message" in
+        *"API rate limit"*|*"rate limit exceeded"*)
+            fail "GitHub API rate limit reached. Try again later."
+            ;;
+        "Not Found")
+            fail "No published latest release found for ${owner}/${repo}"
+            ;;
+    esac
+
+    printf '%s' "$response"
+}
+
+fetch_p99_latest_release_json() {
+    if [ -n "$MIRROR_BASE_URL" ]; then
+        response="$(http_get "$MIRROR_BASE_URL/p99/updates/latest.json" 2>/dev/null || true)"
+        if [ -n "$response" ]; then
+            printf '%s' "$response"
+            return 0
+        fi
+    fi
+    fetch_github_latest_release_json "$REPO_OWNER" "$REPO_NAME"
+}
+
+mirror_asset_url() {
+    case "$1" in
+        http://*|https://*) printf '%s\n' "$1" ;;
+        /*)
+            if [ -n "$MIRROR_BASE_URL" ]; then
+                printf '%s%s\n' "$MIRROR_BASE_URL" "$1"
+            else
+                printf 'https://github.com/%s/%s/releases/latest/download%s\n' "$REPO_OWNER" "$REPO_NAME" "$1"
+            fi
+            ;;
+        *)
+            if [ -n "$MIRROR_BASE_URL" ]; then
+                printf '%s/%s\n' "$MIRROR_BASE_URL" "$1"
+            else
+                printf 'https://github.com/%s/%s/releases/latest/download/%s\n' "$REPO_OWNER" "$REPO_NAME" "$1"
+            fi
+            ;;
+    esac
+}
+
+resolve_p99_release() {
+    asset_ext="ipk"
+
+    [ "$PKG_IS_APK" -eq 1 ] && asset_ext="apk"
+
+    P99_RELEASE_JSON="$(fetch_p99_latest_release_json)"
+    P99_RELEASE_TAG="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-tag 2>/dev/null)"
+    [ -n "$P99_RELEASE_TAG" ] || fail "Failed to detect the P99 release tag"
+
+    P99_BACKEND_URL="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-url backend "$asset_ext" 2>/dev/null)"
+    [ -n "$P99_BACKEND_URL" ] || fail "The P99 release does not contain a p99 .$asset_ext package"
+    P99_BACKEND_URL="$(mirror_asset_url "$P99_BACKEND_URL")"
+    P99_BACKEND_SHA256="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-sha256 backend "$asset_ext" 2>/dev/null)"
+
+    P99_APP_URL="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-url app "$asset_ext" 2>/dev/null)"
+    [ -n "$P99_APP_URL" ] || fail "The P99 release does not contain a luci-app-p99 .$asset_ext package"
+    P99_APP_URL="$(mirror_asset_url "$P99_APP_URL")"
+    P99_APP_SHA256="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-sha256 app "$asset_ext" 2>/dev/null)"
+
+    P99_BACKEND_NAME="$(basename "$P99_BACKEND_URL")"
+    P99_APP_NAME="$(basename "$P99_APP_URL")"
+    P99_PACKAGE_VERSION="$(printf '%s\n' "$P99_BACKEND_NAME" | sed 's/^p99_//;s/\.ipk$//;s/\.apk$//')"
+
+    P99_I18N_URL=""
+    P99_I18N_NAME=""
+
+    if [ "$P99_I18N_REQUESTED" -eq 1 ]; then
+        P99_I18N_URL="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-url i18n "$asset_ext" 2>/dev/null)"
+        [ -n "$P99_I18N_URL" ] || fail "The P99 release does not contain a luci-i18n-p99-ru .$asset_ext package"
+        P99_I18N_URL="$(mirror_asset_url "$P99_I18N_URL")"
+        P99_I18N_SHA256="$(printf '%s' "$P99_RELEASE_JSON" | install_json_ucode release-asset-sha256 i18n "$asset_ext" 2>/dev/null)"
+        P99_I18N_NAME="$(basename "$P99_I18N_URL")"
+    fi
+}
+
+sing_box_is_present() {
+    command_exists sing-box ||
+        pkg_is_installed "sing-box" ||
+        pkg_is_installed "sing-box-tiny" ||
+        pkg_is_installed "sing-box-extended"
+}
+
+select_sing_box_installation() {
+    answer=""
+    default_choice=1
+
+    if legacy_binary_managed_sing_box_present; then
+        SING_BOX_INSTALL_VARIANT="extended-compressed"
+        msg "The legacy binary-managed sing-box variant will be reinstalled for P99"
+        return 0
+    fi
+
+    if sing_box_is_present; then
+        SING_BOX_INSTALL_VARIANT=""
+        return 0
+    fi
+
+    if ! interactive_terminal_available; then
+        SING_BOX_INSTALL_VARIANT="tiny"
+        msg "$(installer_text sing_box_prompt): $default_choice ($(installer_text sing_box_tiny), non-interactive)"
+        return 0
+    fi
+
+    while :; do
+        printf '\n%s\n' "$(installer_text sing_box_prompt)"
+        printf '  1) %s\n' "$(installer_text sing_box_tiny)"
+        printf '  2) %s\n' "$(installer_text sing_box_stable)"
+        printf '  3) %s\n' "$(installer_text sing_box_extended)"
+        printf '%s [%s]: ' "$(installer_text select)" "$default_choice"
+        read -r answer </dev/tty || return 1
+        [ -n "$answer" ] || answer="$default_choice"
+
+        if [ "$answer" = "1" ]; then
+            SING_BOX_INSTALL_VARIANT="tiny"
+            return 0
+        fi
+        if [ "$answer" = "2" ]; then
+            SING_BOX_INSTALL_VARIANT="stable"
+            return 0
+        fi
+        if [ "$answer" = "3" ]; then
+            SING_BOX_INSTALL_VARIANT="extended"
+            return 0
+        fi
+
+        warn "$(installer_text invalid_choice)"
+    done
+}
+
+install_selected_sing_box() {
+    action=""
+    output_file="$TMP_DIR/sing-box-component-action.json"
+
+    case "$SING_BOX_INSTALL_VARIANT" in
+        "")
+            msg "$(installer_text sing_box_skip_msg)"
+            return 0
+            ;;
+        stable)
+            action="install_stable"
+            ;;
+        tiny)
+            action="install_tiny"
+            ;;
+        extended)
+            action="install_extended"
+            ;;
+        extended-compressed)
+            action="install_extended_compressed"
+            ;;
+        *)
+            fail "Unknown sing-box installation variant: $SING_BOX_INSTALL_VARIANT"
+            ;;
+    esac
+
+    [ -x /usr/bin/p99 ] || fail "p99 backend must be installed before sing-box component action"
+    msg "Installing selected sing-box variant through P99 ucode backend"
+    if ! /usr/bin/p99 component_action sing_box "$action" >"$output_file" 2>&1; then
+        cat "$output_file" >&2 2>/dev/null || true
+        fail "Failed to install selected sing-box variant"
+    fi
+}
+
+cleanup_legacy_installation() {
+    [ "$LEGACY_CLEANUP_DONE" -eq 0 ] || return 0
+
+    state_file="$TMP_DIR/install-state.env"
+
+    install_json_ucode installer-cleanup-legacy >"$state_file" ||
+        fail "Failed to prepare the system before P99 package installation"
+
+    # shellcheck disable=SC1090
+    . "$state_file"
+    LEGACY_CLEANUP_DONE=1
+}
+
+detect_legacy_installation() {
+    P99_LEGACY_DETECTED=0
+    LEGACY_CONFIG_BACKUP=""
+    LEGACY_CONFIG_PATH=""
+
+    if ! pkg_is_installed "$LEGACY_BACKEND_PACKAGE"; then
+        legacy_config_present=0
+        for legacy_config_path in \
+            "/etc/config/$LEGACY_BACKEND_PACKAGE" \
+            "/etc/config/$LEGACY_CONFIG_PACKAGE_ALT"; do
+            if [ -r "$legacy_config_path" ]; then
+                legacy_config_present=1
+                break
+            fi
+        done
+        [ "$legacy_config_present" -eq 1 ] || return 0
+    fi
+
+    P99_LEGACY_DETECTED=1
+    for legacy_config_path in \
+        "/etc/config/$LEGACY_BACKEND_PACKAGE" \
+        "/etc/config/$LEGACY_CONFIG_PACKAGE_ALT"; do
+        if [ -r "$legacy_config_path" ]; then
+            LEGACY_CONFIG_PATH="$legacy_config_path"
+            break
+        fi
+    done
+
+    msg "Legacy installation detected; its packages will be removed and its configuration will be upgraded"
+}
+
+detect_install_mode() {
+    if [ "$P99_LEGACY_DETECTED" -eq 1 ]; then
+        INSTALL_MODE="legacy"
+    elif pkg_is_installed "p99"; then
+        INSTALL_MODE="update"
+    else
+        INSTALL_MODE="clean"
+    fi
+    msg "Installation mode: $INSTALL_MODE"
+}
+
+prepare_legacy_config_backup() {
+    [ -n "$LEGACY_CONFIG_PATH" ] || return 0
+
+    LEGACY_CONFIG_BACKUP="/etc/.p99-legacy-config-backup.$$"
+    cp "$LEGACY_CONFIG_PATH" "$LEGACY_CONFIG_BACKUP" ||
+        fail "Failed to back up the legacy configuration"
+    chmod 0600 "$LEGACY_CONFIG_BACKUP" ||
+        fail "Failed to secure the legacy configuration backup"
+    msg "$(installer_text legacy_backup_ready): $LEGACY_CONFIG_BACKUP"
+}
+
+rollback_legacy_config_on_failure() {
+    [ -n "$LEGACY_CONFIG_BACKUP" ] && [ -r "$LEGACY_CONFIG_BACKUP" ] || return 0
+    if [ "$LEGACY_CLEANUP_STARTED" -eq 0 ]; then
+        if [ "$SING_BOX_CHANGE_STARTED" -eq 1 ]; then
+            warn "The legacy configuration backup remains at $LEGACY_CONFIG_BACKUP after the sing-box package change"
+            return 0
+        fi
+        rm -f "$LEGACY_CONFIG_BACKUP"
+        LEGACY_CONFIG_BACKUP=""
+        return 0
+    fi
+    [ -n "$LEGACY_CONFIG_PATH" ] || return 0
+
+    cp "$LEGACY_CONFIG_BACKUP" "$LEGACY_CONFIG_PATH" 2>/dev/null || return 0
+    chmod 0600 "$LEGACY_CONFIG_PATH" 2>/dev/null || true
+    warn "Legacy configuration was restored after the failed migration. Its backup remains at $LEGACY_CONFIG_BACKUP"
+}
+
+confirm_legacy_migration() {
+    [ "$P99_LEGACY_DETECTED" -eq 1 ] || return 0
+
+    if interactive_terminal_available; then
+        numbered_yes_no_prompt "$(installer_text legacy_migration_prompt)" ||
+            fail "Legacy migration was cancelled before changing installed packages"
+    elif [ "$CONFIRM_LEGACY_MIGRATION" -eq 1 ]; then
+        msg "Legacy migration was explicitly authorized by --confirm-legacy-migration"
+    else
+        fail "Legacy migration requires an interactive terminal or --confirm-legacy-migration"
+    fi
+    prepare_legacy_config_backup
+}
+
+begin_legacy_migration() {
+    [ "$P99_LEGACY_DETECTED" -eq 1 ] || return 0
+
+    msg "$(installer_text legacy_cleanup_start)"
+    LEGACY_CLEANUP_STARTED=1
+    cleanup_legacy_installation
+}
+
+remove_legacy_backup() {
+    [ -n "$LEGACY_CONFIG_BACKUP" ] || return 0
+    rm -f "$LEGACY_CONFIG_BACKUP"
+    LEGACY_CONFIG_BACKUP=""
+}
+
+decide_i18n_installation() {
+    luci_lang="$(get_luci_main_lang)"
+
+    detect_installer_language
+
+    if pkg_is_installed "luci-i18n-p99-ru"; then
+        P99_I18N_REQUESTED=1
+        msg "$(installer_text i18n_installed)"
+        return 0
+    fi
+
+    if [ "$P99_LEGACY_DETECTED" -eq 1 ] &&
+        pkg_is_installed "luci-i18n-${LEGACY_BACKEND_PACKAGE}-ru"; then
+        P99_I18N_REQUESTED=1
+        msg "$(installer_text i18n_installed)"
+        return 0
+    fi
+
+    case "$luci_lang" in
+        ru|ru_*|ru-*)
+            P99_I18N_REQUESTED=1
+            INSTALLER_LANG="ru"
+            msg "$(installer_text luci_ru)"
+            return 0
+            ;;
+    esac
+
+    if numbered_yes_no_prompt "$(installer_text i18n_prompt)"; then
+        P99_I18N_REQUESTED=1
+        INSTALLER_LANG="ru"
+        return 0
+    fi
+
+    warn "$(installer_text i18n_skip)"
+}
+
+download_p99_packages() {
+    P99_BACKEND_FILE="$TMP_DIR/$P99_BACKEND_NAME"
+    P99_APP_FILE="$TMP_DIR/$P99_APP_NAME"
+    P99_I18N_FILE=""
+
+    download_with_retry "$P99_BACKEND_URL" "$P99_BACKEND_FILE" "$P99_BACKEND_NAME" || fail "Failed to download $P99_BACKEND_NAME"
+    download_with_retry "$P99_APP_URL" "$P99_APP_FILE" "$P99_APP_NAME" || fail "Failed to download $P99_APP_NAME"
+    verify_download_sha256 "$P99_BACKEND_FILE" "$P99_BACKEND_SHA256" "$P99_BACKEND_NAME"
+    verify_download_sha256 "$P99_APP_FILE" "$P99_APP_SHA256" "$P99_APP_NAME"
+
+    if [ -n "$P99_I18N_URL" ]; then
+        P99_I18N_FILE="$TMP_DIR/$P99_I18N_NAME"
+        download_with_retry "$P99_I18N_URL" "$P99_I18N_FILE" "$P99_I18N_NAME" || fail "Failed to download $P99_I18N_NAME"
+        verify_download_sha256 "$P99_I18N_FILE" "$P99_I18N_SHA256" "$P99_I18N_NAME"
+    fi
+}
+
+install_backend_package() {
+    pkg_install_files "$P99_BACKEND_FILE" || fail "p99 installation failed"
+
+    [ -x /usr/bin/p99 ] || fail "p99 executable is missing after package installation"
+    /usr/bin/p99 package_postinst ||
+        fail "P99 configuration recovery or validation failed"
+}
+
+migrate_legacy_configuration() {
+    [ "$P99_LEGACY_DETECTED" -eq 1 ] || return 0
+
+    if [ -n "$LEGACY_CONFIG_BACKUP" ]; then
+        cp "$LEGACY_CONFIG_BACKUP" /etc/config/p99 ||
+            fail "Failed to restore the legacy configuration for migration"
+        chmod 0644 /etc/config/p99 ||
+            fail "Failed to set permissions on the P99 configuration"
+
+        msg "Migrating the legacy configuration to P99"
+        if ! P99_CONFIG_NAME="p99" \
+            P99_LIB="/usr/lib/p99" \
+            ucode -L /usr/lib/p99 /usr/lib/p99/config/migration.uc migrate-podkop; then
+            cp "$LEGACY_CONFIG_BACKUP" /etc/config/p99 2>/dev/null || true
+            fail "Legacy configuration migration failed; the original configuration was restored"
+        fi
+    else
+        warn "The legacy package had no readable configuration; P99 defaults will be used"
+    fi
+
+    install_json_ucode installer-finalize-legacy ||
+        fail "Failed to remove legacy configuration and cache files after migration"
+}
+
+validate_installed_configuration() {
+    validation_output="$TMP_DIR/config-validation.log"
+    P99_CONFIG_READY=1
+    P99_CONFIG_VALIDATION_ERROR=""
+
+    if ! ucode -L /usr/lib/p99 /usr/lib/p99/config/validator.uc check-requirements >"$validation_output" 2>&1 ||
+        ! ucode -L /usr/lib/p99 /usr/lib/p99/config/validator.uc validate-runtime >>"$validation_output" 2>&1; then
+        P99_CONFIG_READY=0
+    fi
+
+    [ "$P99_CONFIG_READY" -eq 0 ] || return 0
+    P99_CONFIG_VALIDATION_ERROR="$(sed -n '1p' "$validation_output" 2>/dev/null || true)"
+    [ -n "$P99_CONFIG_VALIDATION_ERROR" ] || P99_CONFIG_VALIDATION_ERROR="P99 configuration validation failed"
+
+    warn "P99 configuration requires attention: $P99_CONFIG_VALIDATION_ERROR"
+    warn "P99 will remain disabled. The configuration was preserved; fix it in LuCI before starting the service."
+}
+
+install_ui_packages() {
+    pkg_install_files "$P99_APP_FILE" || fail "luci-app-p99 installation failed"
+
+    if [ -n "$P99_I18N_FILE" ]; then
+        pkg_install_files "$P99_I18N_FILE" || fail "luci-i18n-p99-ru installation failed"
+    fi
+}
+
+post_install() {
+    P99_WAS_ENABLED="$P99_WAS_ENABLED" P99_WAS_RUNNING="$P99_WAS_RUNNING" \
+    P99_CONFIG_READY="$P99_CONFIG_READY" \
+        install_json_ucode installer-post-install ||
+        fail "Failed to complete P99 post-install actions"
+}
+
+main() {
+    trap cleanup EXIT
+    trap 'exit 129' HUP
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+
+    parse_args "$@"
+    check_root
+    init_tmp_dir
+    detect_fetcher
+    sync_time
+    check_system
+    configure_package_mirror
+
+    detect_legacy_installation
+    detect_install_mode
+    decide_i18n_installation
+    select_sing_box_installation
+
+    pkg_list_update || fail "Failed to update package lists"
+    ensure_bootstrap_ucode_runtime
+
+    resolve_p99_release
+    msg "Downloading P99 X packages before making system changes"
+    download_p99_packages
+
+    confirm_legacy_migration
+    ensure_flash_space
+
+    if [ "$INSTALL_MODE" = "legacy" ]; then
+        msg "Installing the P99 X backend before removing legacy packages"
+        install_backend_package
+        begin_legacy_migration
+        migrate_legacy_configuration
+    else
+        cleanup_legacy_installation
+        install_backend_package
+    fi
+    install_ui_packages
+    install_selected_sing_box
+    validate_installed_configuration
+    post_install
+    remove_legacy_backup
+
+    msg "P99 $P99_PACKAGE_VERSION has been installed successfully"
+    msg "Source mirror: ${MIRROR_BASE_URL} (${P99_RELEASE_TAG})"
+    if [ "$P99_CONFIG_READY" -eq 1 ]; then
+        warn "Open LuCI and review your rules before enabling P99"
+    else
+        warn "sing-box was installed, but P99 was not enabled because its configuration is incomplete"
+        warn "Reason: $P99_CONFIG_VALIDATION_ERROR"
+    fi
+}
+
+main "$@"

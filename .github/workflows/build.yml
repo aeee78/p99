@@ -1,0 +1,121 @@
+name: Build packages
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to build and publish
+        required: true
+        type: string
+      publish_release:
+        description: Publish the built packages as a GitHub release
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  preparation:
+    name: Setup build version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      commitish: ${{ steps.version.outputs.commitish }}
+      release_notes: ${{ steps.version.outputs.release_notes }}
+    steps:
+      - uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - id: version
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.release_tag || '' }}
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
+          else
+            VERSION=$(git describe --tags --exact-match 2>/dev/null || true)
+          fi
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release version must use x.y.z format, got: ${VERSION:-<empty>}" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "commitish=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          RAW_RELEASE_NOTES="$(git tag -l --format='%(contents)' "$VERSION")"
+          if [ -z "$RAW_RELEASE_NOTES" ]; then
+            RAW_RELEASE_NOTES="$(git log -1 --pretty=%B)"
+          fi
+          export RAW_RELEASE_NOTES
+          NORMALIZED_RELEASE_NOTES="$(node <<'NODE'
+          process.stdout.write(process.env.RAW_RELEASE_NOTES.replace('\\n', '\n'));
+          NODE
+          )"
+          {
+            echo 'release_notes<<P99_RELEASE_NOTES_EOF'
+            printf '%s\n' "$NORMALIZED_RELEASE_NOTES"
+            echo 'P99_RELEASE_NOTES_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build P99 release packages
+    runs-on: ubuntu-24.04
+    needs: preparation
+    steps:
+      - uses: actions/checkout@v5.0.0
+
+      - name: Install build dependencies
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl fakeroot file gawk git patch perl tar unzip util-linux xz-utils zstd
+
+      - name: Build release artifacts
+        shell: bash
+        run: |
+          VERSION="${{ needs.preparation.outputs.version }}"
+          ./build.sh "$VERSION" "$PWD/filtered-bin/release"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: release-files-${{ needs.preparation.outputs.version }}
+          path: ./filtered-bin/release/*
+          retention-days: 1
+          if-no-files-found: error
+
+  release:
+    name: Create Release
+    if: github.event_name == 'push' || inputs.publish_release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    needs:
+      - preparation
+      - build
+    steps:
+      - uses: actions/checkout@v5.0.0
+      - name: Create release dir
+        run: mkdir -p ./filtered-bin/release
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-files-${{ needs.preparation.outputs.version }}
+          path: ./filtered-bin/release
+
+      - name: Release
+        uses: softprops/action-gh-release@v2.4.0
+        with:
+          files: ./filtered-bin/release/*.*
+          draft: false
+          prerelease: false
+          make_latest: true
+          name: ${{ needs.preparation.outputs.version }}
+          body: ${{ needs.preparation.outputs.release_notes }}
+          tag_name: ${{ needs.preparation.outputs.version }}
+          target_commitish: ${{ needs.preparation.outputs.commitish }}

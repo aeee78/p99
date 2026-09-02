@@ -1,0 +1,55 @@
+name: Differential ShellCheck
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'rc/**'
+    paths:
+      - 'build.sh'
+      - 'install.sh'
+      - 'p99/files/etc/init.d/**'
+      - 'luci-app-p99/root/etc/uci-defaults/**'
+      - 'tests/**/*.sh'
+      - '.github/workflows/shellcheck.yml'
+  pull_request:
+    branches:
+      - main
+      - 'rc/**'
+    paths:
+      - 'build.sh'
+      - 'install.sh'
+      - 'p99/files/etc/init.d/**'
+      - 'luci-app-p99/root/etc/uci-defaults/**'
+      - 'tests/**/*.sh'
+      - '.github/workflows/shellcheck.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: Differential ShellCheck
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: ShellCheck
+        shell: bash
+        run: |
+          mapfile -d '' scripts < <(
+            find . -type f \
+              \( -name '*.sh' -o -path './build.sh' -o -path './install.sh' \
+                 -o -path './p99/files/etc/init.d/*' \
+                 -o -path './luci-app-p99/root/etc/uci-defaults/*' \) \
+              -print0
+          )
+          shellcheck --severity=error "${scripts[@]}"

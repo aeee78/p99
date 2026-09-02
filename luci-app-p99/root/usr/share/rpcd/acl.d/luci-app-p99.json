@@ -1,0 +1,91 @@
+{
+  "luci-app-p99": {
+    "description": "Grant UCI and RPC access to LuCI app P99",
+    "read": {
+      "file": {
+        "/etc/init.d/p99": [
+          "exec"
+        ],
+        "/etc/sing-box/config.json": [
+          "read"
+        ],
+        "/tmp/sing-box/config.json": [
+          "read"
+        ],
+        "/var/run/p99/section-cache/*": [
+          "read"
+        ],
+        "/tmp/run/p99/section-cache/*": [
+          "read"
+        ],
+        "/var/run/p99/component-actions/*": [
+          "read"
+        ],
+        "/tmp/run/p99/component-actions/*": [
+          "read"
+        ],
+        "/var/run/p99/ui-state/*": [
+          "read"
+        ],
+        "/tmp/run/p99/ui-state/*": [
+          "read"
+        ],
+        "/var/run/p99/ui-state/service-actions/*": [
+          "read"
+        ],
+        "/tmp/run/p99/ui-state/service-actions/*": [
+          "read"
+        ],
+        "/var/run/p99/ui-state/latency-actions/*": [
+          "read"
+        ],
+        "/tmp/run/p99/ui-state/latency-actions/*": [
+          "read"
+        ],
+        "/usr/bin/p99": [
+          "exec"
+        ]
+      },
+      "ubus": {
+        "luci-rpc": [
+          "getDHCPLeases",
+          "getHostHints"
+        ],
+        "network.interface": [
+          "dump"
+        ],
+        "service": [
+          "list"
+        ]
+      },
+      "uci": [
+        "p99"
+      ]
+    },
+    "write": {
+      "file": {
+        "/var/run/p99/ui-state/*": [
+          "write"
+        ],
+        "/tmp/run/p99/ui-state/*": [
+          "write"
+        ],
+        "/var/run/p99/ui-state/service-actions/*": [
+          "write"
+        ],
+        "/tmp/run/p99/ui-state/service-actions/*": [
+          "write"
+        ],
+        "/var/run/p99/ui-state/latency-actions/*": [
+          "write"
+        ],
+        "/tmp/run/p99/ui-state/latency-actions/*": [
+          "write"
+        ]
+      },
+      "uci": [
+        "p99"
+      ]
+    }
+  }
+}

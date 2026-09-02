@@ -1,0 +1,14 @@
+{
+  "admin/services/p99": {
+    "title": "p99",
+    "order": 42,
+    "action": {
+      "type": "view",
+      "path": "p99/p99"
+    },
+    "depends": {
+			"acl": [ "luci-app-p99" ],
+			"uci": { "p99": true }
+		}
+  }
+}

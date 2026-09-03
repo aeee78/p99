@@ -108,10 +108,7 @@ export class P99LogWatcher {
     this.running = true;
     void this.checkOnce();
     this.timer = setInterval(() => this.checkOnce(), this.intervalMs);
-    logger.info(
-      '[P99LogWatcher]',
-      `started (interval: ${this.intervalMs}ms)`,
-    );
+    logger.info('[P99LogWatcher]', `started (interval: ${this.intervalMs}ms)`);
   }
 
   stop(): void {

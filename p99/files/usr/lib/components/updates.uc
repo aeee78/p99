@@ -1127,6 +1127,44 @@ function subscription_cleanup_jobs() {
         "-delete"
     ]);
 
+    command_success_from_args([
+        "find",
+        SUBSCRIPTION_JOB_DIR,
+        "-type", "f",
+        "-name", "*.tmp",
+        "-mmin", "+5",
+        "-delete"
+    ]);
+
+    command_success_from_args([
+        "find",
+        RUNTIME_STATE_DIR,
+        "-maxdepth", "2",
+        "-type", "f",
+        "-name", "*.tmp",
+        "-mmin", "+5",
+        "-delete"
+    ]);
+
+    let all_jobs = command_output_from_args([
+        "find",
+        SUBSCRIPTION_JOB_DIR,
+        "-type", "f",
+        "-name", "*.json"
+    ]);
+
+    for (let path in split(all_jobs, "\n")) {
+        path = trim(as_string(path));
+        if (path == "")
+            continue;
+        let job = read_json_file(path);
+        if (type(job) == "object" && job.running === true) {
+            let pid = as_string(job.pid || "");
+            if (!pid_running(pid))
+                write_subscription_stale_job_state(path);
+        }
+    }
+
     let old = command_output_from_args([
         "find",
         SUBSCRIPTION_JOB_DIR,

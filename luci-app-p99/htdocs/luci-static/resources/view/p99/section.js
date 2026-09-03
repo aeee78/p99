@@ -2477,7 +2477,9 @@ function addUrlTestItemOptions(itemSection, options = {}) {
     form.Flag,
     "pin_dashboard",
     _("Pin on dashboard"),
-    _("Keep URLTest before latency-sorted servers"),
+    _(
+      "Pin URLTest group to the top of the dashboard outbound list, before latency-sorted servers",
+    ),
   );
   o.default = "1";
   o.rmempty = false;
@@ -2545,7 +2547,9 @@ function addUrlTestItemOptions(itemSection, options = {}) {
     [
       "include_countries",
       _("Include countries"),
-      _("Test servers only from the specified countries."),
+      _(
+        "Test servers only from the specified countries. E.g. DE, NL, US (2-letter ISO codes).",
+      ),
       countryChoices(),
       validateCountryCode,
       ["include", "mixed"],
@@ -2561,7 +2565,9 @@ function addUrlTestItemOptions(itemSection, options = {}) {
     [
       "include_regex",
       _("Include by regular expression"),
-      _("Test servers whose names match the expression."),
+      _(
+        "Test servers whose names match the expression. E.g. (?i)fast|direct|premium",
+      ),
       null,
       validateRegex,
       ["include", "mixed"],
@@ -2569,7 +2575,9 @@ function addUrlTestItemOptions(itemSection, options = {}) {
     [
       "exclude_countries",
       _("Exclude countries"),
-      _("Do not test servers from these countries."),
+      _(
+        "Do not test servers from these countries. E.g. RU, CN (2-letter ISO codes).",
+      ),
       countryChoices(),
       validateCountryCode,
       ["exclude", "mixed"],
@@ -2963,7 +2971,9 @@ function addPriorityGroupItemOptions(itemSection, options = {}) {
     form.Flag,
     "pin_dashboard",
     _("Pin on dashboard"),
-    _("Keep Priority before latency-sorted servers"),
+    _(
+      "Pin Priority group to the top of the dashboard outbound list, before latency-sorted servers",
+    ),
   );
   o.default = "1";
   o.rmempty = false;
@@ -7234,7 +7244,9 @@ function createSectionContent(section) {
     SettingsDynamicList,
     "subscription_url",
     _("Subscription URL"),
-    _("Enter the subscription URL"),
+    _(
+      "Enter direct subscription URLs (mutually exclusive with pre-configured Subscriptions below)",
+    ),
   );
   o.depends("action", "connection");
   o.rmempty = true;
@@ -7343,7 +7355,9 @@ function createSectionContent(section) {
     form.DynamicList,
     "subscription",
     _("Subscriptions"),
-    _("Select pre-configured subscriptions from the Subscriptions tab"),
+    _(
+      "Select pre-configured subscriptions from the Subscriptions tab (mutually exclusive with direct Subscription URLs above)",
+    ),
   );
   o.depends("action", "connection");
   o.rmempty = true;

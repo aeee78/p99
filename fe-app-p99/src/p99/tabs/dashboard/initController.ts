@@ -1446,6 +1446,65 @@ async function handleUpdateSubscription(section: P99.OutboundGroup) {
   }
 }
 
+async function handleUpdateAllSubscriptions() {
+  const currentSections = store.get().sectionsWidget.data;
+  const targetSections = currentSections.filter((s) =>
+    Boolean(s.subscriptionSourceCount && s.subscriptionSourceCount > 0),
+  );
+
+  if (!targetSections.length) {
+    return;
+  }
+
+  targetSections.forEach((s) => {
+    setSubscriptionUpdating(s.sectionName, true, true);
+  });
+
+  let jobId = '';
+  let ownsJobFollow = false;
+
+  try {
+    const startResponse = await P99ShellMethods.subscriptionUpdateStart();
+    if (!startResponse.success) {
+      throw new Error(startResponse.error);
+    }
+
+    jobId = startResponse.data.job_id;
+    markUiActionOwned('subscription', jobId);
+    if (followedSubscriptionJobs.has(jobId)) {
+      return;
+    }
+
+    followedSubscriptionJobs.add(jobId);
+    ownsJobFollow = true;
+    const response = await P99ShellMethods.waitSubscriptionUpdateJob(jobId);
+    await Promise.all(
+      targetSections.map((s) =>
+        completeSubscriptionUpdateJob(jobId, s.sectionName, response),
+      ),
+    );
+  } catch (error) {
+    logger.error('[DASHBOARD]', 'handleUpdateAllSubscriptions: failed', error);
+    if (!pageUnloading) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : _('Failed to update subscriptions');
+
+      targetSections.forEach((s) => {
+        setSubscriptionUpdating(s.sectionName, false);
+      });
+      if (!isTransientRpcError(message)) {
+        showToast(subscriptionUpdateErrorMessage(message), 'error');
+      }
+    }
+  } finally {
+    if (ownsJobFollow) {
+      followedSubscriptionJobs.delete(jobId);
+    }
+  }
+}
+
 function shallowRecordEqual<T>(
   left: Record<string, T>,
   right: Record<string, T>,
@@ -1637,8 +1696,42 @@ async function renderSectionsWidget() {
     });
   });
 
+  const hasMultipleSubscriptionSections =
+    sectionsWidget.data.filter((s) =>
+      Boolean(s.subscriptionSourceCount && s.subscriptionSourceCount > 0),
+    ).length > 1;
+
+  const globalBar = hasMultipleSubscriptionSections
+    ? E(
+        'div',
+        {
+          class: 'fkp_dashboard-page__global-actions',
+          style:
+            'display: flex; justify-content: flex-end; margin-bottom: 12px;',
+        },
+        [
+          E(
+            'button',
+            {
+              type: 'button',
+              class:
+                'btn fkp_dashboard-page__outbound-section__subscription-update',
+              click: (event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+                void handleUpdateAllSubscriptions();
+              },
+            },
+            _('Update all subscriptions'),
+          ),
+        ],
+      )
+    : undefined;
+
   return preserveScrollForPage(() => {
-    container.replaceChildren(...renderedWidgets);
+    container.replaceChildren(
+      ...(globalBar ? [globalBar, ...renderedWidgets] : renderedWidgets),
+    );
   });
 }
 

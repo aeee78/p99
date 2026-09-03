@@ -291,9 +291,7 @@ async function waitForP99RunningState(expectedRunning: boolean) {
   while (Date.now() - startedAt < SERVICE_ACTION_STATUS_TIMEOUT_MS) {
     await refreshDiagnosticServicesInfo({ force: true, allowInactive: true });
 
-    const p99Running = Boolean(
-      store.get().servicesInfoWidget.data.p99Running,
-    );
+    const p99Running = Boolean(store.get().servicesInfoWidget.data.p99Running);
 
     if (p99Running === expectedRunning) {
       return true;

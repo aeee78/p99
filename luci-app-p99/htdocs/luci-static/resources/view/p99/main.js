@@ -1810,8 +1810,24 @@ function setSectionSortByLatency(sectionKey, enabled) {
   } catch {
   }
 }
+function isPinnedOutbound(outbound) {
+  if (typeof outbound.pinned === "boolean") {
+    return outbound.pinned;
+  }
+  const type = outbound.type?.toLowerCase();
+  return Boolean(outbound.urlTestInfo) || Boolean(outbound.priorityInfo) || type === "urltest" || type === "priority";
+}
 function sortOutboundsByLatency(outbounds) {
-  return [...outbounds].sort((a, b) => {
+  const pinned = [];
+  const regular = [];
+  for (const outbound of outbounds) {
+    if (isPinnedOutbound(outbound)) {
+      pinned.push(outbound);
+    } else {
+      regular.push(outbound);
+    }
+  }
+  const sortedRegular = [...regular].sort((a, b) => {
     const latA = typeof a.latency === "number" && a.latency > 0 ? a.latency : Infinity;
     const latB = typeof b.latency === "number" && b.latency > 0 ? b.latency : Infinity;
     if (latA === latB) {
@@ -1819,6 +1835,7 @@ function sortOutboundsByLatency(outbounds) {
     }
     return latA - latB;
   });
+  return [...pinned, ...sortedRegular];
 }
 
 // src/p99/tabs/dashboard/partials/renderSections.ts
@@ -2598,9 +2615,7 @@ function parseSubscriptionUpdateStartResult(response) {
   );
 }
 function parseSubscriptionUpdateJobState(response) {
-  return parseJsonObjectOutput(
-    response.stdout
-  );
+  return parseJsonObjectOutput(response.stdout);
 }
 function parseUiActionStartResult(response) {
   return parseJsonObjectOutput(response.stdout);
@@ -2682,9 +2697,7 @@ var P99ShellMethods = {
   checkDNSAvailable: async () => callBaseMethod(
     P99.AvailableMethods.CHECK_DNS_AVAILABLE
   ),
-  checkFakeIP: async () => callBaseMethod(
-    P99.AvailableMethods.CHECK_FAKEIP
-  ),
+  checkFakeIP: async () => callBaseMethod(P99.AvailableMethods.CHECK_FAKEIP),
   checkNftRules: async () => callBaseMethod(
     P99.AvailableMethods.CHECK_NFT_RULES
   ),
@@ -2709,24 +2722,18 @@ var P99ShellMethods = {
     P99.AvailableMethods.GET_SUBSCRIPTION_METADATA,
     [section]
   ),
-  checkSingBox: async () => callBaseMethod(
-    P99.AvailableMethods.CHECK_SING_BOX
-  ),
+  checkSingBox: async () => callBaseMethod(P99.AvailableMethods.CHECK_SING_BOX),
   checkInbounds: async () => callBaseMethod(
     P99.AvailableMethods.CHECK_INBOUNDS
   ),
   getSingBoxStatus: async () => callBaseMethod(
     P99.AvailableMethods.GET_SING_BOX_STATUS
   ),
-  getZapretStatus: async () => callBaseMethod(
-    P99.AvailableMethods.GET_ZAPRET_STATUS
-  ),
+  getZapretStatus: async () => callBaseMethod(P99.AvailableMethods.GET_ZAPRET_STATUS),
   getZapret2Status: async () => callBaseMethod(
     P99.AvailableMethods.GET_ZAPRET2_STATUS
   ),
-  getByedpiStatus: async () => callBaseMethod(
-    P99.AvailableMethods.GET_BYEDPI_STATUS
-  ),
+  getByedpiStatus: async () => callBaseMethod(P99.AvailableMethods.GET_BYEDPI_STATUS),
   getClashApiProxies: async () => callBaseMethod(P99.AvailableMethods.CLASH_API, [
     P99.AvailableClashAPIMethods.GET_PROXIES
   ]),
@@ -2761,11 +2768,7 @@ var P99ShellMethods = {
   closeAllClashApiConnections: async () => callBaseMethod(P99.AvailableMethods.CLASH_API, [
     P99.AvailableClashAPIMethods.CLOSE_ALL_CONNECTIONS
   ]),
-  enable: async () => callBaseMethod(
-    P99.AvailableMethods.ENABLE,
-    [],
-    "/etc/init.d/p99"
-  ),
+  enable: async () => callBaseMethod(P99.AvailableMethods.ENABLE, [], "/etc/init.d/p99"),
   disable: async () => callBaseMethod(
     P99.AvailableMethods.DISABLE,
     [],
@@ -2779,9 +2782,7 @@ var P99ShellMethods = {
   ]),
   checkLogs: async () => callBaseMethod(P99.AvailableMethods.CHECK_LOGS),
   checkSingBoxLogs: async () => callBaseMethod(P99.AvailableMethods.CHECK_SING_BOX_LOGS),
-  getSystemInfo: async () => callBaseMethod(
-    P99.AvailableMethods.GET_SYSTEM_INFO
-  ),
+  getSystemInfo: async () => callBaseMethod(P99.AvailableMethods.GET_SYSTEM_INFO),
   getServerCapabilities: async () => callBaseMethod(
     P99.AvailableMethods.GET_SERVER_CAPABILITIES
   ),
@@ -3190,6 +3191,7 @@ function compactSettingsMap(settings) {
 }
 function hydrateConfigSections(configSections) {
   const subscriptionUrls = childSections(configSections, "subscription_url");
+  const subscriptions = childSections(configSections, "subscription");
   const interfaces = childSections(configSections, "section_interface");
   const urltests = childSections(configSections, "urltest");
   const priorityGroups = childSections(configSections, "priority_group");
@@ -3200,15 +3202,24 @@ function hydrateConfigSections(configSections) {
     }
     const next = { ...section };
     const subscriptionUrlItems = ownedChildSections(next, subscriptionUrls);
+    const subscriptionRefs = getListValues(next.subscription);
+    const referencedSubscriptions = subscriptionRefs.map(
+      (ref) => subscriptions.find(
+        (sub) => sub[".name"] === ref && sub.enabled !== "0"
+      )
+    ).filter((sub) => Boolean(sub && sub.url));
     const interfaceItems = ownedChildSections(next, interfaces);
     const urltestItems = ownedChildSections(next, urltests);
     const priorityGroupItems = ownedChildSections(next, priorityGroups);
-    if (subscriptionUrlItems.length) {
+    if (subscriptionUrlItems.length || referencedSubscriptions.length) {
       const settings = {};
-      next.subscription_urls = subscriptionUrlItems.map((item) => item.url || "").filter(Boolean);
+      const urls = [];
       subscriptionUrlItems.forEach((item) => {
         if (!item.url) {
           return;
+        }
+        if (!urls.includes(item.url)) {
+          urls.push(item.url);
         }
         settings[item.url] = {
           subscription_update_enabled: item.subscription_update_enabled,
@@ -3227,6 +3238,33 @@ function hydrateConfigSections(configSections) {
           hide_detour_outbounds: item.hide_detour_outbounds
         };
       });
+      referencedSubscriptions.forEach((sub) => {
+        if (!sub.url) {
+          return;
+        }
+        if (!urls.includes(sub.url)) {
+          urls.push(sub.url);
+        }
+        if (!settings[sub.url]) {
+          settings[sub.url] = {
+            subscription_update_enabled: sub.subscription_update_enabled,
+            subscription_update_interval: sub.subscription_update_interval,
+            download_via_proxy_enabled: sub.download_via_proxy_enabled,
+            download_via_proxy_section: sub.download_via_proxy_section,
+            auto_user_agent: sub.auto_user_agent,
+            user_agent: sub.user_agent,
+            auto_hwid: sub.auto_hwid,
+            hwid: sub.hwid,
+            show_dashboard_metadata: sub.show_dashboard_metadata,
+            prefix_nodes: sub.prefix_nodes,
+            node_prefix: sub.node_prefix,
+            include_urltest_groups: sub.include_urltest_groups,
+            hide_urltest_group_outbounds: sub.hide_urltest_group_outbounds,
+            hide_detour_outbounds: sub.hide_detour_outbounds
+          };
+        }
+      });
+      next.subscription_urls = urls;
       next.subscription_url_settings = compactSettingsMap(settings);
     }
     if (interfaceItems.length) {
@@ -3318,7 +3356,11 @@ function hasSubscriptionSources(section) {
   return getSubscriptionSourceCount(section) > 0;
 }
 function getSubscriptionSourceCount(section) {
-  return getListValues(section.subscription_urls).length;
+  const directUrls = getListValues(section.subscription_urls);
+  if (directUrls.length > 0) {
+    return directUrls.length;
+  }
+  return getListValues(section.subscription).length;
 }
 function shouldSortByLatency(section) {
   return section.sort_by_latency === "1";
@@ -3876,16 +3918,24 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
       cachedProxyLinks.has(code)
     );
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
+    const hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPinned = priorityConfig ? priorityConfig.pinDashboard !== false : Boolean(urlTestConfig?.pinDashboard);
+    let latency = item?.value.history?.[0]?.delay || 0;
+    if (latency <= 0 && isPinned && item?.value?.now) {
+      const selectedChild = proxyByCode.get(item.value.now);
+      latency = selectedChild?.value.history?.[0]?.delay || 0;
+    }
     return [
       {
         code,
         displayName,
-        latency: item?.value.history?.[0]?.delay || 0,
+        latency,
         type: priorityConfig ? "Priority" : item?.value.type || "URLTest",
         selected: selector?.value?.now === code,
         description: outboundMetadata?.descriptions?.[code],
         country: showDetectedCountries ? outboundMetadata?.countries?.[code] : void 0,
         runtimeAvailable: item ? void 0 : false,
+        pinned: isPinned,
         urlTestInfo: urlTestConfig || isRuntimeUrlTest ? buildUrlTestInfo({
           code,
           sectionName,
@@ -3911,11 +3961,12 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
       }
     ];
   });
+  const pinnedCodes = [
+    ...urlTestEntries.filter(({ config }) => config.pinDashboard).map(({ config }) => config.code),
+    ...priorityEntries.filter(({ config }) => config.pinDashboard).map(({ config }) => config.code)
+  ];
   const sortedOutbounds = sortOutboundsForDashboard(outbounds, {
-    pinnedCodes: [
-      ...urlTestEntries.filter(({ config }) => config.pinDashboard).map(({ config }) => config.code),
-      ...priorityEntries.filter(({ config }) => config.pinDashboard).map(({ config }) => config.code)
-    ],
+    pinnedCodes,
     sortByLatency: shouldSortByLatency(section)
   });
   const latencyTestCodes = sortedOutbounds.filter(
@@ -4672,10 +4723,7 @@ var P99LogWatcher = class _P99LogWatcher {
     this.running = true;
     void this.checkOnce();
     this.timer = setInterval(() => this.checkOnce(), this.intervalMs);
-    logger.info(
-      "[P99LogWatcher]",
-      `started (interval: ${this.intervalMs}ms)`
-    );
+    logger.info("[P99LogWatcher]", `started (interval: ${this.intervalMs}ms)`);
   }
   stop() {
     if (!this.running) return;
@@ -6686,6 +6734,54 @@ async function handleUpdateSubscription(section) {
     }
   }
 }
+async function handleUpdateAllSubscriptions() {
+  const currentSections = store.get().sectionsWidget.data;
+  const targetSections = currentSections.filter(
+    (s) => Boolean(s.subscriptionSourceCount && s.subscriptionSourceCount > 0)
+  );
+  if (!targetSections.length) {
+    return;
+  }
+  targetSections.forEach((s) => {
+    setSubscriptionUpdating(s.sectionName, true, true);
+  });
+  let jobId = "";
+  let ownsJobFollow = false;
+  try {
+    const startResponse = await P99ShellMethods.subscriptionUpdateStart();
+    if (!startResponse.success) {
+      throw new Error(startResponse.error);
+    }
+    jobId = startResponse.data.job_id;
+    markUiActionOwned("subscription", jobId);
+    if (followedSubscriptionJobs.has(jobId)) {
+      return;
+    }
+    followedSubscriptionJobs.add(jobId);
+    ownsJobFollow = true;
+    const response = await P99ShellMethods.waitSubscriptionUpdateJob(jobId);
+    await Promise.all(
+      targetSections.map(
+        (s) => completeSubscriptionUpdateJob(jobId, s.sectionName, response)
+      )
+    );
+  } catch (error) {
+    logger.error("[DASHBOARD]", "handleUpdateAllSubscriptions: failed", error);
+    if (!pageUnloading) {
+      const message = error instanceof Error ? error.message : _("Failed to update subscriptions");
+      targetSections.forEach((s) => {
+        setSubscriptionUpdating(s.sectionName, false);
+      });
+      if (!isTransientRpcError(message)) {
+        showToast(subscriptionUpdateErrorMessage(message), "error");
+      }
+    }
+  } finally {
+    if (ownsJobFollow) {
+      followedSubscriptionJobs.delete(jobId);
+    }
+  }
+}
 function shallowRecordEqual(left, right) {
   const leftKeys = Object.keys(left);
   const rightKeys = Object.keys(right);
@@ -6838,8 +6934,35 @@ async function renderSectionsWidget() {
       }
     });
   });
+  const hasMultipleSubscriptionSections = sectionsWidget.data.filter(
+    (s) => Boolean(s.subscriptionSourceCount && s.subscriptionSourceCount > 0)
+  ).length > 1;
+  const globalBar = hasMultipleSubscriptionSections ? E(
+    "div",
+    {
+      class: "fkp_dashboard-page__global-actions",
+      style: "display: flex; justify-content: flex-end; margin-bottom: 12px;"
+    },
+    [
+      E(
+        "button",
+        {
+          type: "button",
+          class: "btn fkp_dashboard-page__outbound-section__subscription-update",
+          click: (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            void handleUpdateAllSubscriptions();
+          }
+        },
+        _("Update all subscriptions")
+      )
+    ]
+  ) : void 0;
   return preserveScrollForPage(() => {
-    container.replaceChildren(...renderedWidgets);
+    container.replaceChildren(
+      ...globalBar ? [globalBar, ...renderedWidgets] : renderedWidgets
+    );
   });
 }
 async function renderBandwidthWidget() {
@@ -10107,9 +10230,7 @@ async function waitForP99RunningState(expectedRunning) {
   const startedAt = Date.now();
   while (Date.now() - startedAt < SERVICE_ACTION_STATUS_TIMEOUT_MS) {
     await refreshDiagnosticServicesInfo({ force: true, allowInactive: true });
-    const p99Running = Boolean(
-      store.get().servicesInfoWidget.data.p99Running
-    );
+    const p99Running = Boolean(store.get().servicesInfoWidget.data.p99Running);
     if (p99Running === expectedRunning) {
       return true;
     }
@@ -13713,11 +13834,7 @@ function getComponentCards() {
   const zapretManagerInstalled = Boolean(systemInfo.zapret_manager_installed);
   const singBoxExtended = Boolean(systemInfo.sing_box_extended) && !systemInfo.sing_box_compressed;
   const singBoxTiny = Boolean(systemInfo.sing_box_tiny);
-  const p99Actions = getInstalledUpdateActions(
-    "p99",
-    "p99Check",
-    "p99Install"
-  );
+  const p99Actions = getInstalledUpdateActions("p99", "p99Check", "p99Install");
   const singBoxActions = getInstalledUpdateActions(
     "sing_box",
     "singBoxCheck",

@@ -298,8 +298,18 @@ function acquire_runtime_dir_lock(lock_dir, owner_pid) {
         return false;
     }
 
-    if (pid_alive(first_line_value(lock_dir + "/pid")))
+    let owner = first_line_value(lock_dir + "/pid");
+    if (pid_alive(owner))
         return false;
+
+    // If owner pid is empty, the directory might have just been created by a concurrent process.
+    // Check lock directory age via fs.stat before declaring it stale.
+    let lock_stat = fs.stat(lock_dir);
+    if (owner == "" && type(lock_stat) == "object") {
+        let age = (int(current_epoch(), 10) || 0) - (lock_stat.mtime || 0);
+        if (age < 5)
+            return false;
+    }
 
     command_success_from_args([ "rm", "-f", lock_dir + "/pid" ]);
     if (!command_success_from_args([ "rmdir", lock_dir ]))

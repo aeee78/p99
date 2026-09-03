@@ -66,9 +66,7 @@ export function isErrorLogLine(line: string) {
   );
 }
 
-export function getP99LogNotification(
-  line: string,
-): P99LogNotification | null {
+export function getP99LogNotification(line: string): P99LogNotification | null {
   if (isErrorLogLine(line)) {
     return { kind: 'error', line };
   }

@@ -25,9 +25,7 @@ type DashboardSectionCache = {
   outboundMetadata?: P99.GetOutboundMetadata;
   urltestGroups?: Record<string, UrlTestCacheGroup>;
   priorityGroups?: Record<string, PriorityCacheGroup>;
-  subscriptionMetadata?:
-    | P99.SubscriptionMetadata
-    | P99.SubscriptionMetadata[];
+  subscriptionMetadata?: P99.SubscriptionMetadata | P99.SubscriptionMetadata[];
 };
 
 type UrlTestCacheGroup = {
@@ -132,7 +130,8 @@ type ChildType =
   | 'section_interface'
   | 'urltest'
   | 'priority_group'
-  | 'priority_level';
+  | 'priority_level'
+  | 'subscription';
 
 const DASHBOARD_SECTION_CACHE_DIR = '/var/run/p99/section-cache';
 const CLASH_API_FETCH_TIMEOUT_MS = 5000;
@@ -201,10 +200,7 @@ function getListValues(value?: string[] | string) {
     .filter(Boolean);
 }
 
-function childSections(
-  configSections: P99.ConfigSection[],
-  type: ChildType,
-) {
+function childSections(configSections: P99.ConfigSection[], type: ChildType) {
   return configSections.filter((section) => section['.type'] === type);
 }
 
@@ -232,6 +228,7 @@ function compactSettingsMap(settings: Record<string, ItemSettings>) {
 
 function hydrateConfigSections(configSections: P99.ConfigSection[]) {
   const subscriptionUrls = childSections(configSections, 'subscription_url');
+  const subscriptions = childSections(configSections, 'subscription');
   const interfaces = childSections(configSections, 'section_interface');
   const urltests = childSections(configSections, 'urltest');
   const priorityGroups = childSections(configSections, 'priority_group');
@@ -244,18 +241,28 @@ function hydrateConfigSections(configSections: P99.ConfigSection[]) {
 
     const next: P99.ConfigSection = { ...section };
     const subscriptionUrlItems = ownedChildSections(next, subscriptionUrls);
+    const subscriptionRefs = getListValues(next.subscription);
+    const referencedSubscriptions = subscriptionRefs
+      .map((ref) =>
+        subscriptions.find(
+          (sub) => sub['.name'] === ref && sub.enabled !== '0',
+        ),
+      )
+      .filter((sub): sub is P99.ConfigSection => Boolean(sub && sub.url));
     const interfaceItems = ownedChildSections(next, interfaces);
     const urltestItems = ownedChildSections(next, urltests);
     const priorityGroupItems = ownedChildSections(next, priorityGroups);
 
-    if (subscriptionUrlItems.length) {
+    if (subscriptionUrlItems.length || referencedSubscriptions.length) {
       const settings: Record<string, ItemSettings> = {};
-      next.subscription_urls = subscriptionUrlItems
-        .map((item) => item.url || '')
-        .filter(Boolean);
+      const urls: string[] = [];
+
       subscriptionUrlItems.forEach((item) => {
         if (!item.url) {
           return;
+        }
+        if (!urls.includes(item.url)) {
+          urls.push(item.url);
         }
         settings[item.url] = {
           subscription_update_enabled: item.subscription_update_enabled,
@@ -274,6 +281,35 @@ function hydrateConfigSections(configSections: P99.ConfigSection[]) {
           hide_detour_outbounds: item.hide_detour_outbounds,
         };
       });
+
+      referencedSubscriptions.forEach((sub) => {
+        if (!sub.url) {
+          return;
+        }
+        if (!urls.includes(sub.url)) {
+          urls.push(sub.url);
+        }
+        if (!settings[sub.url]) {
+          settings[sub.url] = {
+            subscription_update_enabled: sub.subscription_update_enabled,
+            subscription_update_interval: sub.subscription_update_interval,
+            download_via_proxy_enabled: sub.download_via_proxy_enabled,
+            download_via_proxy_section: sub.download_via_proxy_section,
+            auto_user_agent: sub.auto_user_agent,
+            user_agent: sub.user_agent,
+            auto_hwid: sub.auto_hwid,
+            hwid: sub.hwid,
+            show_dashboard_metadata: sub.show_dashboard_metadata,
+            prefix_nodes: sub.prefix_nodes,
+            node_prefix: sub.node_prefix,
+            include_urltest_groups: sub.include_urltest_groups,
+            hide_urltest_group_outbounds: sub.hide_urltest_group_outbounds,
+            hide_detour_outbounds: sub.hide_detour_outbounds,
+          };
+        }
+      });
+
+      next.subscription_urls = urls;
       next.subscription_url_settings = compactSettingsMap(settings);
     }
 
@@ -382,7 +418,11 @@ function hasSubscriptionSources(section: P99.ConfigSection) {
 }
 
 function getSubscriptionSourceCount(section: P99.ConfigSection) {
-  return getListValues(section.subscription_urls).length;
+  const directUrls = getListValues(section.subscription_urls);
+  if (directUrls.length > 0) {
+    return directUrls.length;
+  }
+  return getListValues(section.subscription).length;
 }
 
 function shouldSortByLatency(section: P99.ConfigSection) {
@@ -1194,12 +1234,22 @@ function buildProxyGroupOutbounds(
         cachedProxyLinks.has(code),
       );
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
+    const hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPinned = priorityConfig
+      ? priorityConfig.pinDashboard !== false
+      : Boolean(urlTestConfig?.pinDashboard);
+
+    let latency = item?.value.history?.[0]?.delay || 0;
+    if (latency <= 0 && isPinned && item?.value?.now) {
+      const selectedChild = proxyByCode.get(item.value.now);
+      latency = selectedChild?.value.history?.[0]?.delay || 0;
+    }
 
     return [
       {
         code,
         displayName,
-        latency: item?.value.history?.[0]?.delay || 0,
+        latency,
         type: priorityConfig ? 'Priority' : item?.value.type || 'URLTest',
         selected: selector?.value?.now === code,
         description: outboundMetadata?.descriptions?.[code],
@@ -1207,6 +1257,7 @@ function buildProxyGroupOutbounds(
           ? outboundMetadata?.countries?.[code]
           : undefined,
         runtimeAvailable: item ? undefined : false,
+        pinned: isPinned,
         urlTestInfo:
           urlTestConfig || isRuntimeUrlTest
             ? buildUrlTestInfo({
@@ -1239,15 +1290,17 @@ function buildProxyGroupOutbounds(
     ];
   });
 
+  const pinnedCodes = [
+    ...urlTestEntries
+      .filter(({ config }) => config.pinDashboard)
+      .map(({ config }) => config.code),
+    ...priorityEntries
+      .filter(({ config }) => config.pinDashboard)
+      .map(({ config }) => config.code),
+  ];
+
   const sortedOutbounds = sortOutboundsForDashboard(outbounds, {
-    pinnedCodes: [
-      ...urlTestEntries
-        .filter(({ config }) => config.pinDashboard)
-        .map(({ config }) => config.code),
-      ...priorityEntries
-        .filter(({ config }) => config.pinDashboard)
-        .map(({ config }) => config.code),
-    ],
+    pinnedCodes,
     sortByLatency: shouldSortByLatency(section),
   });
   const latencyTestCodes = sortedOutbounds

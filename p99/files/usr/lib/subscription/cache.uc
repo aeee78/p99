@@ -622,6 +622,14 @@ function ensure_runtime_dirs() {
     ensure_dir(P99_SUBSCRIPTION_METADATA_DIR);
     ensure_dir(P99_OUTBOUND_METADATA_DIR);
     ensure_dir(P99_SECTION_CACHE_DIR);
+    command_success_from_args([
+        "find",
+        TMP_SUBSCRIPTION_FOLDER,
+        "-type", "f",
+        "-name", "*.tmp",
+        "-mmin", "+15",
+        "-delete"
+    ]);
 }
 
 function clear_subscription_runtime_cache() {

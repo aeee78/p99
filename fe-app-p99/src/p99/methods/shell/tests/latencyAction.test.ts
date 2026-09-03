@@ -76,12 +76,7 @@ describe('P99ShellMethods.latencyAction', () => {
       code: 0,
     });
 
-    await P99ShellMethods.latencyTestStart(
-      'proxy',
-      'AWG',
-      'AWG-out',
-      '10000',
-    );
+    await P99ShellMethods.latencyTestStart('proxy', 'AWG', 'AWG-out', '10000');
 
     expect(mocks.executeShellCommand).toHaveBeenCalledWith({
       command: '/usr/bin/p99',

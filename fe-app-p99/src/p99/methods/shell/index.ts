@@ -82,9 +82,7 @@ function parseSubscriptionUpdateStartResult(
 function parseSubscriptionUpdateJobState(
   response: Awaited<ReturnType<typeof executeShellCommand>>,
 ) {
-  return parseJsonObjectOutput<P99.SubscriptionUpdateJobState>(
-    response.stdout,
-  );
+  return parseJsonObjectOutput<P99.SubscriptionUpdateJobState>(response.stdout);
 }
 
 function parseUiActionStartResult(
@@ -210,9 +208,7 @@ export const P99ShellMethods = {
       P99.AvailableMethods.CHECK_DNS_AVAILABLE,
     ),
   checkFakeIP: async () =>
-    callBaseMethod<P99.FakeIPCheckResult>(
-      P99.AvailableMethods.CHECK_FAKEIP,
-    ),
+    callBaseMethod<P99.FakeIPCheckResult>(P99.AvailableMethods.CHECK_FAKEIP),
   checkNftRules: async () =>
     callBaseMethod<P99.NftRulesCheckResult>(
       P99.AvailableMethods.CHECK_NFT_RULES,
@@ -246,9 +242,7 @@ export const P99ShellMethods = {
       [section],
     ),
   checkSingBox: async () =>
-    callBaseMethod<P99.SingBoxCheckResult>(
-      P99.AvailableMethods.CHECK_SING_BOX,
-    ),
+    callBaseMethod<P99.SingBoxCheckResult>(P99.AvailableMethods.CHECK_SING_BOX),
   checkInbounds: async () =>
     callBaseMethod<P99.InboundsCheckResult>(
       P99.AvailableMethods.CHECK_INBOUNDS,
@@ -258,17 +252,13 @@ export const P99ShellMethods = {
       P99.AvailableMethods.GET_SING_BOX_STATUS,
     ),
   getZapretStatus: async () =>
-    callBaseMethod<P99.GetZapretStatus>(
-      P99.AvailableMethods.GET_ZAPRET_STATUS,
-    ),
+    callBaseMethod<P99.GetZapretStatus>(P99.AvailableMethods.GET_ZAPRET_STATUS),
   getZapret2Status: async () =>
     callBaseMethod<P99.GetZapret2Status>(
       P99.AvailableMethods.GET_ZAPRET2_STATUS,
     ),
   getByedpiStatus: async () =>
-    callBaseMethod<P99.GetByedpiStatus>(
-      P99.AvailableMethods.GET_BYEDPI_STATUS,
-    ),
+    callBaseMethod<P99.GetByedpiStatus>(P99.AvailableMethods.GET_BYEDPI_STATUS),
   getClashApiProxies: async () =>
     callBaseMethod<ClashAPI.Proxies>(P99.AvailableMethods.CLASH_API, [
       P99.AvailableClashAPIMethods.GET_PROXIES,
@@ -312,11 +302,7 @@ export const P99ShellMethods = {
       P99.AvailableClashAPIMethods.CLOSE_ALL_CONNECTIONS,
     ]),
   enable: async () =>
-    callBaseMethod<unknown>(
-      P99.AvailableMethods.ENABLE,
-      [],
-      '/etc/init.d/p99',
-    ),
+    callBaseMethod<unknown>(P99.AvailableMethods.ENABLE, [], '/etc/init.d/p99'),
   disable: async () =>
     callBaseMethod<unknown>(
       P99.AvailableMethods.DISABLE,
@@ -336,9 +322,7 @@ export const P99ShellMethods = {
   checkSingBoxLogs: async () =>
     callBaseMethod<unknown>(P99.AvailableMethods.CHECK_SING_BOX_LOGS),
   getSystemInfo: async () =>
-    callBaseMethod<P99.GetSystemInfo>(
-      P99.AvailableMethods.GET_SYSTEM_INFO,
-    ),
+    callBaseMethod<P99.GetSystemInfo>(P99.AvailableMethods.GET_SYSTEM_INFO),
   getServerCapabilities: async () =>
     callBaseMethod<P99.GetServerCapabilities>(
       P99.AvailableMethods.GET_SERVER_CAPABILITIES,

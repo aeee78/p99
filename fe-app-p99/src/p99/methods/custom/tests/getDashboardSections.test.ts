@@ -1244,4 +1244,89 @@ describe('getDashboardSections', () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(mocks.getClashApiProxies).toHaveBeenCalledTimes(1);
   });
+
+  it('hydrates config subscription sections linked via section.subscription', async () => {
+    mocks.getConfigSections.mockResolvedValue([
+      {
+        '.name': 'sub1',
+        '.type': 'subscription',
+        url: 'https://example.com/api/sub',
+        enabled: '1',
+        label: 'My Subscription',
+      },
+      {
+        '.name': 'rule1',
+        '.type': 'section',
+        enabled: '1',
+        action: 'connection',
+        subscription: ['sub1'],
+      },
+    ]);
+    mocks.getClashApiProxies.mockResolvedValue({
+      success: true,
+      data: {
+        proxies: {
+          'rule1-out': proxy('Selector', {
+            name: 'rule1-out',
+            all: ['node-1'],
+            now: 'node-1',
+          }),
+          'node-1': proxy('VLESS', {
+            name: 'node-1',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 45 }],
+          }),
+        },
+      },
+    });
+
+    const result = await getDashboardSections();
+    expect(result.success).toBe(true);
+    expect(result.data.length).toBe(1);
+    const [section] = result.data;
+    expect(section.subscriptionSourceCount).toBe(1);
+    expect(section.proxyConfigType).toBe('subscription');
+  });
+
+  it('sets pinned: true on URLTest and inherits selected child latency when group delay is 0', async () => {
+    mocks.getConfigSections.mockResolvedValue([
+      proxySection({
+        urltests: ['urltest'],
+        urltest_settings: urlTestSettings('urltest', {
+          display_name: 'Fastest',
+          pin_dashboard: '1',
+        }),
+      }),
+    ]);
+    mocks.getClashApiProxies.mockResolvedValue({
+      success: true,
+      data: {
+        proxies: {
+          'main-out': proxy('Selector', {
+            name: 'main-out',
+            all: ['main-urltest-out', 'main-1-out'],
+            now: 'main-urltest-out',
+          }),
+          'main-urltest-out': proxy('URLTest', {
+            name: 'main-urltest-out',
+            history: [],
+            now: 'main-1-out',
+            all: ['main-1-out'],
+          }),
+          'main-1-out': proxy('VLESS', {
+            name: 'Fast node',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 42 }],
+          }),
+        },
+      },
+    });
+
+    const result = await getDashboardSections();
+    expect(result.success).toBe(true);
+    const [section] = result.data;
+    const urltestOutbound = section.outbounds.find(
+      (o) => o.code === 'main-urltest-out',
+    );
+    expect(urltestOutbound?.pinned).toBe(true);
+    expect(urltestOutbound?.latency).toBe(42);
+  });
 });

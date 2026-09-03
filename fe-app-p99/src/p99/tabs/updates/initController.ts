@@ -818,11 +818,7 @@ function getComponentCards(): ComponentCard[] {
     Boolean(systemInfo.sing_box_extended) && !systemInfo.sing_box_compressed;
   const singBoxTiny = Boolean(systemInfo.sing_box_tiny);
 
-  const p99Actions = getInstalledUpdateActions(
-    'p99',
-    'p99Check',
-    'p99Install',
-  );
+  const p99Actions = getInstalledUpdateActions('p99', 'p99Check', 'p99Install');
   const singBoxActions = getInstalledUpdateActions(
     'sing_box',
     'singBoxCheck',

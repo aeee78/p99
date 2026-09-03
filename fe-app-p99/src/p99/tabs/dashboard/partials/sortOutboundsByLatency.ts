@@ -45,10 +45,34 @@ export function setSectionSortByLatency(
   }
 }
 
+export function isPinnedOutbound(outbound: P99.Outbound): boolean {
+  if (typeof outbound.pinned === 'boolean') {
+    return outbound.pinned;
+  }
+  const type = outbound.type?.toLowerCase();
+  return (
+    Boolean(outbound.urlTestInfo) ||
+    Boolean(outbound.priorityInfo) ||
+    type === 'urltest' ||
+    type === 'priority'
+  );
+}
+
 export function sortOutboundsByLatency(
   outbounds: P99.Outbound[],
 ): P99.Outbound[] {
-  return [...outbounds].sort((a, b) => {
+  const pinned: P99.Outbound[] = [];
+  const regular: P99.Outbound[] = [];
+
+  for (const outbound of outbounds) {
+    if (isPinnedOutbound(outbound)) {
+      pinned.push(outbound);
+    } else {
+      regular.push(outbound);
+    }
+  }
+
+  const sortedRegular = [...regular].sort((a, b) => {
     const latA =
       typeof a.latency === 'number' && a.latency > 0 ? a.latency : Infinity;
     const latB =
@@ -59,4 +83,6 @@ export function sortOutboundsByLatency(
     }
     return latA - latB;
   });
+
+  return [...pinned, ...sortedRegular];
 }

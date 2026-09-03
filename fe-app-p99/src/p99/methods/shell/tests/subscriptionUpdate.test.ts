@@ -65,8 +65,7 @@ describe('P99ShellMethods.subscriptionUpdate', () => {
       },
     });
 
-    const responsePromise =
-      P99ShellMethods.waitSubscriptionUpdateJob('job-1');
+    const responsePromise = P99ShellMethods.waitSubscriptionUpdateJob('job-1');
 
     await vi.advanceTimersByTimeAsync(1500);
 
@@ -133,8 +132,7 @@ describe('P99ShellMethods.subscriptionUpdate', () => {
       });
     });
 
-    const responsePromise =
-      P99ShellMethods.waitSubscriptionUpdateJob('job-1');
+    const responsePromise = P99ShellMethods.waitSubscriptionUpdateJob('job-1');
 
     await vi.advanceTimersByTimeAsync(1500);
 
@@ -188,8 +186,7 @@ describe('P99ShellMethods.subscriptionUpdate', () => {
       });
     });
 
-    const responsePromise =
-      P99ShellMethods.waitSubscriptionUpdateJob('job-1');
+    const responsePromise = P99ShellMethods.waitSubscriptionUpdateJob('job-1');
 
     await vi.advanceTimersByTimeAsync(10 * 60 * 1000 + 3000);
 
@@ -238,8 +235,7 @@ describe('P99ShellMethods.subscriptionUpdate', () => {
       });
     });
 
-    const responsePromise =
-      P99ShellMethods.waitSubscriptionUpdateJob('job-1');
+    const responsePromise = P99ShellMethods.waitSubscriptionUpdateJob('job-1');
 
     await vi.advanceTimersByTimeAsync(3000);
 

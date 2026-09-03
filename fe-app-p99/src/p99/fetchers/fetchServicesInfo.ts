@@ -53,15 +53,9 @@ export async function fetchServicesInfo() {
       failed: !p99.success || !singbox.success,
       data: {
         singbox: singbox.success ? singbox.data.running : previousData.singbox,
-        p99Running: p99.success
-          ? p99.data.running
-          : previousData.p99Running,
-        p99Enabled: p99.success
-          ? p99.data.enabled
-          : previousData.p99Enabled,
-        p99Status: p99.success
-          ? p99.data.status
-          : previousData.p99Status,
+        p99Running: p99.success ? p99.data.running : previousData.p99Running,
+        p99Enabled: p99.success ? p99.data.enabled : previousData.p99Enabled,
+        p99Status: p99.success ? p99.data.status : previousData.p99Status,
       },
     },
   });

@@ -212,11 +212,7 @@ const EntryPoint = {
         main.P99ShellMethods.checkZapret2Runtime(),
         main.P99ShellMethods.checkByedpiRuntime(),
       ]).then(
-        ([
-          zapretRuntimeResult,
-          zapret2RuntimeResult,
-          byedpiRuntimeResult,
-        ]) => {
+        ([zapretRuntimeResult, zapret2RuntimeResult, byedpiRuntimeResult]) => {
           const zapretRuntime =
             zapretRuntimeResult.status === "fulfilled"
               ? zapretRuntimeResult.value
@@ -289,11 +285,7 @@ const EntryPoint = {
 
       return uiCapabilitiesPromise;
     };
-    const p99Map = new form.Map(
-      UCI_PACKAGE,
-      _("P99 X Settings"),
-      null,
-    );
+    const p99Map = new form.Map(UCI_PACKAGE, _("P99 X Settings"), null);
     p99Map.tabbed = true;
     const originalHandleSaveApply = p99Map.handleSaveApply;
     p99Map.handleSaveApply = function (ev, mode) {
@@ -357,7 +349,9 @@ const EntryPoint = {
       form.GridSection,
       "subscription",
       _("Subscriptions"),
-      _("Manage remote subscriptions. Configure subscriptions once and select them in any section."),
+      _(
+        "Manage remote subscriptions. Configure subscriptions once and select them in any section.",
+      ),
     );
     configureGridSection(
       subscriptionsSection,

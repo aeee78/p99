@@ -2,6 +2,7 @@
 "require form";
 "require uci";
 "require baseclass";
+"require ui";
 "require view.p99.main as main";
 
 const UCI_PACKAGE = main.P99_UCI_PACKAGE;
@@ -33,10 +34,76 @@ function configureSubscriptionsSection(sectionRef) {
   sectionRef.addremove = true;
   sectionRef.sortable = true;
   sectionRef.rowcolors = true;
-  sectionRef.nodescriptions = true;
+
+  sectionRef.description = E(
+    "div",
+    {
+      style:
+        "display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;",
+    },
+    [
+      E(
+        "span",
+        {},
+        _(
+          "Manage remote subscriptions. Configure subscriptions once and select them in any section.",
+        ),
+      ),
+      E(
+        "button",
+        {
+          type: "button",
+          class: "btn cbi-button-apply",
+          click: function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            ui.showIndicator(
+              "p99-updating-all",
+              _("Updating all subscriptions..."),
+            );
+            return main.P99ShellMethods.subscriptionUpdateStart()
+              .then(function (res) {
+                if (!res || !res.success) {
+                  throw new Error((res && res.error) || _("Update failed"));
+                }
+                return main.P99ShellMethods.waitSubscriptionUpdateJob(
+                  res.data.job_id,
+                );
+              })
+              .then(function (jobRes) {
+                ui.hideIndicator("p99-updating-all");
+                if (jobRes && jobRes.data && jobRes.data.failed) {
+                  ui.addNotification(
+                    null,
+                    E("p", _("Subscription update failed")),
+                    "error",
+                  );
+                } else {
+                  ui.addNotification(
+                    null,
+                    E("p", _("All subscriptions updated successfully")),
+                    "info",
+                  );
+                }
+              })
+              .catch(function (err) {
+                ui.hideIndicator("p99-updating-all");
+                ui.addNotification(
+                  null,
+                  E("p", err.message || _("Update failed")),
+                  "error",
+                );
+              });
+          },
+        },
+        _("Update all subscriptions"),
+      ),
+    ],
+  );
 
   sectionRef.modaltitle = function (section_id) {
-    const label = uci.get(UCI_PACKAGE, section_id, "label") ||
+    const label =
+      uci.get(UCI_PACKAGE, section_id, "label") ||
       getUrlHostname(uci.get(UCI_PACKAGE, section_id, "url"));
     return section_id
       ? `${_("Subscription")}: ${label || section_id}`
@@ -60,7 +127,9 @@ function createSubscriptionsContent(section) {
     form.Value,
     "label",
     _("Name"),
-    _("Custom name for this subscription. If empty, the URL hostname will be used."),
+    _(
+      "Custom name for this subscription. If empty, the URL hostname will be used.",
+    ),
   );
   o.placeholder = _("e.g. European Fast");
   o.rmempty = true;
@@ -88,6 +157,54 @@ function createSubscriptionsContent(section) {
   o.default = "1";
   o.rmempty = false;
 
+  // 3b. Action: Update now
+  o = section.option(form.Button, "_update_btn", _("Sync"));
+  o.inputtitle = _("Update now");
+  o.inputstyle = "apply";
+  o.modalonly = false;
+  o.onclick = function (ev, section_id) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const btn = ev.target;
+    if (btn) btn.setAttribute("disabled", "true");
+
+    ui.showIndicator("p99-updating-sub", _("Updating subscription..."));
+
+    return main.P99ShellMethods.subscriptionUpdateStart(section_id)
+      .then(function (res) {
+        if (!res || !res.success) {
+          throw new Error((res && res.error) || _("Update failed"));
+        }
+        return main.P99ShellMethods.waitSubscriptionUpdateJob(res.data.job_id);
+      })
+      .then(function (jobRes) {
+        ui.hideIndicator("p99-updating-sub");
+        if (btn) btn.removeAttribute("disabled");
+        if (jobRes && jobRes.data && jobRes.data.failed) {
+          ui.addNotification(
+            null,
+            E("p", _("Subscription update failed")),
+            "error",
+          );
+        } else {
+          ui.addNotification(
+            null,
+            E("p", _("Subscription updated successfully")),
+            "info",
+          );
+        }
+      })
+      .catch(function (err) {
+        ui.hideIndicator("p99-updating-sub");
+        if (btn) btn.removeAttribute("disabled");
+        ui.addNotification(
+          null,
+          E("p", err.message || _("Subscription update failed")),
+          "error",
+        );
+      });
+  };
+
   // 4. Auto Update
   o = section.option(
     form.Flag,
@@ -109,7 +226,10 @@ function createSubscriptionsContent(section) {
   o.default = "4h";
   o.depends("subscription_update_enabled", "1");
   o.validate = function (section_id, value) {
-    const enabled = this.section.formvalue(section_id, "subscription_update_enabled");
+    const enabled = this.section.formvalue(
+      section_id,
+      "subscription_update_enabled",
+    );
     if (enabled === "0") return true;
     const trimmed = `${value || ""}`.trim();
     if (!trimmed) return _("Update interval is required");
@@ -135,7 +255,9 @@ function createSubscriptionsContent(section) {
     form.Value,
     "node_prefix",
     _("Add prefix to nodes"),
-    _("Automatically add text to the name of each server from this subscription for convenient filtering."),
+    _(
+      "Automatically add text to the name of each server from this subscription for convenient filtering.",
+    ),
   );
   o.modalonly = true;
   o.placeholder = _("e.g. MyVPN");
@@ -157,7 +279,9 @@ function createSubscriptionsContent(section) {
     form.Value,
     "user_agent",
     _("User-Agent"),
-    _("Leave empty for automatic detection or specify e.g. sing-box, clash.meta, v2ray"),
+    _(
+      "Leave empty for automatic detection or specify e.g. sing-box, clash.meta, v2ray",
+    ),
   );
   o.modalonly = true;
   o.placeholder = "sing-box";

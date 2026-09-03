@@ -111,6 +111,7 @@ export namespace P99 {
     selected: boolean;
     country?: string;
     runtimeAvailable?: boolean;
+    pinned?: boolean;
     urlTestInfo?: UrlTestInfo;
     priorityInfo?: PriorityInfo;
   }
@@ -238,8 +239,10 @@ export namespace P99 {
       | 'section_interface'
       | 'urltest'
       | 'priority_group'
-      | 'priority_level';
+      | 'priority_level'
+      | 'subscription';
     label?: string;
+    subscription?: string | string[];
     enabled?: string;
     action?: RuleAction;
     connection_type?: LegacyConnectionType;

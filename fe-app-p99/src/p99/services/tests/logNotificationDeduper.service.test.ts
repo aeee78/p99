@@ -51,9 +51,7 @@ describe('LogNotificationDeduper', () => {
       ),
     ).toBe(false);
     expect(
-      getP99LogNotification(
-        'p99: [info] [component-update] zapret2 v1.2.3',
-      ),
+      getP99LogNotification('p99: [info] [component-update] zapret2 v1.2.3'),
     ).toEqual({
       kind: 'component-update',
       line: 'p99: [info] [component-update] zapret2 v1.2.3',
@@ -70,16 +68,14 @@ describe('LogNotificationDeduper', () => {
     expect(first.shouldNotify('p99: [error] failed')).toBe(true);
     expect(first.shouldNotify('p99: [error] failed')).toBe(false);
     expect(first.shouldNotify('p99: [error] another failure')).toBe(true);
-    expect(
-      first.shouldNotify('p99: [info] [component-update] p99 1.2.3'),
-    ).toBe(true);
+    expect(first.shouldNotify('p99: [info] [component-update] p99 1.2.3')).toBe(
+      true,
+    );
 
     const afterReload = new LogNotificationDeduper(storage);
 
     expect(afterReload.shouldNotify('p99: [error] failed')).toBe(false);
-    expect(afterReload.shouldNotify('p99: [fatal] fatal failure')).toBe(
-      true,
-    );
+    expect(afterReload.shouldNotify('p99: [fatal] fatal failure')).toBe(true);
   });
 
   it('keeps the full log line as the replay key', () => {

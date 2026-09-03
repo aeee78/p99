@@ -16,10 +16,7 @@ import {
   subscribeRuntimeUiState,
 } from '../runtimeUiState.service';
 
-function createUiState(
-  status = 'running & enabled',
-  running = 1,
-): P99.UiState {
+function createUiState(status = 'running & enabled', running = 1): P99.UiState {
   return {
     service: {
       p99: {

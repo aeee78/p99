@@ -50,6 +50,37 @@ describe('sortOutboundsByLatency', () => {
     const sorted = sortOutboundsByLatency(list);
     expect(sorted.map((item) => item.code)).toEqual(['a', 'b', 'c']);
   });
+
+  it('keeps URLTest, Priority, and pinned groups at the top even with higher or zero latency', () => {
+    const list: P99.Outbound[] = [
+      createOutbound('node-30ms', 30),
+      {
+        ...createOutbound('fastest-group', 0),
+        type: 'URLTest',
+        urlTestInfo: {
+          code: 'fastest-group',
+          displayName: 'Fastest',
+          outbounds: [],
+        },
+      },
+      createOutbound('node-10ms', 10),
+      {
+        ...createOutbound('priority-group', 150),
+        type: 'Priority',
+        pinned: true,
+      },
+      createOutbound('node-50ms', 50),
+    ];
+
+    const sorted = sortOutboundsByLatency(list);
+    expect(sorted.map((item) => item.code)).toEqual([
+      'fastest-group',
+      'priority-group',
+      'node-10ms',
+      'node-30ms',
+      'node-50ms',
+    ]);
+  });
 });
 
 describe('getSectionSortByLatency and setSectionSortByLatency', () => {

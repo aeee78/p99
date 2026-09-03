@@ -2062,7 +2062,10 @@ function defaultSubscriptionUrlSettings() {
 
 function flintnetSubscriptionUrl(value) {
   try {
-    return new URL(`${value || ""}`.trim()).hostname.toLowerCase() === "sub.flintnet.pro";
+    return (
+      new URL(`${value || ""}`.trim()).hostname.toLowerCase() ===
+      "sub.flintnet.pro"
+    );
   } catch (_error) {
     return false;
   }
@@ -2345,7 +2348,6 @@ function addSubscriptionUrlItemOptions(itemSection, options = {}) {
   );
   o.default = "1";
   o.rmempty = false;
-
 }
 
 function addInterfaceItemOptions(itemSection) {
@@ -4828,8 +4830,7 @@ function attachNfqwsRemoteValidation(option, section_id, textarea) {
       return;
     }
 
-    const requestId =
-      (textarea.__p99NfqwsRemoteValidationRequestId || 0) + 1;
+    const requestId = (textarea.__p99NfqwsRemoteValidationRequestId || 0) + 1;
     textarea.__p99NfqwsRemoteValidationRequestId = requestId;
 
     validateNfqwsStrategyRemotely(value).then(() => {
@@ -4876,8 +4877,7 @@ function attachNfqws2RemoteValidation(option, section_id, textarea) {
       return;
     }
 
-    const requestId =
-      (textarea.__p99Nfqws2RemoteValidationRequestId || 0) + 1;
+    const requestId = (textarea.__p99Nfqws2RemoteValidationRequestId || 0) + 1;
     textarea.__p99Nfqws2RemoteValidationRequestId = requestId;
 
     validateNfqws2StrategyRemotely(value).then(() => {
@@ -7266,19 +7266,76 @@ function createSectionContent(section) {
       delete this.pendingChildSettings[section_id];
     }
   };
+  function hasSelectedSubscriptions(option, section_id) {
+    const live = currentLiveDynamicListValues(section_id, "subscription");
+    if (live != null) {
+      return live.length > 0;
+    }
+    const saved = optionMapValue(option, section_id, "subscription");
+    return Boolean(
+      saved &&
+        (Array.isArray(saved)
+          ? saved.filter((v) => `${v || ""}`.trim() !== "").length > 0
+          : `${saved}`.trim() !== ""),
+    );
+  }
+
+  function hasDirectSubscriptionUrls(option, section_id) {
+    const live = currentLiveDynamicListValues(section_id, "subscription_url");
+    if (live != null) {
+      return live.length > 0;
+    }
+    const childIds = getChildItemIds(section_id, "subscription_url");
+    if (childIds && childIds.length > 0) {
+      return true;
+    }
+    const saved = optionMapValue(option, section_id, "subscription_url");
+    return Boolean(
+      saved &&
+        (Array.isArray(saved)
+          ? saved.filter((v) => `${v || ""}`.trim() !== "").length > 0
+          : `${saved}`.trim() !== ""),
+    );
+  }
+
+  function triggerPeerValidation(section_id, optionName) {
+    if (typeof document === "undefined") {
+      return;
+    }
+    const widget = document.getElementById(
+      `cbid.${UCI_PACKAGE}.${section_id}.${optionName}`,
+    );
+    if (!widget) {
+      return;
+    }
+    widget.querySelectorAll("input, select").forEach((el) => {
+      el.dispatchEvent(new Event("blur"));
+    });
+  }
+
   o.renderListItemLabel = function (section_id, itemId) {
     return childItemInputValue(section_id, itemId, "subscription_url", "url");
   };
-  o.validate = validateSubscriptionUrlEntry;
   o.validate = function (section_id, value) {
-    const globalSubs = optionMapValue(this, section_id, "subscription");
-    if (globalSubs && (Array.isArray(globalSubs) ? globalSubs.length > 0 : `${globalSubs}`.trim() !== "")) {
-      return _("Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first.");
+    const rawValue = `${value || ""}`.trim();
+    const normalizedValue = `${
+      childItemInputValue(section_id, value, "subscription_url", "url") || ""
+    }`.trim();
+
+    if (!rawValue && !normalizedValue) {
+      return true;
     }
-    return validateSubscriptionUrlEntry(
-      section_id,
-      childItemInputValue(section_id, value, "subscription_url", "url"),
-    );
+
+    if (hasSelectedSubscriptions(this, section_id)) {
+      return _(
+        "Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first.",
+      );
+    }
+
+    return validateSubscriptionUrlEntry(section_id, normalizedValue);
+  };
+  o.onListChange = function (section_id) {
+    triggerPeerValidation(section_id, "subscription");
   };
 
   o = section.taboption(
@@ -7297,12 +7354,23 @@ function createSectionContent(section) {
   };
   o.onchange = function (_event, section_id) {
     refreshDashboardFilterChoiceWidgets(section_id);
+    triggerPeerValidation(section_id, "subscription_url");
   };
   o.validate = function (section_id, value) {
-    const directUrls = optionMapValue(this, section_id, "subscription_url");
-    if (directUrls && (Array.isArray(directUrls) ? directUrls.length > 0 : `${directUrls}`.trim() !== "")) {
-      return _("Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first.");
+    const rawValues = Array.isArray(value)
+      ? value.map((v) => `${v || ""}`.trim()).filter(Boolean)
+      : [`${value || ""}`.trim()].filter(Boolean);
+
+    if (rawValues.length === 0) {
+      return true;
     }
+
+    if (hasDirectSubscriptionUrls(this, section_id)) {
+      return _(
+        "Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first.",
+      );
+    }
+
     return true;
   };
   outboundNameSourceOptions.set("subscription", o);

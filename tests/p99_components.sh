@@ -11,11 +11,10 @@ fail() {
   exit 1
 }
 
-grep -Fq '/p99/sing-box-extended/latest.json' "$ACTION_UC" ||
-  fail "sing-box Extended metadata must come from the P99 mirror"
-if grep -A12 'function resolve_sing_box_extended_release' "$ACTION_UC" |
-  grep -Fq 'fetch_github'; then
-  fail "sing-box Extended resolver must not fall back to GitHub"
+grep -Fq 'fetch_github_release_json("shtorm-7", "sing-box-extended")' "$ACTION_UC" ||
+  fail "sing-box Extended metadata must come from shtorm-7/sing-box-extended"
+if grep -Fq '/p99/sing-box-extended/latest.json' "$ACTION_UC"; then
+  fail "sing-box Extended metadata must not come from the mirror"
 fi
 
 grep -Fq "text: 'Tiny'" "$UPDATES_TS" || fail "Tiny switch is missing"

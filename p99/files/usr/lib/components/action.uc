@@ -1238,16 +1238,25 @@ function set_sing_box_extended_release_from_json(release_json, compressed) {
 
     return {
         tag,
-        release_url: p99_release_url(trim(helper_output_input(release_json, "object-get-default", [ "html_url", "" ]))),
-        asset_url: p99_release_url(asset_url),
+        release_url: trim(helper_output_input(release_json, "object-get-default", [ "html_url", "" ])),
+        asset_url,
         asset_name: path_basename(asset_url)
     };
 }
 
 function resolve_sing_box_extended_release(compressed) {
-    if (P99_MIRROR_BASE_URL == "")
+    let release_json = fetch_github_release_json("shtorm-7", "sing-box-extended");
+    let resolved = set_sing_box_extended_release_from_json(release_json, compressed);
+    if (resolved != null)
+        return resolved;
+
+    let releases_json = fetch_github_releases_json("shtorm-7", "sing-box-extended", "30");
+    if (releases_json == "")
         return null;
-    let release_json = http_get(P99_MIRROR_BASE_URL + "/p99/sing-box-extended/latest.json");
+    let tag = trim(helper_output_input(releases_json, "sing-box-extended-release-tag", []));
+    if (tag == "")
+        return null;
+    release_json = helper_output_input(releases_json, "release-by-tag", [ tag ]);
     return set_sing_box_extended_release_from_json(release_json, compressed);
 }
 

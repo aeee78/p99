@@ -1554,7 +1554,9 @@ export async function getDashboardSections(): Promise<IGetDashboardSectionsRespo
             sectionName,
             displayName,
             action: sectionAction,
-            latencyTestTimeout: '10000',
+            latencyTestTimeout:
+              getSettingsSection(configSections)?.latency_test_timeout ||
+              '2000',
             outbounds: [
               {
                 code: outbound?.code || sectionName,

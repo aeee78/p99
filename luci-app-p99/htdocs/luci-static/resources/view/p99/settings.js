@@ -556,6 +556,30 @@ function createSettingsContent(section, capabilities) {
   };
 
   o = section.option(
+    form.Value,
+    "latency_test_timeout",
+    _("Latency test timeout (ms)"),
+    _(
+      "Maximum wait time in milliseconds for server ping and latency tests. Default is 2000 ms.",
+    ),
+  );
+  o.datatype = "uinteger";
+  o.placeholder = "2000";
+  o.default = String(main.DEFAULT_LATENCY_TEST_TIMEOUT || "2000");
+  o.rmempty = false;
+  o.validate = function (_section_id, value) {
+    const normalized = value ? `${value}`.trim() : "";
+    if (!/^[0-9]+$/.test(normalized)) {
+      return _("Enter a number between 100 and 60000 ms");
+    }
+    const val = parseInt(normalized, 10);
+    if (val < 100 || val > 60000) {
+      return _("Enter a number between 100 and 60000 ms");
+    }
+    return true;
+  };
+
+  o = section.option(
     form.Flag,
     "download_lists_via_proxy",
     _("Download lists through a section"),

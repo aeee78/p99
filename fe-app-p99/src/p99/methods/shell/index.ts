@@ -1,6 +1,7 @@
 import { callBaseMethod } from './callBaseMethod';
 import { ClashAPI, P99 } from '../../types';
 import { executeShellCommand } from '../../../helpers';
+import { DEFAULT_LATENCY_TEST_TIMEOUT } from '../../../constants';
 import { isTransientRpcError } from '../../helpers/isTransientRpcError';
 
 const SUBSCRIPTION_UPDATE_RPC_TIMEOUT_MS = 15000;
@@ -267,24 +268,33 @@ export const P99ShellMethods = {
     callBaseMethod<unknown>(P99.AvailableMethods.CLASH_API, [
       P99.AvailableClashAPIMethods.GET_CONNECTIONS,
     ]),
-  getClashApiProxyLatency: async (tag: string, timeout = '5000') =>
+  getClashApiProxyLatency: async (
+    tag: string,
+    timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT),
+  ) =>
     callBaseMethod<P99.GetClashApiProxyLatency>(
       P99.AvailableMethods.CLASH_API,
       [P99.AvailableClashAPIMethods.GET_PROXY_LATENCY, tag, timeout],
     ),
-  getClashApiProxyLatencies: async (tags: string[]) =>
+  getClashApiProxyLatencies: async (
+    tags: string[],
+    timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT),
+  ) =>
     callBaseMethod<P99.GetClashApiProxyLatencies>(
       P99.AvailableMethods.CLASH_API,
       [
         P99.AvailableClashAPIMethods.GET_PROXY_LATENCIES,
         JSON.stringify(tags),
-        '5000',
+        timeout,
       ],
     ),
-  getClashApiGroupLatency: async (tag: string) =>
+  getClashApiGroupLatency: async (
+    tag: string,
+    timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT),
+  ) =>
     callBaseMethod<P99.GetClashApiGroupLatency>(
       P99.AvailableMethods.CLASH_API,
-      [P99.AvailableClashAPIMethods.GET_GROUP_LATENCY, tag, '10000'],
+      [P99.AvailableClashAPIMethods.GET_GROUP_LATENCY, tag, timeout],
     ),
   setClashApiGroupProxy: async (group: string, proxy: string) =>
     callBaseMethod<unknown>(P99.AvailableMethods.CLASH_API, [

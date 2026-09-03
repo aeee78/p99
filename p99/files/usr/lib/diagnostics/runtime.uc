@@ -41,6 +41,7 @@ const SING_BOX_BIN_PATH = getenv("P99_DIAGNOSTICS_SING_BOX_BIN_PATH") || "/usr/b
 const CLOUDFLARE_OCTETS = getenv("CLOUDFLARE_OCTETS") || constants.CLOUDFLARE_OCTETS || "8.47 162.159 188.114";
 const ZAPRET_LEGACY_DEFAULT_NFQWS_OPT = getenv("ZAPRET_LEGACY_DEFAULT_NFQWS_OPT") || constants.ZAPRET_LEGACY_DEFAULT_NFQWS_OPT || "";
 const DEFAULT_LATENCY_TEST_URL = getenv("DEFAULT_LATENCY_TEST_URL") || "https://www.gstatic.com/generate_204";
+const DEFAULT_LATENCY_TEST_TIMEOUT = getenv("DEFAULT_LATENCY_TEST_TIMEOUT") || "2000";
 const RUNTIME_STABLE_MIN_AGE = getenv("P99_RUNTIME_STABLE_MIN_AGE") || "2";
 const AUTOMATIC_LATENCY_TEST_LOCK_DIR = getenv("P99_AUTOMATIC_LATENCY_TEST_LOCK_DIR") || RUNTIME_STATE_DIR + "/automatic-latency-test.lock";
 
@@ -1663,9 +1664,15 @@ function latency_test_url() {
     return value == "" ? DEFAULT_LATENCY_TEST_URL : value;
 }
 
+function latency_test_timeout() {
+    let value = option(settings(), "latency_test_timeout", DEFAULT_LATENCY_TEST_TIMEOUT);
+    return value == "" ? DEFAULT_LATENCY_TEST_TIMEOUT : as_string(value);
+}
+
 function clash_api(action, arg1, arg2, arg3) {
     let base_url = clash_api_url();
     let test_url = latency_test_url();
+    let default_timeout = latency_test_timeout();
     let auth = clash_auth_args();
 
     if (action == "get_proxies") {
@@ -1693,7 +1700,7 @@ function clash_api(action, arg1, arg2, arg3) {
         push(args, "--data-urlencode");
         push(args, "url=" + url);
         push(args, "--data-urlencode");
-        push(args, "timeout=" + as_string(arg2 || "2000"));
+        push(args, "timeout=" + as_string(arg2 || default_timeout));
         return clash_json_output(args);
     }
 
@@ -1732,7 +1739,7 @@ function clash_api(action, arg1, arg2, arg3) {
             push(args, "--data-urlencode");
             push(args, "url=" + test_url);
             push(args, "--data-urlencode");
-            push(args, "timeout=" + as_string(arg2 || "5000"));
+            push(args, "timeout=" + as_string(arg2 || default_timeout));
             if (status_capture([ "stdin-json" ], command_output(command_from_args(args))).status != 0)
                 failed++;
             count++;
@@ -1753,7 +1760,7 @@ function clash_api(action, arg1, arg2, arg3) {
         push(args, "--data-urlencode");
         push(args, "url=" + test_url);
         push(args, "--data-urlencode");
-        push(args, "timeout=" + as_string(arg2 || "5000"));
+        push(args, "timeout=" + as_string(arg2 || default_timeout));
         return clash_json_output(args);
     }
 
@@ -1819,7 +1826,7 @@ function automatic_latency_test() {
     }
 
     command_success_from_args([ "logger", "-t", "p99", "[info] Starting automatic latency test for " + length(proxy_tags) + " proxy outbounds" ]);
-    let status = clash_api("get_proxy_latencies", sprintf("%J", proxy_tags), "5000", "");
+    let status = clash_api("get_proxy_latencies", sprintf("%J", proxy_tags), latency_test_timeout(), "");
     module_success(SERVICE_STATE_UC, [ "release-runtime-dir-lock", AUTOMATIC_LATENCY_TEST_LOCK_DIR ]);
     command_success_from_args([ "logger", "-t", "p99", status == 0 ?
         "[info] Automatic latency test completed" :

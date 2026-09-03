@@ -15,6 +15,7 @@ let connections = require("config.connections");
 
 const CONFIG_NAME = getenv("P99_CONFIG_NAME") || "p99";
 const DEFAULT_LATENCY_TEST_URL = "https://www.gstatic.com/generate_204";
+const DEFAULT_LATENCY_TEST_TIMEOUT = "2000";
 const TAILSCALE_FWMARK_MASK = 0x00ff0000;
 
 function as_string(value) {
@@ -1103,6 +1104,17 @@ function validate_urltest_tolerance_value(value, section, urltest_id) {
     fail_validation("Invalid URLTest tolerance '" + value + "' in rule '" + section + "', URLTest '" + urltest_id + "'. Use a number from 0 to 10000. Aborted.");
 }
 
+function validate_latency_test_timeout_value(value) {
+    value = trim(as_string(value));
+    if (match(value, /^[0-9]+$/) != null) {
+        let parsed = int(value, 10);
+        if (parsed >= 100 && parsed <= 60000)
+            return;
+    }
+
+    fail_validation("Invalid latency test timeout '" + value + "'. Use a number from 100 to 60000 ms. Aborted.");
+}
+
 function validate_priority_level_order(value, section, group_id, level_id) {
     value = trim(as_string(value));
     if (match(value, /^[0-9]+$/) != null)
@@ -1709,6 +1721,7 @@ function validate_runtime_config(context) {
     validate_dns_settings(settings, sections, context);
     validate_list_update_settings(settings);
     validate_http_url_option(option(settings, "latency_test_url", DEFAULT_LATENCY_TEST_URL) || DEFAULT_LATENCY_TEST_URL, "settings.latency_test_url");
+    validate_latency_test_timeout_value(option(settings, "latency_test_timeout", DEFAULT_LATENCY_TEST_TIMEOUT) || DEFAULT_LATENCY_TEST_TIMEOUT);
 
     if (download_via_proxy_enabled(settings, "lists")) {
         validate_download_section_rows(

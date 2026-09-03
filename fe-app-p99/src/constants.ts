@@ -11,6 +11,7 @@ export const LATENCY_TEST_URL_OPTIONS = [
   'https://captive.apple.com',
   'https://connectivity-check.ubuntu.com',
 ];
+export const DEFAULT_LATENCY_TEST_TIMEOUT = 2000;
 
 export const DOMAIN_LIST_OPTIONS = {
   russia_inside: 'Russia inside',

@@ -168,6 +168,8 @@ CLI-утилита `/usr/bin/p99` написана на ucode и служит е
 - `source_network_interfaces`: интерфейсы-источники для перехвата (по умолчанию `br-lan`).
 - `enable_badwan_interface_monitoring`: мониторинг падений WAN-интерфейсов.
 - `disable_quic`: блокировка UDP:443 (QUIC/HTTP3) для принудительного использования TCP TLS.
+- `latency_test_url`: адрес для проверки доступности и задержки серверов (по умолчанию `https://www.gstatic.com/generate_204`).
+- `latency_test_timeout`: максимальное время ожидания ответа сервера (таймаут пинга) в миллисекундах (по умолчанию `2000`).
 - `dont_touch_dhcp`: запрет модификации dnsmasq (для нестандартных DNS-конфигураций).
 - `config_path`: путь к сгенерированному файлу sing-box (`/etc/sing-box/config.json`).
 - `cache_path`: путь к базе данных кэша (`/tmp/sing-box/cache.db`).

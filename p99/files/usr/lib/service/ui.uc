@@ -1388,13 +1388,19 @@ function service_action_status(job_id_value) {
     print(as_string(fs.readfile(path)));
 }
 
+function default_latency_test_timeout() {
+    let value = uci_core.get(CONFIG_NAME + ".settings.latency_test_timeout");
+    return value != null && as_string(value) != "" ? as_string(value) : "2000";
+}
+
 function latency_clash_method(latency_type) {
     latency_type = as_string(latency_type);
+    let default_timeout = default_latency_test_timeout();
     if (latency_type == "group")
-        return { method: "get_group_latency", timeout: "10000" };
+        return { method: "get_group_latency", timeout: default_timeout };
     if (latency_type == "proxy_list")
-        return { method: "get_proxy_latencies", timeout: "5000" };
-    return { method: "get_proxy_latency", timeout: "5000" };
+        return { method: "get_proxy_latencies", timeout: default_timeout };
+    return { method: "get_proxy_latency", timeout: default_timeout };
 }
 
 function latency_worker(path, latency_type, tag, timeout) {

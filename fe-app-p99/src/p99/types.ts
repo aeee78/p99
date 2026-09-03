@@ -351,6 +351,8 @@ export namespace P99 {
     hide_urltest_group_outbounds?: '0' | '1';
     hide_detour_outbounds?: '0' | '1';
     yacd_secret_key?: string;
+    latency_test_url?: string;
+    latency_test_timeout?: string;
     config_path?: string;
   }
 

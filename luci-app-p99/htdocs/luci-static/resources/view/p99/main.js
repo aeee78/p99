@@ -962,6 +962,7 @@ var LATENCY_TEST_URL_OPTIONS = [
   "https://captive.apple.com",
   "https://connectivity-check.ubuntu.com"
 ];
+var DEFAULT_LATENCY_TEST_TIMEOUT = 2e3;
 var DOMAIN_LIST_OPTIONS = {
   russia_inside: "Russia inside",
   russia_outside: "Russia outside",
@@ -2740,21 +2741,21 @@ var P99ShellMethods = {
   getClashApiConnections: async () => callBaseMethod(P99.AvailableMethods.CLASH_API, [
     P99.AvailableClashAPIMethods.GET_CONNECTIONS
   ]),
-  getClashApiProxyLatency: async (tag, timeout = "5000") => callBaseMethod(
+  getClashApiProxyLatency: async (tag, timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT)) => callBaseMethod(
     P99.AvailableMethods.CLASH_API,
     [P99.AvailableClashAPIMethods.GET_PROXY_LATENCY, tag, timeout]
   ),
-  getClashApiProxyLatencies: async (tags) => callBaseMethod(
+  getClashApiProxyLatencies: async (tags, timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT)) => callBaseMethod(
     P99.AvailableMethods.CLASH_API,
     [
       P99.AvailableClashAPIMethods.GET_PROXY_LATENCIES,
       JSON.stringify(tags),
-      "5000"
+      timeout
     ]
   ),
-  getClashApiGroupLatency: async (tag) => callBaseMethod(
+  getClashApiGroupLatency: async (tag, timeout = String(DEFAULT_LATENCY_TEST_TIMEOUT)) => callBaseMethod(
     P99.AvailableMethods.CLASH_API,
-    [P99.AvailableClashAPIMethods.GET_GROUP_LATENCY, tag, "10000"]
+    [P99.AvailableClashAPIMethods.GET_GROUP_LATENCY, tag, timeout]
   ),
   setClashApiGroupProxy: async (group, proxy) => callBaseMethod(P99.AvailableMethods.CLASH_API, [
     P99.AvailableClashAPIMethods.SET_GROUP_PROXY,
@@ -4138,7 +4139,7 @@ async function getDashboardSections() {
           sectionName,
           displayName,
           action: sectionAction,
-          latencyTestTimeout: "10000",
+          latencyTestTimeout: getSettingsSection(configSections)?.latency_test_timeout || "2000",
           outbounds: [
             {
               code: outbound?.code || sectionName,
@@ -14599,6 +14600,7 @@ if (typeof structuredClone !== "function")
   globalThis.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
 return baseclass.extend({
   BOOTSTRAP_DNS_SERVER_OPTIONS,
+  DEFAULT_LATENCY_TEST_TIMEOUT,
   DEFAULT_LATENCY_TEST_URL,
   DNS_SERVER_OPTIONS,
   DOMAIN_LIST_OPTIONS,

@@ -992,6 +992,15 @@ msgstr "Проверка задержки не удалась"
 msgid "Latency test URL"
 msgstr "URL для проверки задержки"
 
+msgid "Latency test timeout (ms)"
+msgstr "Таймаут проверки задержки (мс)"
+
+msgid "Maximum wait time in milliseconds for server ping and latency tests. Default is 2000 ms."
+msgstr "Максимальное время ожидания ответа сервера в миллисекундах при проверке задержки. По умолчанию 2000 мс."
+
+msgid "Enter a number between 100 and 60000 ms"
+msgstr "Введите число от 100 до 60000 мс"
+
 msgid "Latest version is installed"
 msgstr "Установлена последняя версия"
 

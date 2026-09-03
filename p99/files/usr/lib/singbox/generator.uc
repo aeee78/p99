@@ -1358,12 +1358,6 @@ function add_urltest_outbound(config, section, urltest_id, urltest_candidate_tag
     let urltest_outbounds = urltest_filtered_outbounds(section, urltest_id, urltest_candidate_tags, state);
     let urltest_tag = urltest_outbound_tag(section_name, urltest_id);
     let display_name = connections.urltest_display_name(section, urltest_id);
-
-    if (length(urltest_outbounds) == 0 && length(urltest_candidate_tags) > 0) {
-        warn("URLTest group '", display_name, "' for rule '", section_name, "' matched 0 outbounds after filtering; falling back to all candidate outbounds to prevent service outage\n");
-        urltest_outbounds = urltest_all_candidate_outbounds(urltest_candidate_tags);
-    }
-
     let urltest_outbound = {
         type: "urltest",
         tag: urltest_tag,

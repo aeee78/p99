@@ -61,10 +61,88 @@ jobs:
             echo 'P99_RELEASE_NOTES_EOF'
           } >> "$GITHUB_OUTPUT"
 
+  backend-checks:
+    name: Backend Runtime Checks
+    runs-on: ubuntu-24.04
+    needs: preparation
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Build ucode
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake git libjson-c-dev pkg-config
+          git clone --depth 1 --branch v0.0.20250529 https://github.com/jow-/ucode.git /tmp/ucode
+          cmake -S /tmp/ucode -B /tmp/ucode/build \
+            -DUBUS_SUPPORT=OFF \
+            -DUCI_SUPPORT=OFF \
+            -DULOOP_SUPPORT=OFF
+          cmake --build /tmp/ucode/build --parallel
+          sudo cmake --install /tmp/ucode/build
+          sudo ldconfig
+          command -v ucode
+          ucode -e 'print("ucode ready\n")'
+
+      - name: Check ucode syntax
+        shell: bash
+        run: |
+          find p99/files/usr/lib -name '*.uc' -print0 | xargs -0 -n1 ucode -c -o /dev/null
+          find p99/files/usr/lib -name '*.uc' -print0 | xargs -0 -n1 ucode -S -c -o /dev/null
+
+      - name: Run backend tests
+        shell: bash
+        run: |
+          for test_file in tests/*.sh; do
+            printf 'Running %s\n' "$test_file"
+            bash "$test_file"
+          done
+
+  frontend-checks:
+    name: Frontend Quality Checks
+    runs-on: ubuntu-24.04
+    needs: preparation
+    defaults:
+      run:
+        working-directory: fe-app-p99
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5.0.0
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        working-directory: fe-app-p99
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v4.3.0
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('fe-app-p99/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests
+        run: yarn test --run
+
   build:
     name: Build P99 release packages
     runs-on: ubuntu-24.04
-    needs: preparation
+    needs: [preparation, backend-checks, frontend-checks]
     steps:
       - uses: actions/checkout@v5.0.0
 

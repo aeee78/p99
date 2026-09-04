@@ -1330,23 +1330,10 @@ function remember_dashboard_group_outbounds(group_outbounds, group_name, outboun
     group_outbounds[group_name] = unique_string_array(combined);
 }
 
-function dashboard_candidate_outbounds(section, selector_tags, group_outbounds, urltest_candidate_tags) {
-    let selected = [ ...selector_tags ];
-    for (let group_name in keys(object_or_empty(group_outbounds)))
-        for (let tag_name in array_or_empty(group_outbounds[group_name]))
-            push(selected, tag_name);
-
-    if (length(selected) == 0 && length(array_or_empty(urltest_candidate_tags)) > 0)
-        selected = [ ...urltest_candidate_tags ];
-
-    return unique_string_array(selected);
-}
-
-function dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds, urltest_candidate_tags) {
-    let candidates = dashboard_candidate_outbounds(section, selector_tags, group_outbounds, urltest_candidate_tags);
+function dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds) {
     return filter_candidate_outbounds(
         connections.dashboard_filter_mode(section),
-        candidates,
+        selector_tags,
         object_or_empty(object_or_empty(state.outboundMetadata).names),
         dashboard_country_metadata(section, state),
         object_or_empty(state.outboundMetadata),
@@ -1567,7 +1554,7 @@ function add_proxy_selector(config, section, selector_tags, urltest_candidate_ta
         push(priority_tags, priority.tag);
     }
 
-    selector_outbounds = dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds, urltest_candidate_tags);
+    selector_outbounds = dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds);
     selector_default = select_default_urltest_outbound(selector_outbounds, state, "");
     if (length(urltest_tags) > 0 || length(priority_tags) > 0) {
         for (let tag in urltest_tags)

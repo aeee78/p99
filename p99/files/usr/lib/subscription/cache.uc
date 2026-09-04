@@ -347,6 +347,12 @@ function path_starts_with(path, prefix) {
     return path == prefix || substr(path, 0, length(prefix) + 1) == prefix + "/";
 }
 
+function starts_with(value, prefix) {
+    value = as_string(value);
+    prefix = as_string(prefix);
+    return substr(value, 0, length(prefix)) == prefix;
+}
+
 function ends_with(value, suffix) {
     value = as_string(value);
     suffix = as_string(suffix);
@@ -443,9 +449,6 @@ auto_user_agents["Happ/3.26.1"] = true;
 if (happ_compat_version != "")
     auto_user_agents["Happ/" + happ_compat_version] = true;
 auto_user_agents["sing-box/default"] = true;
-let current_sb_ver = get_sing_box_version();
-if (current_sb_ver != "")
-    auto_user_agents["sing-box/" + current_sb_ver] = true;
 
 function user_agent_supported(user_agent, default_user_agent) {
     user_agent = as_string(user_agent);
@@ -454,6 +457,8 @@ function user_agent_supported(user_agent, default_user_agent) {
     if (user_agent == "")
         return false;
     if (user_agent == default_user_agent)
+        return true;
+    if (starts_with(user_agent, "sing-box/") || starts_with(user_agent, "Happ/"))
         return true;
 
     return auto_user_agents[user_agent] == true;

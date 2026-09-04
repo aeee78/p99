@@ -1378,4 +1378,55 @@ describe('getDashboardSections', () => {
     expect(node1?.latency).toBe(150);
     expect(node2?.latency).toBe(0);
   });
+
+  it('correctly maps shared pool URLTest group (type Selector) as URLTest on dashboard', async () => {
+    mocks.getConfigSections.mockResolvedValue([
+      proxySection({
+        selector_proxy_links: [
+          'vless://example1#one',
+          'vless://example2#two',
+        ],
+        urltests: ['fastest'],
+        urltest_settings: undefined,
+      }),
+    ]);
+    mocks.getClashApiProxies.mockResolvedValue({
+      success: true,
+      data: {
+        proxies: {
+          'main-out': proxy('Selector', {
+            name: 'main-out',
+            now: 'main-urltest-fastest-out',
+            all: ['main-urltest-fastest-out', 'main-1-out', 'main-2-out'],
+          }),
+          'main-urltest-fastest-out': proxy('Selector', {
+            name: 'main-urltest-fastest-out',
+            now: 'main-1-out',
+            all: ['main-1-out', 'main-2-out'],
+          }),
+          'main-1-out': proxy('VLESS', {
+            name: 'Node 1',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 45 }],
+          }),
+          'main-2-out': proxy('VLESS', {
+            name: 'Node 2',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 120 }],
+          }),
+        },
+      },
+    });
+
+    const result = await getDashboardSections();
+    expect(result.success).toBe(true);
+    const [section] = result.data;
+    const urltestOutbound = section.outbounds.find(
+      (o) => o.code === 'main-urltest-fastest-out',
+    );
+    expect(urltestOutbound).toBeDefined();
+    expect(urltestOutbound?.type).toBe('URLTest');
+    expect(urltestOutbound?.pinned).toBe(true);
+    expect(urltestOutbound?.latency).toBe(45);
+    expect(urltestOutbound?.urlTestInfo).toBeDefined();
+    expect(urltestOutbound?.urlTestInfo?.selectedCode).toBe('main-1-out');
+  });
 });

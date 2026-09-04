@@ -193,6 +193,33 @@ function priority_groups_from_cache() {
     return result;
 }
 
+function shared_pool_groups_from_cache() {
+    let result = [];
+    for (let path in section_cache_files()) {
+        let cache = object_or_empty(read_json_file(path));
+        for (let tag_name, group in object_or_empty(cache.urltestGroups)) {
+            if (bool_value(group.shared_pool, false)) {
+                let outbounds = [];
+                for (let outbound in array_or_empty(group.outbounds)) {
+                    outbound = as_string(outbound);
+                    if (outbound != "")
+                        push(outbounds, outbound);
+                }
+                if (length(outbounds) > 0) {
+                    push(result, {
+                        tag: as_string(tag_name),
+                        displayName: as_string(group.displayName || tag_name),
+                        outbounds: outbounds,
+                        tolerance: int(group.tolerance || 0),
+                        interval: as_string(group.interval || "20m")
+                    });
+                }
+            }
+        }
+    }
+    return result;
+}
+
 function module_capture(args) {
     let output_path = trim(command_output_from_args([ "mktemp" ]));
     if (output_path == "")
@@ -413,18 +440,94 @@ function tick_group(state, group) {
     }
 }
 
+function sync_shared_pool_groups(shared_groups) {
+    if (length(shared_groups) == 0)
+        return;
+
+    let res = module_capture([ "get_proxies" ]);
+    if (res.status != 0)
+        return;
+
+    let data = null;
+    try {
+        data = json(res.output);
+    }
+    catch (e) {
+        return;
+    }
+
+    let proxies = object_or_empty(data?.proxies);
+    for (let group in shared_groups) {
+        let group_entry = proxies[group.tag];
+        let current_active = as_string(group_entry?.now || "");
+        let current_delay = null;
+        if (current_active != "" && proxies[current_active]) {
+            let hist = proxies[current_active].history;
+            if (length(hist) > 0 && hist[0].delay != null && hist[0].delay > 0)
+                current_delay = int(hist[0].delay, 10);
+        }
+
+        let best_tag = "";
+        let best_delay = 999999;
+        for (let tag_name in group.outbounds) {
+            let p = proxies[tag_name];
+            if (!p)
+                continue;
+            let hist = p.history;
+            if (length(hist) > 0 && hist[0].delay != null && hist[0].delay > 0) {
+                let delay = int(hist[0].delay, 10);
+                if (delay < best_delay) {
+                    best_delay = delay;
+                    best_tag = tag_name;
+                }
+            }
+        }
+
+        if (best_tag == "")
+            continue;
+
+        let tolerance = group.tolerance > 0 ? group.tolerance : 50;
+        let should_switch = false;
+        if (current_active == "") {
+            should_switch = true;
+        }
+        else if (current_delay == null) {
+            should_switch = (best_tag != current_active);
+        }
+        else if (best_tag != current_active && (current_delay - best_delay > tolerance)) {
+            should_switch = true;
+        }
+
+        if (should_switch) {
+            log_message("switching shared pool group " + group.tag + " to " + best_tag + " (delay " + best_delay + "ms vs " + (current_delay != null ? current_delay + "ms" : "none") + ")");
+            set_group_proxy(group, best_tag);
+        }
+    }
+}
+
 function worker() {
     let groups = priority_groups_from_cache();
-    if (length(groups) == 0)
+    let shared_groups = shared_pool_groups_from_cache();
+    if (length(groups) == 0 && length(shared_groups) == 0)
         return 0;
 
     let states = {};
     for (let group in groups)
         states[group.tag] = init_group_state(group);
 
+    let last_shared_sync = 0;
+    const SHARED_SYNC_INTERVAL = 10;
+
     while (true) {
+        let now = now_seconds();
         for (let group in groups)
             tick_group(states[group.tag], group);
+
+        if (length(shared_groups) > 0 && (now - last_shared_sync >= SHARED_SYNC_INTERVAL)) {
+            sync_shared_pool_groups(shared_groups);
+            last_shared_sync = now;
+        }
+
         system("sleep 1");
     }
 }
@@ -444,8 +547,9 @@ function stop_runtime() {
 
 function start_runtime() {
     let groups = priority_groups_from_cache();
+    let shared_groups = shared_pool_groups_from_cache();
     stop_runtime();
-    if (length(groups) == 0)
+    if (length(groups) == 0 && length(shared_groups) == 0)
         return 0;
 
     if (!ensure_dir(RUNTIME_STATE_DIR))

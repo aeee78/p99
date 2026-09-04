@@ -963,6 +963,8 @@ var LATENCY_TEST_URL_OPTIONS = [
   "https://connectivity-check.ubuntu.com"
 ];
 var DEFAULT_LATENCY_TEST_TIMEOUT = 2e3;
+var DEFAULT_SHARED_LATENCY_POOL = false;
+var DEFAULT_SHARED_LATENCY_INTERVAL = "20m";
 var DOMAIN_LIST_OPTIONS = {
   russia_inside: "Russia inside",
   russia_outside: "Russia outside",
@@ -3954,7 +3956,7 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
         code,
         displayName,
         latency,
-        type: priorityConfig ? "Priority" : item?.value.type || "URLTest",
+        type: priorityConfig ? "Priority" : urlTestConfig ? "URLTest" : item?.value.type || "URLTest",
         selected: selector?.value?.now === code,
         description: outboundMetadata?.descriptions?.[code],
         country: showDetectedCountries ? outboundMetadata?.countries?.[code] : void 0,
@@ -14648,6 +14650,8 @@ return baseclass.extend({
   BOOTSTRAP_DNS_SERVER_OPTIONS,
   DEFAULT_LATENCY_TEST_TIMEOUT,
   DEFAULT_LATENCY_TEST_URL,
+  DEFAULT_SHARED_LATENCY_INTERVAL,
+  DEFAULT_SHARED_LATENCY_POOL,
   DNS_SERVER_OPTIONS,
   DOMAIN_LIST_OPTIONS,
   DashboardTab,

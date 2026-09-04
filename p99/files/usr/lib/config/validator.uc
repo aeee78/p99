@@ -16,6 +16,7 @@ let connections = require("config.connections");
 const CONFIG_NAME = getenv("P99_CONFIG_NAME") || "p99";
 const DEFAULT_LATENCY_TEST_URL = "https://www.gstatic.com/generate_204";
 const DEFAULT_LATENCY_TEST_TIMEOUT = "2000";
+const DEFAULT_SHARED_LATENCY_INTERVAL = "20m";
 const TAILSCALE_FWMARK_MASK = 0x00ff0000;
 
 function as_string(value) {
@@ -1722,6 +1723,8 @@ function validate_runtime_config(context) {
     validate_list_update_settings(settings);
     validate_http_url_option(option(settings, "latency_test_url", DEFAULT_LATENCY_TEST_URL) || DEFAULT_LATENCY_TEST_URL, "settings.latency_test_url");
     validate_latency_test_timeout_value(option(settings, "latency_test_timeout", DEFAULT_LATENCY_TEST_TIMEOUT) || DEFAULT_LATENCY_TEST_TIMEOUT);
+    let shared_latency_interval = option(settings, "shared_latency_interval", DEFAULT_SHARED_LATENCY_INTERVAL) || DEFAULT_SHARED_LATENCY_INTERVAL;
+    validate_required_duration_option(shared_latency_interval, "settings.shared_latency_interval");
 
     if (download_via_proxy_enabled(settings, "lists")) {
         validate_download_section_rows(

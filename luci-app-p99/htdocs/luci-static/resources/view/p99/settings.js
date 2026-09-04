@@ -581,6 +581,37 @@ function createSettingsContent(section, capabilities) {
 
   o = section.option(
     form.Flag,
+    "shared_latency_pool",
+    _("Shared latency pool for subscriptions"),
+    _(
+      "Pings all subscription proxy nodes once globally on a shared schedule instead of creating separate ping timers per section. Sections independently select their fastest alive node.",
+    ),
+  );
+  o.default = "0";
+  o.rmempty = false;
+
+  o = section.option(
+    form.Value,
+    "shared_latency_interval",
+    _("Shared latency test interval"),
+    _(
+      "Interval between automatic latency checks in the shared pool (e.g., 20m, 1h). Default is 20m.",
+    ),
+  );
+  o.placeholder = "20m";
+  o.default = "20m";
+  o.depends("shared_latency_pool", "1");
+  o.validate = function (_section_id, value) {
+    const normalized = value ? `${value}`.trim() : "";
+    if (!normalized) return true;
+    if (!/^[0-9]+(\.[0-9]+)?(ns|us|ms|s|m|h|d)$/.test(normalized)) {
+      return _("Enter a valid duration (e.g. 20m, 1h, 30s)");
+    }
+    return true;
+  };
+
+  o = section.option(
+    form.Flag,
     "download_lists_via_proxy",
     _("Download lists through a section"),
     _("Download remote lists and rule sets via the selected section"),

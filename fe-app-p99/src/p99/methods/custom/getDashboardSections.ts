@@ -1280,7 +1280,7 @@ function buildProxyGroupOutbounds(
         code,
         displayName,
         latency,
-        type: priorityConfig ? 'Priority' : item?.value.type || 'URLTest',
+        type: priorityConfig ? 'Priority' : urlTestConfig ? 'URLTest' : item?.value.type || 'URLTest',
         selected: selector?.value?.now === code,
         description: outboundMetadata?.descriptions?.[code],
         country: showDetectedCountries

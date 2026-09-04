@@ -2026,3 +2026,18 @@ msgstr "sing-box outbound для Zapret2 настроен"
 
 msgid "Zapret2 sing-box outbound is not configured"
 msgstr "sing-box outbound для Zapret2 не настроен"
+
+msgid "Shared latency pool for subscriptions"
+msgstr "Общий пул проверки задержки для подписок"
+
+msgid "Pings all subscription proxy nodes once globally on a shared schedule instead of creating separate ping timers per section. Sections independently select their fastest alive node."
+msgstr "Глобально проверяет задержку всех прокси-серверов из подписок один раз по общему расписанию вместо отдельных таймеров в каждой секции. Секции независимо выбирают свой самый быстрый доступный сервер."
+
+msgid "Shared latency test interval"
+msgstr "Интервал проверки задержки общего пула"
+
+msgid "Interval between automatic latency checks in the shared pool (e.g., 20m, 1h). Default is 20m."
+msgstr "Интервал между автоматическими проверками задержки в общем пуле (например, 20m, 1h). По умолчанию 20m."
+
+msgid "Enter a valid duration (e.g. 20m, 1h, 30s)"
+msgstr "Введите корректную длительность (например, 20m, 1h, 30s)"

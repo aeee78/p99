@@ -253,6 +253,8 @@ export namespace P99 {
     domain_ip_lists?: string[];
     ports?: string[];
     update_interval?: string;
+    shared_latency_pool?: '0' | '1';
+    shared_latency_interval?: string;
     proxy_string?: string;
     nfqws_opt?: string;
     nfqws2_opt?: string;

@@ -1358,29 +1358,44 @@ function add_urltest_outbound(config, section, urltest_id, urltest_candidate_tag
     let urltest_outbounds = urltest_filtered_outbounds(section, urltest_id, urltest_candidate_tags, state);
     let urltest_tag = urltest_outbound_tag(section_name, urltest_id);
     let display_name = connections.urltest_display_name(section, urltest_id);
-    let urltest_outbound = {
-        type: "urltest",
-        tag: urltest_tag,
-        outbounds: urltest_outbounds,
-        url: connections.urltest_testing_url(section, urltest_id),
-        interval: urltest_check_interval(section, urltest_id),
-        tolerance: int(connections.urltest_tolerance(section, urltest_id), 10),
-        interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id)
-    };
-    let idle_timeout = urltest_idle_timeout(section, urltest_id);
-    if (idle_timeout != "")
-        urltest_outbound.idle_timeout = idle_timeout;
-    urltest_override.apply(urltest_outbound, section_name, urltest_tag);
+    let is_shared_pool = bool_option(runtime_settings(), "shared_latency_pool", false);
+
+    let urltest_outbound;
+    if (is_shared_pool) {
+        urltest_outbound = {
+            type: "selector",
+            tag: urltest_tag,
+            outbounds: urltest_outbounds,
+            default: urltest_outbounds[0],
+            interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id)
+        };
+    }
+    else {
+        urltest_outbound = {
+            type: "urltest",
+            tag: urltest_tag,
+            outbounds: urltest_outbounds,
+            url: connections.urltest_testing_url(section, urltest_id),
+            interval: urltest_check_interval(section, urltest_id),
+            tolerance: int(connections.urltest_tolerance(section, urltest_id), 10),
+            interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id)
+        };
+        let idle_timeout = urltest_idle_timeout(section, urltest_id);
+        if (idle_timeout != "")
+            urltest_outbound.idle_timeout = idle_timeout;
+        urltest_override.apply(urltest_outbound, section_name, urltest_tag);
+    }
 
     runtime_subscription.remember_outbound_metadata(state, urltest_tag, display_name, urltest_outbound);
     runtime_subscription.remember_urltest_group_config(state, urltest_tag, {
         displayName: display_name,
         outbounds: urltest_outbounds,
-        url: urltest_outbound.url,
-        interval: urltest_outbound.interval,
-        tolerance: urltest_outbound.tolerance,
-        idle_timeout: urltest_outbound.idle_timeout,
-        interrupt_exist_connections: urltest_outbound.interrupt_exist_connections
+        url: connections.urltest_testing_url(section, urltest_id),
+        interval: urltest_check_interval(section, urltest_id),
+        tolerance: int(connections.urltest_tolerance(section, urltest_id), 10),
+        idle_timeout: urltest_idle_timeout(section, urltest_id),
+        interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id),
+        shared_pool: is_shared_pool
     });
 
     if (length(urltest_outbounds) == 0)
@@ -3041,6 +3056,49 @@ function apply_connection_timeout_to_outbounds(config, settings) {
     }
 }
 
+function shared_latency_pool_outbounds(config, taken) {
+    let result = [];
+    let seen = {};
+    for (let outbound in array_or_empty(config.outbounds)) {
+        if (type(outbound) != "object")
+            continue;
+        let tag_name = as_string(outbound.tag || "");
+        if (tag_name == "" || seen[tag_name])
+            continue;
+        if (taken[tag_name] || runtime_constants.RESERVED_TAGS[tag_name])
+            continue;
+        let t = lc(as_string(outbound.type || ""));
+        if (t == "selector" || t == "urltest" || t == "dns" || t == "block")
+            continue;
+        if (t == "direct" && outbound.bind_interface == null)
+            continue;
+        seen[tag_name] = true;
+        push(result, tag_name);
+    }
+    return result;
+}
+
+function add_shared_latency_pool_outbound(config, settings, taken) {
+    if (!bool_option(settings, "shared_latency_pool", false))
+        return;
+
+    let pool_outbounds = shared_latency_pool_outbounds(config, taken);
+    if (length(pool_outbounds) == 0)
+        return;
+
+    let pool_tag = runtime_constants.SHARED_LATENCY_POOL_TAG;
+    let test_url = option(settings, "latency_test_url", "https://www.gstatic.com/generate_204") || "https://www.gstatic.com/generate_204";
+    let interval = option(settings, "shared_latency_interval", runtime_constants.DEFAULT_SHARED_LATENCY_INTERVAL) || runtime_constants.DEFAULT_SHARED_LATENCY_INTERVAL;
+    let pool_outbound = {
+        type: "urltest",
+        tag: pool_tag,
+        outbounds: pool_outbounds,
+        url: test_url,
+        interval: interval
+    };
+    push(config.outbounds, pool_outbound);
+}
+
 function generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections) {
     runtime_supports_xhttp = supports_xhttp == null || as_string(supports_xhttp) == ""
         ? true
@@ -3065,6 +3123,7 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
     reserve_section_outbound_tags(sections, taken);
     for (let section in sections)
         add_outbound_for_section(config, section, taken, sections, dedup_cache);
+    add_shared_latency_pool_outbound(config, settings, taken);
     add_service_route_rules(config, sections);
     for (let section in sections)
         add_route_for_section(config, section);

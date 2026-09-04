@@ -1555,6 +1555,15 @@ function add_proxy_selector(config, section, selector_tags, urltest_candidate_ta
     }
 
     selector_outbounds = dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds);
+    if (length(selector_outbounds) == 0) {
+        if (length(selector_tags) > 0) {
+            warn("dashboard server filtering for rule '", section_name, "' produced no usable outbounds; falling back to unfiltered selector tags\n");
+            selector_outbounds = selector_tags;
+        } else {
+            runtime_generate_unsupported("dashboard server filtering produced no usable outbounds");
+        }
+    }
+
     selector_default = select_default_urltest_outbound(selector_outbounds, state, "");
     if (length(urltest_tags) > 0 || length(priority_tags) > 0) {
         for (let tag in urltest_tags)
@@ -1562,16 +1571,6 @@ function add_proxy_selector(config, section, selector_tags, urltest_candidate_ta
         for (let tag in priority_tags)
             push(selector_outbounds, tag);
         selector_default = length(urltest_tags) > 0 ? urltest_tags[0] : priority_tags[0];
-    }
-
-    if (length(selector_outbounds) == 0) {
-        if (length(selector_tags) > 0) {
-            warn("dashboard server filtering for rule '", section_name, "' produced no usable outbounds; falling back to unfiltered selector tags\n");
-            selector_outbounds = selector_tags;
-            selector_default = select_default_urltest_outbound(selector_outbounds, state, "");
-        } else {
-            runtime_generate_unsupported("dashboard server filtering produced no usable outbounds");
-        }
     }
 
     push(config.outbounds, {

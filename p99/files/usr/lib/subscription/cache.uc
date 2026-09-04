@@ -432,22 +432,19 @@ function maintenance_plan(sections, section_cache_dir) {
     print("missing\t", runtime_cache_missing(sections, section_cache_dir) ? "1" : "0", "\n");
 }
 
-const DEFAULT_HAPP_USER_AGENT = "Happ/3.26.1";
 let p99_version = as_string(constants.P99_VERSION);
 let happ_compat_version = match(p99_version, /^[0-9]+[.][0-9]+[.][0-9]+$/) != null
     ? p99_version
     : "3.26.1";
-let happ_compat_user_agent = DEFAULT_HAPP_USER_AGENT;
+let happ_compat_user_agent = "Happ/" + happ_compat_version;
 
-let auto_user_agent_profiles = [ happ_compat_user_agent, "Happ/2.8.0" ];
+let auto_user_agent_profiles = [ happ_compat_user_agent ];
 
 let auto_user_agents = {};
 for (let profile in auto_user_agent_profiles)
     auto_user_agents[profile] = true;
 auto_user_agents["Happ/2.8.0"] = true;
 auto_user_agents["Happ/3.26.1"] = true;
-if (happ_compat_version != "")
-    auto_user_agents["Happ/" + happ_compat_version] = true;
 auto_user_agents["sing-box/default"] = true;
 
 function user_agent_supported(user_agent, default_user_agent) {
@@ -457,8 +454,6 @@ function user_agent_supported(user_agent, default_user_agent) {
     if (user_agent == "")
         return false;
     if (user_agent == default_user_agent)
-        return true;
-    if (starts_with(user_agent, "sing-box/") || starts_with(user_agent, "Happ/"))
         return true;
 
     return auto_user_agents[user_agent] == true;
@@ -1455,7 +1450,7 @@ function get_subscription_user_agent(custom_user_agent) {
     if (custom_user_agent != "")
         return custom_user_agent;
 
-    return DEFAULT_HAPP_USER_AGENT;
+    return happ_compat_user_agent;
 }
 
 function user_agent_candidates(configured_user_agent, preferred_user_agent, default_user_agent) {

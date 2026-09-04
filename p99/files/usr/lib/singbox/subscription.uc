@@ -312,6 +312,7 @@ function resolve_urltest_profile_aliases(state) {
     let names = object_or_empty(metadata.names);
     let countries = object_or_empty(metadata.countries);
     let descriptions = object_or_empty(metadata.descriptions);
+    let aliases = object_or_empty(metadata.aliases);
 
     for (let _, group in object_or_empty(state.urltestGroups)) {
         let members = {};
@@ -338,6 +339,7 @@ function resolve_urltest_profile_aliases(state) {
             if (profile_tag == "")
                 continue;
 
+            aliases[member] = profile_tag;
             names[member] = as_string(names[profile_tag] || profile_tag);
             if (countries[profile_tag] != null)
                 countries[member] = countries[profile_tag];
@@ -349,6 +351,7 @@ function resolve_urltest_profile_aliases(state) {
     metadata.names = names;
     metadata.countries = countries;
     metadata.descriptions = descriptions;
+    metadata.aliases = aliases;
     state.outboundMetadata = metadata;
 }
 
@@ -427,7 +430,8 @@ function new_section_state(section_name) {
             protocols: {},
             transports: {},
             securities: {},
-            descriptions: {}
+            descriptions: {},
+            aliases: {}
         },
         servers: {},
         urltestCandidateTags: [],

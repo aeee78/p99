@@ -11,7 +11,7 @@ type HtmlAttributes<T extends HtmlTag = 'div'> = Partial<
     'aria-label'?: string;
     'data-latency-section'?: string;
     'data-sort-section'?: string;
-    [dataAttr: `data-${string}`]: any;
+    [dataAttr: `data-${string}`]: unknown;
     click?: (event: MouseEvent) => void;
     onclick?: (event: MouseEvent) => void;
   }

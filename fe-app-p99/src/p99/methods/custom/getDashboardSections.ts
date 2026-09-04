@@ -1260,7 +1260,7 @@ function buildProxyGroupOutbounds(
         cachedProxyLinks.has(code),
       );
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
-    const hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const _hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig
       ? priorityConfig.pinDashboard !== false
       : Boolean(urlTestConfig?.pinDashboard);
@@ -1282,7 +1282,11 @@ function buildProxyGroupOutbounds(
         code,
         displayName,
         latency,
-        type: priorityConfig ? 'Priority' : urlTestConfig ? 'URLTest' : item?.value.type || 'URLTest',
+        type: priorityConfig
+          ? 'Priority'
+          : urlTestConfig
+            ? 'URLTest'
+            : item?.value.type || 'URLTest',
         selected: selector?.value?.now === code,
         description: outboundMetadata?.descriptions?.[code],
         country: showDetectedCountries

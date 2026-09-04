@@ -1132,6 +1132,20 @@ function urltest_all_candidate_outbounds(urltest_candidate_tags) {
     return unique_string_array(urltest_candidate_tags);
 }
 
+function deduplicate_alias_outbounds(outbounds, metadata) {
+    let aliases = object_or_empty(object_or_empty(metadata).aliases);
+    let seen = {};
+    let result = [];
+    for (let tag in array_or_empty(outbounds)) {
+        let identity = as_string(aliases[tag] || tag);
+        if (seen[identity])
+            continue;
+        seen[identity] = true;
+        push(result, tag);
+    }
+    return result;
+}
+
 function urltest_matching_candidate_outbounds(urltest_candidate_tags, names, countries, name_filter, regexes, country_filter,
     metadata, proxy_parameters_enabled, proxy_parameters_operator, protocols, transports, securities, additional_matches) {
     names = object_or_empty(names);
@@ -1186,9 +1200,9 @@ function filter_candidate_outbounds(filter_mode, urltest_candidate_tags, names, 
     include_additional_matches, exclude_additional_matches) {
     let all_outbounds = urltest_all_candidate_outbounds(urltest_candidate_tags);
     if (filter_mode == "" || filter_mode == "disabled")
-        return all_outbounds;
+        return deduplicate_alias_outbounds(all_outbounds, metadata);
     if (!supported_urltest_filter_mode(filter_mode))
-        return all_outbounds;
+        return deduplicate_alias_outbounds(all_outbounds, metadata);
 
     let include_outbounds = urltest_matching_candidate_outbounds(
         urltest_candidate_tags,
@@ -1222,12 +1236,12 @@ function filter_candidate_outbounds(filter_mode, urltest_candidate_tags, names, 
     );
 
     if (filter_mode == "include")
-        return include_outbounds;
+        return deduplicate_alias_outbounds(include_outbounds, metadata);
     if (filter_mode == "exclude")
-        return urltest_exclude_outbounds(all_outbounds, exclude_outbounds);
+        return deduplicate_alias_outbounds(urltest_exclude_outbounds(all_outbounds, exclude_outbounds), metadata);
     if (filter_mode == "mixed")
-        return urltest_exclude_outbounds(include_outbounds, exclude_outbounds);
-    return all_outbounds;
+        return deduplicate_alias_outbounds(urltest_exclude_outbounds(include_outbounds, exclude_outbounds), metadata);
+    return deduplicate_alias_outbounds(all_outbounds, metadata);
 }
 
 function urltest_filtered_outbounds(section, urltest_id, urltest_candidate_tags, state) {
@@ -3147,7 +3161,7 @@ function add_shared_latency_pool_outbound(config, settings, taken) {
     push(config.outbounds, pool_outbound);
 }
 
-function generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections) {
+function generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections, sing_box_version) {
     runtime_supports_xhttp = supports_xhttp == null || as_string(supports_xhttp) == ""
         ? true
         : cli_bool(supports_xhttp);
@@ -3165,6 +3179,10 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
         mwan3_active: cli_bool(mwan3_active),
         source_aware_dns: length(source_aware_dns) > 0
     });
+    let version_parts = match(as_string(sing_box_version), /^v?([0-9]+)\.([0-9]+)\./);
+    if (version_parts != null && (int(version_parts[1]) > 1 ||
+        (int(version_parts[1]) == 1 && int(version_parts[2]) >= 14)))
+        delete config.dns.independent_cache;
     add_source_aware_dns_support(config, source_aware_dns);
     let taken = reserved_runtime_tag_set(config.outbounds);
     let dedup_cache = {};
@@ -3189,11 +3207,11 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
     }
 }
 
-function generate_config_fixture(fixture_path, output_path, service_address, mwan3_active, supports_xhttp, deferred_sections) {
+function generate_config_fixture(fixture_path, output_path, service_address, mwan3_active, supports_xhttp, deferred_sections, sing_box_version) {
     use_fixture_cursor(fixture_path);
     runtime_subscription.set_section_cache_dir(output_path + ".section-cache");
     runtime_ruleset_folder = output_path + ".rulesets";
-    generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections);
+    generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections, sing_box_version);
 }
 
 function stdin_length() {
@@ -3307,9 +3325,9 @@ function object_nonempty_stdin() {
 let mode = ARGV[0] || "";
 
 if (mode == "generate-config")
-    generate_config(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5] || "");
+    generate_config(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5] || "", ARGV[6] || "");
 else if (mode == "generate-config-fixture")
-    generate_config_fixture(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5], ARGV[6] || "");
+    generate_config_fixture(ARGV[1], ARGV[2], ARGV[3], ARGV[4], ARGV[5], ARGV[6] || "", ARGV[7] || "");
 else if (mode == "stdin-length")
     stdin_length();
 else if (mode == "stdin-contains")

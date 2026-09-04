@@ -1041,6 +1041,7 @@ var SECONDARY_RULESET_OPTIONS = {
   google: "Google"
 };
 var DNS_SERVER_OPTIONS = {
+  "77.88.8.8": "77.88.8.8 (Yandex DNS)",
   "1.1.1.1": "1.1.1.1 (Cloudflare)",
   "8.8.8.8": "8.8.8.8 (Google)",
   "9.9.9.9": "9.9.9.9 (Quad9)",
@@ -1775,7 +1776,7 @@ function prettyBytes(n) {
 
 // src/p99/tabs/dashboard/partials/getOutboundFooterLabel.ts
 function getOutboundFooterLabel(outbound) {
-  return outbound.urlTestInfo?.selectedName || outbound.description || outbound.type;
+  return outbound.urlTestInfo?.selectedName || outbound.priorityInfo?.selectedName || outbound.description || outbound.type;
 }
 
 // src/p99/tabs/dashboard/partials/sortOutboundsByLatency.ts
@@ -3938,7 +3939,7 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
       cachedProxyLinks.has(code)
     );
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
-    const hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const _hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig ? priorityConfig.pinDashboard !== false : Boolean(urlTestConfig?.pinDashboard);
     let latency = normalizeLatency(
       item?.value.history?.[0]?.delay,

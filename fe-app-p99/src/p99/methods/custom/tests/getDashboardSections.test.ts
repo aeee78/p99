@@ -1338,10 +1338,7 @@ describe('getDashboardSections', () => {
         latency_test_timeout: '2000',
       },
       proxySection({
-        selector_proxy_links: [
-          'vless://example1#one',
-          'vless://example2#two',
-        ],
+        selector_proxy_links: ['vless://example1#one', 'vless://example2#two'],
         urltests: [],
         urltest_settings: undefined,
       }),
@@ -1382,10 +1379,7 @@ describe('getDashboardSections', () => {
   it('correctly maps shared pool URLTest group (type Selector) as URLTest on dashboard', async () => {
     mocks.getConfigSections.mockResolvedValue([
       proxySection({
-        selector_proxy_links: [
-          'vless://example1#one',
-          'vless://example2#two',
-        ],
+        selector_proxy_links: ['vless://example1#one', 'vless://example2#two'],
         urltests: ['fastest'],
         urltest_settings: undefined,
       }),

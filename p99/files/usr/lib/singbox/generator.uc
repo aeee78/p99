@@ -683,6 +683,48 @@ function reportable_skipped_subscription_type(t) {
     return t != "direct" && t != "selector" && t != "urltest" && t != "dns" && t != "block";
 }
 
+function is_unroutable_server_address(server) {
+    server = lc(trim(as_string(server || "")));
+    if (server == "" || server == "0.0.0.0")
+        return true;
+    if (server == "ib.ob" || match(server, /\.(invalid|test|example|ob)$/) != null || match(server, /^(null|none|dummy)$/i) != null)
+        return true;
+    return false;
+}
+
+function select_default_urltest_outbound(urltest_outbounds, state, previous_active) {
+    if (length(urltest_outbounds) == 0)
+        return "";
+
+    if (previous_active != "") {
+        for (let tag in urltest_outbounds) {
+            if (tag == previous_active)
+                return previous_active;
+        }
+    }
+
+    let servers = object_or_empty(state?.servers);
+    for (let tag in urltest_outbounds) {
+        let server = servers[tag];
+        if (!is_unroutable_server_address(server))
+            return tag;
+    }
+
+    return urltest_outbounds[0];
+}
+
+function prioritize_default_outbound(outbounds, default_tag) {
+    if (length(outbounds) <= 1 || default_tag == "" || outbounds[0] == default_tag)
+        return outbounds;
+
+    let result = [ default_tag ];
+    for (let tag in outbounds) {
+        if (tag != default_tag)
+            push(result, tag);
+    }
+    return result;
+}
+
 function urltest_leaf_candidate_outbound(outbound) {
     if (type(outbound) != "object")
         return false;
@@ -1360,13 +1402,18 @@ function add_urltest_outbound(config, section, urltest_id, urltest_candidate_tag
     let display_name = connections.urltest_display_name(section, urltest_id);
     let is_shared_pool = bool_option(runtime_settings(), "shared_latency_pool", false);
 
+    let previous_state = read_json_file(runtime_subscription.published_section_cache_path(section_name));
+    let previous_active = as_string(previous_state?.urltestGroups?.[urltest_tag]?.last_active || "");
+    let default_outbound = select_default_urltest_outbound(urltest_outbounds, state, previous_active);
+    urltest_outbounds = prioritize_default_outbound(urltest_outbounds, default_outbound);
+
     let urltest_outbound;
     if (is_shared_pool) {
         urltest_outbound = {
             type: "selector",
             tag: urltest_tag,
             outbounds: urltest_outbounds,
-            default: urltest_outbounds[0],
+            default: default_outbound,
             interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id)
         };
     }
@@ -1395,7 +1442,8 @@ function add_urltest_outbound(config, section, urltest_id, urltest_candidate_tag
         tolerance: int(connections.urltest_tolerance(section, urltest_id), 10),
         idle_timeout: urltest_idle_timeout(section, urltest_id),
         interrupt_exist_connections: connections.urltest_interrupt_exist_connections(section, urltest_id),
-        shared_pool: is_shared_pool
+        shared_pool: is_shared_pool,
+        last_active: default_outbound
     });
 
     if (length(urltest_outbounds) == 0)
@@ -1493,7 +1541,7 @@ function add_proxy_selector(config, section, selector_tags, urltest_candidate_ta
     }
 
     selector_outbounds = dashboard_filtered_outbounds(section, selector_tags, state, group_outbounds);
-    selector_default = selector_outbounds[0];
+    selector_default = select_default_urltest_outbound(selector_outbounds, state, "");
     if (length(urltest_tags) > 0 || length(priority_tags) > 0) {
         for (let tag in urltest_tags)
             push(selector_outbounds, tag);
@@ -1506,7 +1554,7 @@ function add_proxy_selector(config, section, selector_tags, urltest_candidate_ta
         if (length(selector_tags) > 0) {
             warn("dashboard server filtering for rule '", section_name, "' produced no usable outbounds; falling back to unfiltered selector tags\n");
             selector_outbounds = selector_tags;
-            selector_default = selector_outbounds[0];
+            selector_default = select_default_urltest_outbound(selector_outbounds, state, "");
         } else {
             runtime_generate_unsupported("dashboard server filtering produced no usable outbounds");
         }

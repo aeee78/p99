@@ -33,6 +33,10 @@ function section_cache_path(section_name) {
     return section_cache_dir + "/" + section_name + ".json";
 }
 
+function published_section_cache_path(section_name) {
+    return P99_SECTION_CACHE_DIR + "/" + section_name + ".json";
+}
+
 function legacy_metadata_path(section_name) {
     return P99_SUBSCRIPTION_METADATA_DIR + "/" + section_name + ".json";
 }
@@ -291,7 +295,7 @@ function remember_urltest_group_config(state, tag_name, input_group) {
         outbounds: array_or_empty(input_group.outbounds)
     };
 
-    for (let key in [ "url", "interval", "tolerance", "idle_timeout", "interrupt_exist_connections", "shared_pool" ]) {
+    for (let key in [ "url", "interval", "tolerance", "idle_timeout", "interrupt_exist_connections", "shared_pool", "last_active" ]) {
         if (input_group[key] != null)
             output_group[key] = input_group[key];
     }
@@ -437,6 +441,7 @@ return {
     set_section_cache_dir,
     source_id,
     section_cache_path,
+    published_section_cache_path,
     merge_source_metadata,
     remember_outbound_metadata,
     remember_source_outbound,

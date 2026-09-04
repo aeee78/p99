@@ -207,17 +207,34 @@ function shared_pool_groups_from_cache() {
                 }
                 if (length(outbounds) > 0) {
                     push(result, {
+                        cache_path: path,
                         tag: as_string(tag_name),
                         displayName: as_string(group.displayName || tag_name),
                         outbounds: outbounds,
                         tolerance: int(group.tolerance || 0),
-                        interval: as_string(group.interval || "20m")
+                        interval: as_string(group.interval || "20m"),
+                        last_active: as_string(group.last_active || "")
                     });
                 }
             }
         }
     }
     return result;
+}
+
+function record_shared_pool_active(cache_path, group_tag, active_tag) {
+    if (!cache_path || !group_tag || !active_tag)
+        return;
+    let cache = read_json_file(cache_path);
+    if (type(cache) != "object" || type(cache.urltestGroups) != "object")
+        return;
+    let group = cache.urltestGroups[group_tag];
+    if (group && group.last_active != active_tag) {
+        group.last_active = active_tag;
+        let tmp = cache_path + ".tmp";
+        if (common.write_json_file(tmp, cache))
+            fs.rename(tmp, cache_path);
+    }
 }
 
 function module_capture(args) {
@@ -442,21 +459,22 @@ function tick_group(state, group) {
 
 function sync_shared_pool_groups(shared_groups) {
     if (length(shared_groups) == 0)
-        return;
+        return true;
 
     let res = module_capture([ "get_proxies" ]);
     if (res.status != 0)
-        return;
+        return false;
 
     let data = null;
     try {
         data = json(res.output);
     }
     catch (e) {
-        return;
+        return false;
     }
 
     let proxies = object_or_empty(data?.proxies);
+    let all_resolved = true;
     for (let group in shared_groups) {
         let group_entry = proxies[group.tag];
         let current_active = as_string(group_entry?.now || "");
@@ -483,8 +501,10 @@ function sync_shared_pool_groups(shared_groups) {
             }
         }
 
-        if (best_tag == "")
+        if (best_tag == "") {
+            all_resolved = false;
             continue;
+        }
 
         let tolerance = group.tolerance > 0 ? group.tolerance : 50;
         let should_switch = false;
@@ -500,9 +520,13 @@ function sync_shared_pool_groups(shared_groups) {
 
         if (should_switch) {
             log_message("switching shared pool group " + group.tag + " to " + best_tag + " (delay " + best_delay + "ms vs " + (current_delay != null ? current_delay + "ms" : "none") + ")");
-            set_group_proxy(group, best_tag);
+            if (set_group_proxy(group, best_tag)) {
+                record_shared_pool_active(group.cache_path, group.tag, best_tag);
+                group.last_active = best_tag;
+            }
         }
     }
+    return all_resolved;
 }
 
 function worker() {
@@ -517,15 +541,21 @@ function worker() {
 
     let last_shared_sync = 0;
     const SHARED_SYNC_INTERVAL = 10;
+    let shared_resolved = false;
+    let startup_ticks = 0;
 
     while (true) {
         let now = now_seconds();
         for (let group in groups)
             tick_group(states[group.tag], group);
 
-        if (length(shared_groups) > 0 && (now - last_shared_sync >= SHARED_SYNC_INTERVAL)) {
-            sync_shared_pool_groups(shared_groups);
-            last_shared_sync = now;
+        if (length(shared_groups) > 0) {
+            let needs_sync = (!shared_resolved && startup_ticks < 15) || (now - last_shared_sync >= SHARED_SYNC_INTERVAL);
+            if (needs_sync) {
+                shared_resolved = sync_shared_pool_groups(shared_groups);
+                last_shared_sync = now;
+            }
+            startup_ticks++;
         }
 
         system("sleep 1");

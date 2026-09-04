@@ -36,6 +36,8 @@ type UrlTestCacheGroup = {
   tolerance?: string | number;
   idle_timeout?: string;
   interrupt_exist_connections?: boolean;
+  shared_pool?: boolean;
+  last_active?: string;
 };
 
 type SingBoxRuntimeConfig = {

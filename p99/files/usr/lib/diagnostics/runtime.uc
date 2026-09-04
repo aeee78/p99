@@ -1669,6 +1669,14 @@ function latency_test_timeout() {
     return value == "" ? DEFAULT_LATENCY_TEST_TIMEOUT : as_string(value);
 }
 
+function clash_curl_max_time(timeout_arg, default_timeout) {
+    let timeout_ms = int(as_string(timeout_arg || default_timeout || "2000"));
+    if (timeout_ms <= 0)
+        timeout_ms = 2000;
+    let max_time = int((timeout_ms + 1500) / 1000);
+    return max_time < 1 ? "1" : as_string(max_time);
+}
+
 function clash_api(action, arg1, arg2, arg3) {
     let base_url = clash_api_url();
     let test_url = latency_test_url();
@@ -1695,7 +1703,8 @@ function clash_api(action, arg1, arg2, arg3) {
         let url = as_string(arg3 || "");
         if (url == "")
             url = test_url;
-        let args = [ "curl", "-G", "-s", base_url + "/proxies/" + clash_urlencode(arg1) + "/delay" ];
+        let max_time = clash_curl_max_time(arg2, default_timeout);
+        let args = [ "curl", "-G", "-s", "--max-time", max_time, base_url + "/proxies/" + clash_urlencode(arg1) + "/delay" ];
         for (let item in auth) push(args, item);
         push(args, "--data-urlencode");
         push(args, "url=" + url);
@@ -1733,8 +1742,9 @@ function clash_api(action, arg1, arg2, arg3) {
             if (lc(as_string(proxy_types[proxy_tag])) == "urltest")
                 push(ordered_proxy_tags, proxy_tag);
 
+        let max_time = clash_curl_max_time(arg2, default_timeout);
         for (let proxy_tag in ordered_proxy_tags) {
-            let args = [ "curl", "-G", "-s", clash_latency_endpoint(base_url, proxy_tag, proxy_types[proxy_tag]) ];
+            let args = [ "curl", "-G", "-s", "--max-time", max_time, clash_latency_endpoint(base_url, proxy_tag, proxy_types[proxy_tag]) ];
             for (let item in auth) push(args, item);
             push(args, "--data-urlencode");
             push(args, "url=" + test_url);
@@ -1755,7 +1765,8 @@ function clash_api(action, arg1, arg2, arg3) {
     if (action == "get_group_latency") {
         if (as_string(arg1) == "")
             return clash_json_error("group_tag required");
-        let args = [ "curl", "-G", "-s", base_url + "/group/" + clash_urlencode(arg1) + "/delay" ];
+        let max_time = clash_curl_max_time(arg2, default_timeout);
+        let args = [ "curl", "-G", "-s", "--max-time", max_time, base_url + "/group/" + clash_urlencode(arg1) + "/delay" ];
         for (let item in auth) push(args, item);
         push(args, "--data-urlencode");
         push(args, "url=" + test_url);

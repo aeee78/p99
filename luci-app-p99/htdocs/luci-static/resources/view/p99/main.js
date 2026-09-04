@@ -3436,6 +3436,15 @@ function getLatencySortValue(outbound) {
   const latency = Number(outbound.latency);
   return Number.isFinite(latency) && latency > 0 ? latency : Number.POSITIVE_INFINITY;
 }
+function normalizeLatency(delay, maxTimeout) {
+  if (typeof delay !== "number" || !Number.isFinite(delay) || delay <= 0) {
+    return 0;
+  }
+  if (typeof maxTimeout === "number" && maxTimeout > 0 && delay > maxTimeout) {
+    return 0;
+  }
+  return delay;
+}
 function sortOutboundsForDashboard(outbounds, options = {}) {
   const pinnedCodes = [
     ...options.pinnedCode ? [options.pinnedCode] : [],
@@ -3736,7 +3745,8 @@ function buildUrlTestInfo({
   manualLinkByCode,
   cachedProxyLinks,
   outboundMetadata,
-  showDetectedCountries
+  showDetectedCountries,
+  latencyTestTimeout
 }) {
   const childCodes = uniqueCodes(
     groupCache?.outbounds?.length ? groupCache.outbounds : entry?.value.all || []
@@ -3756,7 +3766,10 @@ function buildUrlTestInfo({
             outboundMetadata,
             cachedProxyLinks.has(childCode)
           ),
-          latency: childEntry?.value?.history?.[0]?.delay || 0,
+          latency: normalizeLatency(
+            childEntry?.value?.history?.[0]?.delay,
+            latencyTestTimeout
+          ),
           type: childEntry?.value?.type || "",
           selected: selectedCode === childCode,
           country: showDetectedCountries ? outboundMetadata?.countries?.[childCode] : void 0
@@ -3787,7 +3800,8 @@ function buildPriorityInfo({
   manualLinkByCode,
   cachedProxyLinks,
   outboundMetadata,
-  showDetectedCountries
+  showDetectedCountries,
+  latencyTestTimeout
 }) {
   const selectedCode = entry?.value.now || "";
   const cacheLevels = Array.isArray(groupCache?.levels) ? groupCache.levels : [];
@@ -3831,7 +3845,10 @@ function buildPriorityInfo({
           outboundMetadata,
           cachedProxyLinks.has(childCode)
         ),
-        latency: childEntry?.value?.history?.[0]?.delay || 0,
+        latency: normalizeLatency(
+          childEntry?.value?.history?.[0]?.delay,
+          latencyTestTimeout
+        ),
         type: childEntry?.value?.type || "",
         selected: selectedCode === childCode,
         country: showDetectedCountries ? outboundMetadata?.countries?.[childCode] : void 0,
@@ -3865,7 +3882,7 @@ function buildPriorityInfo({
     outbounds
   };
 }
-function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGroups = {}, priorityGroups = {}, cachedProxyLinks = /* @__PURE__ */ new Map()) {
+function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGroups = {}, priorityGroups = {}, cachedProxyLinks = /* @__PURE__ */ new Map(), latencyTestTimeout) {
   const sectionName = section[".name"];
   const proxyByCode = getProxyEntryByCode(proxies);
   const selectorTag = getOutboundTagBySection(sectionName);
@@ -3921,10 +3938,16 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
     const hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig ? priorityConfig.pinDashboard !== false : Boolean(urlTestConfig?.pinDashboard);
-    let latency = item?.value.history?.[0]?.delay || 0;
+    let latency = normalizeLatency(
+      item?.value.history?.[0]?.delay,
+      latencyTestTimeout
+    );
     if (latency <= 0 && isPinned && item?.value?.now) {
       const selectedChild = proxyByCode.get(item.value.now);
-      latency = selectedChild?.value.history?.[0]?.delay || 0;
+      latency = normalizeLatency(
+        selectedChild?.value.history?.[0]?.delay,
+        latencyTestTimeout
+      );
     }
     return [
       {
@@ -3947,7 +3970,8 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
           manualLinkByCode,
           cachedProxyLinks,
           outboundMetadata,
-          showDetectedCountries: urlTestConfig?.showDetectedCountries || showDetectedCountries
+          showDetectedCountries: urlTestConfig?.showDetectedCountries || showDetectedCountries,
+          latencyTestTimeout
         }) : void 0,
         priorityInfo: priorityConfig ? buildPriorityInfo({
           config: priorityConfig,
@@ -3957,7 +3981,8 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
           manualLinkByCode,
           cachedProxyLinks,
           outboundMetadata,
-          showDetectedCountries: priorityConfig.showDetectedCountries
+          showDetectedCountries: priorityConfig.showDetectedCountries,
+          latencyTestTimeout
         }) : void 0
       }
     ];
@@ -4108,13 +4133,16 @@ async function getDashboardSections() {
           runtimeMetadata.urltestGroups
         );
         const priorityGroups = getPriorityGroups(dashboardCache);
+        const latencyTestTimeoutStr = getSettingsSection(configSections)?.latency_test_timeout || "2000";
+        const latencyTestTimeoutNum = Number(latencyTestTimeoutStr) || 2e3;
         const { selector, latencyTestCode, latencyTestCodes, outbounds } = buildProxyGroupOutbounds(
           section,
           proxies,
           outboundMetadata,
           urltestGroups,
           priorityGroups,
-          cachedProxyLinks
+          cachedProxyLinks,
+          latencyTestTimeoutNum
         );
         return {
           withTagSelect: true,
@@ -4124,6 +4152,7 @@ async function getDashboardSections() {
           action: sectionAction,
           latencyTestCode,
           latencyTestCodes,
+          latencyTestTimeout: latencyTestTimeoutStr,
           proxyConfigType,
           subscriptionSourceCount,
           subscriptionMetadata,
@@ -4133,18 +4162,23 @@ async function getDashboardSections() {
       if (sectionAction === "vpn") {
         const outboundTag = getOutboundTagBySection(sectionName);
         const outbound = proxies.find((proxy) => proxy.code === outboundTag);
+        const latencyTestTimeoutStr = getSettingsSection(configSections)?.latency_test_timeout || "2000";
+        const latencyTestTimeoutNum = Number(latencyTestTimeoutStr) || 2e3;
         return {
           withTagSelect: false,
           code: outbound?.code || sectionName,
           sectionName,
           displayName,
           action: sectionAction,
-          latencyTestTimeout: getSettingsSection(configSections)?.latency_test_timeout || "2000",
+          latencyTestTimeout: latencyTestTimeoutStr,
           outbounds: [
             {
               code: outbound?.code || sectionName,
               displayName: section.interface || outbound?.value?.name || "",
-              latency: outbound?.value?.history?.[0]?.delay || 0,
+              latency: normalizeLatency(
+                outbound?.value?.history?.[0]?.delay,
+                latencyTestTimeoutNum
+              ),
               type: outbound?.value?.type || "",
               selected: true,
               runtimeAvailable: Boolean(outbound)
@@ -4155,17 +4189,23 @@ async function getDashboardSections() {
       if (sectionAction === "outbound") {
         const outboundTag = getOutboundTagBySection(sectionName);
         const outbound = proxies.find((proxy) => proxy.code === outboundTag);
+        const latencyTestTimeoutStr = getSettingsSection(configSections)?.latency_test_timeout || "2000";
+        const latencyTestTimeoutNum = Number(latencyTestTimeoutStr) || 2e3;
         return {
           withTagSelect: false,
           code: outbound?.code || sectionName,
           sectionName,
           displayName,
           action: sectionAction,
+          latencyTestTimeout: latencyTestTimeoutStr,
           outbounds: [
             {
               code: outbound?.code || sectionName,
               displayName: getJsonOutboundDisplayName(section) || outbound?.value?.name || "",
-              latency: outbound?.value?.history?.[0]?.delay || 0,
+              latency: normalizeLatency(
+                outbound?.value?.history?.[0]?.delay,
+                latencyTestTimeoutNum
+              ),
               type: outbound?.value?.type || "",
               selected: true
             }
@@ -6909,10 +6949,16 @@ async function renderSectionsWidget() {
             return handleTestLatency(
               "proxy_list",
               section.sectionName,
-              JSON.stringify(tag)
+              JSON.stringify(tag),
+              section.latencyTestTimeout
             );
           }
-          return handleTestLatency("group", section.sectionName, tag);
+          return handleTestLatency(
+            "group",
+            section.sectionName,
+            tag,
+            section.latencyTestTimeout
+          );
         }
         return handleTestLatency(
           "proxy",

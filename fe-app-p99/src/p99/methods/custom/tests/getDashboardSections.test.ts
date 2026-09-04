@@ -1329,4 +1329,53 @@ describe('getDashboardSections', () => {
     expect(urltestOutbound?.pinned).toBe(true);
     expect(urltestOutbound?.latency).toBe(42);
   });
+
+  it('populates latencyTestTimeout and normalizes delays exceeding the timeout to 0', async () => {
+    mocks.getConfigSections.mockResolvedValue([
+      {
+        '.name': 'settings',
+        '.type': 'settings',
+        latency_test_timeout: '2000',
+      },
+      proxySection({
+        selector_proxy_links: [
+          'vless://example1#one',
+          'vless://example2#two',
+        ],
+        urltests: [],
+        urltest_settings: undefined,
+      }),
+    ]);
+    mocks.getClashApiProxies.mockResolvedValue({
+      success: true,
+      data: {
+        proxies: {
+          'main-out': proxy('Selector', {
+            name: 'main-out',
+            history: [],
+            now: 'main-1-out',
+            all: ['main-1-out', 'main-2-out'],
+          }),
+          'main-1-out': proxy('VLESS', {
+            name: 'Fast node',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 150 }],
+          }),
+          'main-2-out': proxy('VLESS', {
+            name: 'Slow dead node',
+            history: [{ time: '2026-06-11T00:00:00Z', delay: 3500 }],
+          }),
+        },
+      },
+    });
+
+    const result = await getDashboardSections();
+    expect(result.success).toBe(true);
+    const [section] = result.data;
+    expect(section.latencyTestTimeout).toBe('2000');
+
+    const node1 = section.outbounds.find((o) => o.code === 'main-1-out');
+    const node2 = section.outbounds.find((o) => o.code === 'main-2-out');
+    expect(node1?.latency).toBe(150);
+    expect(node2?.latency).toBe(0);
+  });
 });

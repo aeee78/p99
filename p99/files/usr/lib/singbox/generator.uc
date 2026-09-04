@@ -3020,6 +3020,27 @@ function section_by_name(sections, name) {
     return null;
 }
 
+function apply_connection_timeout_to_outbounds(config, settings) {
+    let timeout = int_option(settings, "latency_test_timeout", "2000");
+    if (timeout <= 0)
+        timeout = 2000;
+    let timeout_str = sprintf("%dms", timeout);
+
+    for (let outbound in array_or_empty(config.outbounds)) {
+        if (type(outbound) != "object")
+            continue;
+        let t = as_string(outbound.type || "");
+        if (t == "" || t == "direct" || t == "selector" || t == "urltest" || t == "dns" || t == "block")
+            continue;
+        if (outbound.routing_mark != null)
+            continue;
+        if (as_string(outbound.server || "") == runtime_constants.BYEDPI_LISTEN_ADDRESS)
+            continue;
+        if (outbound.connect_timeout == null || outbound.connect_timeout == "")
+            outbound.connect_timeout = timeout_str;
+    }
+}
+
 function generate_config(output_path, service_address, mwan3_active, supports_xhttp, deferred_sections) {
     runtime_supports_xhttp = supports_xhttp == null || as_string(supports_xhttp) == ""
         ? true
@@ -3053,6 +3074,7 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
         add_mixed_proxy_for_section(config, section, service_address);
 
     assert_unique_outbound_tags(config);
+    apply_connection_timeout_to_outbounds(config, settings);
     strip_internal_fields(config);
     if (!write_json_file(output_path, config)) {
         warn("failed to write ", output_path, "\n");

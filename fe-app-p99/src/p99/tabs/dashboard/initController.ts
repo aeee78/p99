@@ -1668,10 +1668,16 @@ async function renderSectionsWidget() {
               'proxy_list',
               section.sectionName,
               JSON.stringify(tag),
+              section.latencyTestTimeout,
             );
           }
 
-          return handleTestLatency('group', section.sectionName, tag);
+          return handleTestLatency(
+            'group',
+            section.sectionName,
+            tag,
+            section.latencyTestTimeout,
+          );
         }
 
         return handleTestLatency(

@@ -722,9 +722,6 @@ function subscription_node_prefix(section, value) {
 }
 
 function subscription_user_agent(section, value) {
-    if (subscription_auto_user_agent(section, value))
-        return "";
-
     let child = child_item_by_value(section, "subscription_url", "url", value);
     let configured = child != null
         ? child_option(child, "user_agent", "")
@@ -734,7 +731,7 @@ function subscription_user_agent(section, value) {
     let sub = subscription_by_url(value);
     if (sub != null && option(sub, "user_agent", "") != "")
         return option(sub, "user_agent", "");
-    return "sing-box";
+    return "";
 }
 
 function subscription_hwid(section, value) {

@@ -426,20 +426,26 @@ function maintenance_plan(sections, section_cache_dir) {
     print("missing\t", runtime_cache_missing(sections, section_cache_dir) ? "1" : "0", "\n");
 }
 
+const DEFAULT_HAPP_USER_AGENT = "Happ/3.26.1";
 let p99_version = as_string(constants.P99_VERSION);
 let happ_compat_version = match(p99_version, /^[0-9]+[.][0-9]+[.][0-9]+$/) != null
     ? p99_version
-    : "2.8.0";
-let happ_compat_user_agent = "Happ/" + happ_compat_version;
+    : "3.26.1";
+let happ_compat_user_agent = DEFAULT_HAPP_USER_AGENT;
 
-let auto_user_agent_profiles = [ happ_compat_user_agent ];
+let auto_user_agent_profiles = [ happ_compat_user_agent, "Happ/2.8.0" ];
 
 let auto_user_agents = {};
 for (let profile in auto_user_agent_profiles)
     auto_user_agents[profile] = true;
-// Accept caches created before the compatibility UA followed the P99 version,
-// but do not send the legacy UA for new downloads.
 auto_user_agents["Happ/2.8.0"] = true;
+auto_user_agents["Happ/3.26.1"] = true;
+if (happ_compat_version != "")
+    auto_user_agents["Happ/" + happ_compat_version] = true;
+auto_user_agents["sing-box/default"] = true;
+let current_sb_ver = get_sing_box_version();
+if (current_sb_ver != "")
+    auto_user_agents["sing-box/" + current_sb_ver] = true;
 
 function user_agent_supported(user_agent, default_user_agent) {
     user_agent = as_string(user_agent);
@@ -1444,8 +1450,7 @@ function get_subscription_user_agent(custom_user_agent) {
     if (custom_user_agent != "")
         return custom_user_agent;
 
-    let version = get_sing_box_version();
-    return "sing-box/" + (version != "" ? version : "unknown");
+    return DEFAULT_HAPP_USER_AGENT;
 }
 
 function user_agent_candidates(configured_user_agent, preferred_user_agent, default_user_agent) {

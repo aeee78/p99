@@ -280,11 +280,11 @@ function createSubscriptionsContent(section) {
     "user_agent",
     _("User-Agent"),
     _(
-      "Leave empty for automatic detection or specify e.g. sing-box, clash.meta, v2ray",
+      "Leave empty for default (Happ/3.26.1) or specify e.g. sing-box, clash.meta, v2ray",
     ),
   );
   o.modalonly = true;
-  o.placeholder = "sing-box";
+  o.placeholder = "Happ/3.26.1";
   o.rmempty = true;
 }
 

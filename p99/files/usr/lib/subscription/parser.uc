@@ -2189,6 +2189,30 @@ function xray_transport_from_stream(stream) {
     return null;
 }
 
+function is_generic_xray_tag(tag) {
+    tag = lc(trim(as_string(tag)));
+    return tag == "" || tag == "proxy" || tag == "primary" || tag == "server" || match(tag, /^proxy[-_0-9]*$/) != null;
+}
+
+function xray_outbound_display_name(outbound, fallback) {
+    if (type(outbound) != "object")
+        return fallback;
+    let remark = xray_first_string([
+        outbound.remarks,
+        outbound.remark,
+        outbound.name,
+        outbound.ps,
+        outbound._remark,
+        outbound.description
+    ]);
+    if (remark != "")
+        return remark;
+    let tag = trim(as_string(outbound.tag || ""));
+    if (tag != "" && !is_generic_xray_tag(tag))
+        return tag;
+    return fallback;
+}
+
 function xray_display_name(original_tag) {
     original_tag = as_string(original_tag);
     return original_tag;
@@ -2504,10 +2528,12 @@ function xray_plan_config_outbounds(config, config_index, config_count, taken) {
             continue;
 
         let original_tag = xray_source_tag(outbound, lc(as_string(outbound.protocol || "server")) + "-" + (i + 1));
-        let tag = xray_unique_tag(xray_tag_base(original_tag, config_index, config_count), taken);
+        let display_name = xray_outbound_display_name(outbound, "");
+        let base_name = display_name != "" ? display_name : original_tag;
+        let tag = xray_unique_tag(xray_tag_base(base_name, config_index, config_count), taken);
         taken[tag] = true;
         tag_map[original_tag] = tag;
-        push(planned, { outbound, original_tag, tag });
+        push(planned, { outbound, original_tag, tag, display_name });
     }
 
     return { planned, tag_map };
@@ -2547,8 +2573,14 @@ function xray_add_converted_outbound(result, item, tag_map, visible, display_nam
     if (!converted)
         return;
 
-    if (visible && display_name != "")
-        converted.remark = display_name;
+    let remark = display_name != "" ? display_name : item.display_name;
+    if (remark != "")
+        converted.remark = remark;
+    else if (as_string(converted.remark || "") == "") {
+        let ob_remark = xray_outbound_display_name(item.outbound, "");
+        if (ob_remark != "")
+            converted.remark = ob_remark;
+    }
     if (visible && as_string(server_description) != "")
         converted.__p99_description = as_string(server_description);
     if (!visible)
@@ -2619,9 +2651,9 @@ function xray_config_outbounds(config, config_index, config_count, taken) {
         let visible = visible_source_tags[item.original_tag] === true;
         let hidden = !visible;
         if (visible || dependency_tags[item.original_tag] || visible_source_tags[item.original_tag] === false) {
-            let item_display_name = visible && display_name != ""
-                ? display_name
-                : xray_display_name(item.original_tag);
+            let item_display_name = item.display_name != ""
+                ? item.display_name
+                : (visible && display_name != "" ? display_name : xray_display_name(item.original_tag));
             xray_add_converted_outbound(result, item, tag_map, !hidden, item_display_name, server_description);
         }
     }
@@ -2730,6 +2762,152 @@ function normalize_sing_box_json_outbounds(candidates) {
     return outbounds;
 }
 
+function proxy_outbound_signature(outbound) {
+    if (type(outbound) != "object")
+        return "";
+    let ob_type = lc(as_string(outbound.type || ""));
+    if (ob_type == "" || ob_type == "urltest" || ob_type == "selector" || ob_type == "direct" || ob_type == "block")
+        return "";
+
+    let server = lc(as_string(outbound.server || ""));
+    let port = as_string(outbound.server_port || "");
+    if (server == "" || port == "")
+        return "";
+
+    let auth = as_string(outbound.uuid || outbound.password || "");
+    let method = as_string(outbound.method || "");
+    let flow = as_string(outbound.flow || "");
+
+    let transport = object_or_empty(outbound.transport);
+    let t_type = lc(as_string(transport.type || ""));
+    let t_path = as_string(transport.path || transport.service_name || "");
+    let t_host = as_string(transport.host || "");
+
+    let tls = object_or_empty(outbound.tls);
+    let sni = lc(as_string(tls.server_name || ""));
+    let reality = object_or_empty(tls.reality);
+    let r_pubkey = as_string(reality.public_key || "");
+    let r_shortid = as_string(reality.short_id || "");
+
+    return sprintf("%s://%s:%s@%s:%s?m=%s&f=%s&tt=%s&tp=%s&th=%s&sni=%s&rpk=%s&rsi=%s",
+        ob_type, auth, method, server, port, method, flow, t_type, t_path, t_host, sni, r_pubkey, r_shortid);
+}
+
+function outbound_quality_score(outbound) {
+    let score = 0;
+    if (!is_true(outbound.__p99_hidden))
+        score += 10;
+    let remark = as_string(outbound.remark || "");
+    if (remark != "") {
+        score += 5;
+        if (!is_generic_xray_tag(remark))
+            score += 5;
+    }
+    let tag = as_string(outbound.tag || "");
+    if (tag != "" && !is_generic_xray_tag(tag))
+        score += 5;
+    return score;
+}
+
+function deduplicate_subscription_outbounds(outbounds) {
+    if (type(outbounds) != "array" || length(outbounds) <= 1)
+        return outbounds;
+
+    let sig_map = {};
+    let tag_redirects = {};
+    let deduped = [];
+
+    for (let i = 0; i < length(outbounds); i++) {
+        let outbound = outbounds[i];
+        if (type(outbound) != "object")
+            continue;
+
+        let sig = proxy_outbound_signature(outbound);
+        if (sig == "") {
+            push(deduped, outbound);
+            continue;
+        }
+
+        let existing_idx = sig_map[sig];
+        if (existing_idx == null) {
+            sig_map[sig] = length(deduped);
+            push(deduped, outbound);
+        } else {
+            let existing = deduped[existing_idx];
+            let cand_score = outbound_quality_score(outbound);
+            let exist_score = outbound_quality_score(existing);
+
+            let old_tag = "";
+            let new_tag = "";
+
+            if (cand_score > exist_score) {
+                old_tag = as_string(existing.tag || "");
+                new_tag = as_string(outbound.tag || "");
+                if (old_tag != "" && new_tag != "")
+                    tag_redirects[old_tag] = new_tag;
+
+                if (as_string(outbound.remark || "") == "" && as_string(existing.remark || "") != "")
+                    outbound.remark = existing.remark;
+                if (!is_true(existing.__p99_hidden) && is_true(outbound.__p99_hidden))
+                    delete outbound.__p99_hidden;
+                if (as_string(outbound.__p99_description || "") == "" && as_string(existing.__p99_description || "") != "")
+                    outbound.__p99_description = existing.__p99_description;
+
+                deduped[existing_idx] = outbound;
+            } else {
+                old_tag = as_string(outbound.tag || "");
+                new_tag = as_string(existing.tag || "");
+                if (old_tag != "" && new_tag != "")
+                    tag_redirects[old_tag] = new_tag;
+
+                if (as_string(existing.remark || "") == "" && as_string(outbound.remark || "") != "")
+                    existing.remark = outbound.remark;
+                if (!is_true(outbound.__p99_hidden) && is_true(existing.__p99_hidden))
+                    delete existing.__p99_hidden;
+                if (as_string(existing.__p99_description || "") == "" && as_string(outbound.__p99_description || "") != "")
+                    existing.__p99_description = outbound.__p99_description;
+            }
+        }
+    }
+
+    for (let src in keys(tag_redirects)) {
+        let dest = tag_redirects[src];
+        let visited = {};
+        visited[src] = true;
+        while (dest != "" && tag_redirects[dest] && !visited[dest]) {
+            visited[dest] = true;
+            dest = tag_redirects[dest];
+        }
+        tag_redirects[src] = dest;
+    }
+
+    for (let outbound in deduped) {
+        if (type(outbound) != "object")
+            continue;
+
+        if (type(outbound.outbounds) == "array") {
+            let new_refs = [];
+            let seen_refs = {};
+            for (let ref in outbound.outbounds) {
+                ref = as_string(ref);
+                if (tag_redirects[ref])
+                    ref = tag_redirects[ref];
+                if (ref != "" && !seen_refs[ref]) {
+                    seen_refs[ref] = true;
+                    push(new_refs, ref);
+                }
+            }
+            outbound.outbounds = new_refs;
+        }
+
+        let detour = as_string(outbound.detour || "");
+        if (detour != "" && tag_redirects[detour])
+            outbound.detour = tag_redirects[detour];
+    }
+
+    return deduped;
+}
+
 function normalize_sing_box_json_value(value, output_file) {
     let candidates = [];
     let outbounds = [];
@@ -2740,6 +2918,7 @@ function normalize_sing_box_json_value(value, output_file) {
         outbounds = normalize_xray_configs(value);
 
     if (length(outbounds) > 0) {
+        outbounds = deduplicate_subscription_outbounds(outbounds);
         return write_json_file(output_file, {
             version: 1,
             format: "sing-box-json",
@@ -2755,6 +2934,7 @@ function normalize_sing_box_json_value(value, output_file) {
         candidates = [value];
 
     outbounds = normalize_sing_box_json_outbounds(candidates);
+    outbounds = deduplicate_subscription_outbounds(outbounds);
 
     if (length(outbounds) == 0) {
         fs.unlink(output_file);

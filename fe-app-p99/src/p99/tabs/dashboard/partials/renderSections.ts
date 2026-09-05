@@ -348,7 +348,11 @@ function renderDefaultState({
             ]
           : []),
         E('div', { class: 'fkp_dashboard-page__outbound-grid__item__header' }, [
-          E('b', {}, renderFlagEmojis(outbound.displayName)),
+          E(
+            'b',
+            {},
+            renderFlagEmojis(outbound.cleanDisplayName || outbound.displayName),
+          ),
           ...(outbound.urlTestInfo
             ? [
                 E(
@@ -396,8 +400,27 @@ function renderDefaultState({
           ),
           E(
             'div',
-            { class: getLatencyClass() },
-            outbound.latency ? `${outbound.latency}ms` : 'N/A',
+            { class: 'fkp_dashboard-page__outbound-grid__item__latency-box' },
+            [
+              ...(outbound.subscriptionPrefix
+                ? [
+                    E(
+                      'span',
+                      {
+                        class:
+                          'fkp_dashboard-page__outbound-grid__item__sub-tag',
+                        title: `${_('Subscription')}: ${outbound.subscriptionPrefix}`,
+                      },
+                      outbound.subscriptionPrefix,
+                    ),
+                  ]
+                : []),
+              E(
+                'div',
+                { class: getLatencyClass() },
+                outbound.latency ? `${outbound.latency}ms` : 'N/A',
+              ),
+            ],
           ),
         ]),
       ],
@@ -450,6 +473,27 @@ function renderDefaultState({
   const outboundsList = sortByLatency
     ? sortOutboundsByLatency(section.outbounds)
     : section.outbounds;
+
+  const activeOutbounds: P99.Outbound[] = [];
+  const naOutbounds: P99.Outbound[] = [];
+
+  for (const outbound of outboundsList) {
+    const isPinned =
+      outbound.pinned ||
+      (
+        outbound.cleanDisplayName ||
+        outbound.displayName ||
+        ''
+      ).toLowerCase() === 'fastest';
+    const isAlive =
+      typeof outbound.latency === 'number' && outbound.latency > 0;
+
+    if (isPinned || isAlive) {
+      activeOutbounds.push(outbound);
+    } else {
+      naOutbounds.push(outbound);
+    }
+  }
 
   return E('div', { class: 'fkp_dashboard-page__outbound-section' }, [
     // Title with test latency
@@ -510,8 +554,27 @@ function renderDefaultState({
     ]),
     E('div', { class: 'fkp_dashboard-page__outbound-grid' }, [
       ...metadataNodes,
-      ...outboundsList.map((outbound) => renderOutbound(outbound)),
+      ...activeOutbounds.map((outbound) => renderOutbound(outbound)),
     ]),
+    ...(naOutbounds.length > 0
+      ? [
+          E('div', { class: 'fkp_dashboard-page__na-separator' }, [
+            E(
+              'span',
+              { class: 'fkp_dashboard-page__na-title' },
+              `${_('Unavailable servers')} (${naOutbounds.length})`,
+            ),
+          ]),
+          E(
+            'div',
+            {
+              class:
+                'fkp_dashboard-page__outbound-grid fkp_dashboard-page__outbound-grid--na',
+            },
+            naOutbounds.map((outbound) => renderOutbound(outbound)),
+          ),
+        ]
+      : []),
   ]);
 }
 

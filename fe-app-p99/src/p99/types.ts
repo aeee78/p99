@@ -105,6 +105,9 @@ export namespace P99 {
   export interface Outbound {
     code: string;
     displayName: string;
+    cleanDisplayName?: string;
+    subscriptionPrefix?: string;
+    protocolStack?: string;
     latency: number;
     type: string;
     description?: string;
@@ -463,6 +466,9 @@ export namespace P99 {
     names?: Record<string, string>;
     countries?: Record<string, string>;
     descriptions?: Record<string, string>;
+    protocols?: Record<string, string>;
+    transports?: Record<string, string>;
+    securities?: Record<string, string>;
   }
 
   export interface GetSingBoxStatus {

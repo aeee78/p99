@@ -52,4 +52,42 @@ describe('getOutboundFooterLabel', () => {
     ).toBe('Upstream Tube');
     expect(getOutboundFooterLabel(outbound({}))).toBe('VLESS');
   });
+
+  it('avoids tautology when active member name matches group name', () => {
+    expect(
+      getOutboundFooterLabel(
+        outbound({
+          displayName: 'enot 🇫🇮 Финляндия',
+          cleanDisplayName: '🇫🇮 Финляндия',
+          protocolStack: 'Auto · VLESS · Reality',
+          urlTestInfo: {
+            code: 'urltest-fi',
+            displayName: 'enot 🇫🇮 Финляндия',
+            selectedName: 'enot 🇫🇮 Финляндия',
+            outbounds: [],
+          },
+        }),
+      ),
+    ).toBe('Auto · VLESS · Reality');
+  });
+
+  it('shows technical protocol stack for regular nodes', () => {
+    expect(
+      getOutboundFooterLabel(
+        outbound({
+          type: 'VLESS',
+          protocolStack: 'VLESS · Reality',
+        }),
+      ),
+    ).toBe('VLESS · Reality');
+
+    expect(
+      getOutboundFooterLabel(
+        outbound({
+          type: 'Hysteria2',
+          protocolStack: 'Hysteria2',
+        }),
+      ),
+    ).toBe('Hysteria2');
+  });
 });

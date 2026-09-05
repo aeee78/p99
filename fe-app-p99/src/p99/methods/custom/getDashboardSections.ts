@@ -1190,6 +1190,103 @@ function buildPriorityInfo({
   };
 }
 
+function getSubscriptionPrefixes(section: P99.ConfigSection): string[] {
+  const prefixes: string[] = [];
+  try {
+    const raw = section.subscription_url_settings;
+    const settings =
+      typeof raw === 'string'
+        ? (JSON.parse(raw) as Record<string, ItemSettings>)
+        : (raw as Record<string, ItemSettings> | undefined);
+    if (settings && typeof settings === 'object') {
+      for (const val of Object.values(settings)) {
+        if (val && typeof val === 'object') {
+          const p = String(
+            (val as Record<string, unknown>).node_prefix || '',
+          ).trim();
+          if (p && !prefixes.includes(p)) {
+            prefixes.push(p);
+          }
+        }
+      }
+    }
+  } catch {
+    // Ignore JSON parse errors
+  }
+  return prefixes;
+}
+
+function extractSubscriptionPrefix(
+  displayName: string,
+  prefixes: string[],
+): { prefix?: string; cleanName: string } {
+  const trimmed = displayName.trim();
+  for (const prefix of prefixes) {
+    if (trimmed === prefix) {
+      return { prefix, cleanName: trimmed };
+    }
+    if (trimmed.startsWith(`${prefix} `)) {
+      return { prefix, cleanName: trimmed.slice(prefix.length + 1).trim() };
+    }
+  }
+
+  const match =
+    /^([a-zA-Z0-9_-]{2,15})\s+([\u{1f1e6}-\u{1f1ff}]{2}.*|[\u{1f300}-\u{1f9ff}].*)$/u.exec(
+      trimmed,
+    );
+  if (match && match[1] && match[2]) {
+    const candidate = match[1];
+    if (
+      !/^(Fastest|URLTest|Priority|Selector|Direct|Bypass|Proxy)$/i.test(
+        candidate,
+      )
+    ) {
+      return { prefix: candidate, cleanName: match[2].trim() };
+    }
+  }
+
+  return { prefix: undefined, cleanName: trimmed };
+}
+
+export function formatProtocolStack(
+  protocol?: string,
+  transport?: string,
+  security?: string,
+): string {
+  if (!protocol) return '';
+  const protoLower = protocol.toLowerCase();
+  let protoLabel = protocol;
+  if (protoLower === 'vless') protoLabel = 'VLESS';
+  else if (protoLower === 'vmess') protoLabel = 'VMess';
+  else if (protoLower === 'hysteria2' || protoLower === 'hy2')
+    protoLabel = 'Hysteria2';
+  else if (protoLower === 'trojan') protoLabel = 'Trojan';
+  else if (protoLower === 'shadowsocks' || protoLower === 'ss')
+    protoLabel = 'Shadowsocks';
+  else if (protoLower === 'socks' || protoLower === 'socks5')
+    protoLabel = 'SOCKS5';
+
+  const parts: string[] = [protoLabel];
+
+  const transLower = (transport || '').toLowerCase();
+  if (transLower && transLower !== 'tcp' && transLower !== 'raw') {
+    if (transLower === 'grpc') parts.push('gRPC');
+    else if (transLower === 'xhttp') parts.push('xHTTP');
+    else if (transLower === 'ws') parts.push('WS');
+    else if (transLower === 'http' || transLower === 'h2') parts.push('H2');
+    else parts.push(transLower.toUpperCase());
+  }
+
+  const secLower = (security || '').toLowerCase();
+  if (secLower === 'reality') {
+    parts.push('Reality');
+  } else if (secLower === 'tls' && protoLower !== 'hysteria2') {
+    parts.push('TLS');
+  }
+
+  return parts.join(' · ');
+}
+
 function buildProxyGroupOutbounds(
   section: P99.ConfigSection,
   proxies: ClashProxyEntry[],
@@ -1239,6 +1336,8 @@ function buildProxyGroupOutbounds(
     ...priorityCodes,
   ]);
 
+  const subscriptionPrefixes = getSubscriptionPrefixes(section);
+
   const outbounds = uniqueCodes(groupCodes).flatMap((code) => {
     const item = proxyByCode.get(code);
     const urlTestConfig = urlTestConfigByCode.get(code);
@@ -1259,6 +1358,8 @@ function buildProxyGroupOutbounds(
         outboundMetadata,
         cachedProxyLinks.has(code),
       );
+    const { prefix: subscriptionPrefix, cleanName: cleanDisplayName } =
+      extractSubscriptionPrefix(displayName, subscriptionPrefixes);
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
     const _hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig
@@ -1277,10 +1378,42 @@ function buildProxyGroupOutbounds(
       );
     }
 
+    let protocolStack = '';
+    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPriority = Boolean(priorityConfig);
+
+    if (isUrlTest || isPriority) {
+      const activeCode = item?.value?.now;
+      if (activeCode) {
+        const childProto =
+          outboundMetadata?.protocols?.[activeCode] ||
+          proxyByCode.get(activeCode)?.value?.type;
+        const childTransport = outboundMetadata?.transports?.[activeCode];
+        const childSec = outboundMetadata?.securities?.[activeCode];
+        const childStack = formatProtocolStack(
+          childProto,
+          childTransport,
+          childSec,
+        );
+        protocolStack = childStack ? `Auto · ${childStack}` : 'Auto';
+      } else {
+        protocolStack = 'Auto';
+      }
+    } else {
+      const nodeProto =
+        outboundMetadata?.protocols?.[code] || item?.value?.type;
+      const nodeTransport = outboundMetadata?.transports?.[code];
+      const nodeSec = outboundMetadata?.securities?.[code];
+      protocolStack = formatProtocolStack(nodeProto, nodeTransport, nodeSec);
+    }
+
     return [
       {
         code,
         displayName,
+        cleanDisplayName,
+        subscriptionPrefix,
+        protocolStack,
         latency,
         type: priorityConfig
           ? 'Priority'
@@ -1495,6 +1628,9 @@ function getOutboundMetadata(dashboardCache?: DashboardSectionCache) {
   const names = objectMap(metadata?.names);
   const countries = objectMap(metadata?.countries);
   const descriptions = objectMap(metadata?.descriptions);
+  const protocols = objectMap(metadata?.protocols);
+  const transports = objectMap(metadata?.transports);
+  const securities = objectMap(metadata?.securities);
 
   if (!metadata || typeof metadata !== 'object') {
     return undefined;
@@ -1504,6 +1640,9 @@ function getOutboundMetadata(dashboardCache?: DashboardSectionCache) {
     names,
     countries,
     descriptions,
+    protocols,
+    transports,
+    securities,
   };
 }
 

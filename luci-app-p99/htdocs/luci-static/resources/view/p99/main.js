@@ -1775,8 +1775,33 @@ function prettyBytes(n) {
 }
 
 // src/p99/tabs/dashboard/partials/getOutboundFooterLabel.ts
+function normalizeText(value) {
+  return (value || "").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+}
 function getOutboundFooterLabel(outbound) {
-  return outbound.urlTestInfo?.selectedName || outbound.priorityInfo?.selectedName || outbound.description || outbound.type;
+  if (outbound.priorityInfo?.selectedName) {
+    return outbound.priorityInfo.selectedName;
+  }
+  if (outbound.urlTestInfo) {
+    const selected = outbound.urlTestInfo.selectedName;
+    const cleanGroup = (outbound.cleanDisplayName || outbound.displayName || "").trim();
+    if (outbound.code.toLowerCase().includes("urltest") || cleanGroup.toLowerCase() === "fastest") {
+      return selected || outbound.protocolStack || "URLTest";
+    }
+    if (selected) {
+      const normGroup = normalizeText(cleanGroup);
+      const normSelected = normalizeText(selected);
+      const isRedundant = Boolean(normGroup && normSelected) && (normGroup === normSelected || normSelected.includes(normGroup) || normGroup.includes(normSelected));
+      if (isRedundant) {
+        return outbound.protocolStack || "Auto";
+      }
+      if (/авто-?выбор|auto/i.test(cleanGroup)) {
+        return selected;
+      }
+    }
+    return outbound.protocolStack || selected || "Auto";
+  }
+  return outbound.description || outbound.protocolStack || outbound.type;
 }
 
 // src/p99/tabs/dashboard/partials/sortOutboundsByLatency.ts
@@ -2083,7 +2108,11 @@ function renderDefaultState({
           )
         ] : [],
         E("div", { class: "fkp_dashboard-page__outbound-grid__item__header" }, [
-          E("b", {}, renderFlagEmojis(outbound.displayName)),
+          E(
+            "b",
+            {},
+            renderFlagEmojis(outbound.cleanDisplayName || outbound.displayName)
+          ),
           ...outbound.urlTestInfo ? [
             E(
               "button",
@@ -2125,8 +2154,24 @@ function renderDefaultState({
           ),
           E(
             "div",
-            { class: getLatencyClass() },
-            outbound.latency ? `${outbound.latency}ms` : "N/A"
+            { class: "fkp_dashboard-page__outbound-grid__item__latency-box" },
+            [
+              ...outbound.subscriptionPrefix ? [
+                E(
+                  "span",
+                  {
+                    class: "fkp_dashboard-page__outbound-grid__item__sub-tag",
+                    title: `${_("Subscription")}: ${outbound.subscriptionPrefix}`
+                  },
+                  outbound.subscriptionPrefix
+                )
+              ] : [],
+              E(
+                "div",
+                { class: getLatencyClass() },
+                outbound.latency ? `${outbound.latency}ms` : "N/A"
+              )
+            ]
           )
         ])
       ]
@@ -2166,6 +2211,17 @@ function renderDefaultState({
     ]
   ) : void 0;
   const outboundsList = sortByLatency ? sortOutboundsByLatency(section.outbounds) : section.outbounds;
+  const activeOutbounds = [];
+  const naOutbounds = [];
+  for (const outbound of outboundsList) {
+    const isPinned = outbound.pinned || (outbound.cleanDisplayName || outbound.displayName || "").toLowerCase() === "fastest";
+    const isAlive = typeof outbound.latency === "number" && outbound.latency > 0;
+    if (isPinned || isAlive) {
+      activeOutbounds.push(outbound);
+    } else {
+      naOutbounds.push(outbound);
+    }
+  }
   return E("div", { class: "fkp_dashboard-page__outbound-section" }, [
     // Title with test latency
     E("div", { class: "fkp_dashboard-page__outbound-section__title-section" }, [
@@ -2222,8 +2278,24 @@ function renderDefaultState({
     ]),
     E("div", { class: "fkp_dashboard-page__outbound-grid" }, [
       ...metadataNodes,
-      ...outboundsList.map((outbound) => renderOutbound(outbound))
-    ])
+      ...activeOutbounds.map((outbound) => renderOutbound(outbound))
+    ]),
+    ...naOutbounds.length > 0 ? [
+      E("div", { class: "fkp_dashboard-page__na-separator" }, [
+        E(
+          "span",
+          { class: "fkp_dashboard-page__na-title" },
+          `${_("Unavailable servers")} (${naOutbounds.length})`
+        )
+      ]),
+      E(
+        "div",
+        {
+          class: "fkp_dashboard-page__outbound-grid fkp_dashboard-page__outbound-grid--na"
+        },
+        naOutbounds.map((outbound) => renderOutbound(outbound))
+      )
+    ] : []
   ]);
 }
 function renderSections(props) {
@@ -3885,6 +3957,80 @@ function buildPriorityInfo({
     outbounds
   };
 }
+function getSubscriptionPrefixes(section) {
+  const prefixes = [];
+  try {
+    const raw = section.subscription_url_settings;
+    const settings = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (settings && typeof settings === "object") {
+      for (const val of Object.values(settings)) {
+        if (val && typeof val === "object") {
+          const p = String(
+            val.node_prefix || ""
+          ).trim();
+          if (p && !prefixes.includes(p)) {
+            prefixes.push(p);
+          }
+        }
+      }
+    }
+  } catch {
+  }
+  return prefixes;
+}
+function extractSubscriptionPrefix(displayName, prefixes) {
+  const trimmed = displayName.trim();
+  for (const prefix of prefixes) {
+    if (trimmed === prefix) {
+      return { prefix, cleanName: trimmed };
+    }
+    if (trimmed.startsWith(`${prefix} `)) {
+      return { prefix, cleanName: trimmed.slice(prefix.length + 1).trim() };
+    }
+  }
+  const match = /^([a-zA-Z0-9_-]{2,15})\s+([\u{1f1e6}-\u{1f1ff}]{2}.*|[\u{1f300}-\u{1f9ff}].*)$/u.exec(
+    trimmed
+  );
+  if (match && match[1] && match[2]) {
+    const candidate = match[1];
+    if (!/^(Fastest|URLTest|Priority|Selector|Direct|Bypass|Proxy)$/i.test(
+      candidate
+    )) {
+      return { prefix: candidate, cleanName: match[2].trim() };
+    }
+  }
+  return { prefix: void 0, cleanName: trimmed };
+}
+function formatProtocolStack(protocol, transport, security) {
+  if (!protocol) return "";
+  const protoLower = protocol.toLowerCase();
+  let protoLabel = protocol;
+  if (protoLower === "vless") protoLabel = "VLESS";
+  else if (protoLower === "vmess") protoLabel = "VMess";
+  else if (protoLower === "hysteria2" || protoLower === "hy2")
+    protoLabel = "Hysteria2";
+  else if (protoLower === "trojan") protoLabel = "Trojan";
+  else if (protoLower === "shadowsocks" || protoLower === "ss")
+    protoLabel = "Shadowsocks";
+  else if (protoLower === "socks" || protoLower === "socks5")
+    protoLabel = "SOCKS5";
+  const parts = [protoLabel];
+  const transLower = (transport || "").toLowerCase();
+  if (transLower && transLower !== "tcp" && transLower !== "raw") {
+    if (transLower === "grpc") parts.push("gRPC");
+    else if (transLower === "xhttp") parts.push("xHTTP");
+    else if (transLower === "ws") parts.push("WS");
+    else if (transLower === "http" || transLower === "h2") parts.push("H2");
+    else parts.push(transLower.toUpperCase());
+  }
+  const secLower = (security || "").toLowerCase();
+  if (secLower === "reality") {
+    parts.push("Reality");
+  } else if (secLower === "tls" && protoLower !== "hysteria2") {
+    parts.push("TLS");
+  }
+  return parts.join(" \xB7 ");
+}
 function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGroups = {}, priorityGroups = {}, cachedProxyLinks = /* @__PURE__ */ new Map(), latencyTestTimeout) {
   const sectionName = section[".name"];
   const proxyByCode = getProxyEntryByCode(proxies);
@@ -3923,6 +4069,7 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
     ...urlTestCodes,
     ...priorityCodes
   ]);
+  const subscriptionPrefixes = getSubscriptionPrefixes(section);
   const outbounds = uniqueCodes(groupCodes).flatMap((code) => {
     const item = proxyByCode.get(code);
     const urlTestConfig = urlTestConfigByCode.get(code);
@@ -3938,6 +4085,7 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
       outboundMetadata,
       cachedProxyLinks.has(code)
     );
+    const { prefix: subscriptionPrefix, cleanName: cleanDisplayName } = extractSubscriptionPrefix(displayName, subscriptionPrefixes);
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
     const _hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig ? priorityConfig.pinDashboard !== false : Boolean(urlTestConfig?.pinDashboard);
@@ -3952,10 +4100,37 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
         latencyTestTimeout
       );
     }
+    let protocolStack = "";
+    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPriority = Boolean(priorityConfig);
+    if (isUrlTest || isPriority) {
+      const activeCode = item?.value?.now;
+      if (activeCode) {
+        const childProto = outboundMetadata?.protocols?.[activeCode] || proxyByCode.get(activeCode)?.value?.type;
+        const childTransport = outboundMetadata?.transports?.[activeCode];
+        const childSec = outboundMetadata?.securities?.[activeCode];
+        const childStack = formatProtocolStack(
+          childProto,
+          childTransport,
+          childSec
+        );
+        protocolStack = childStack ? `Auto \xB7 ${childStack}` : "Auto";
+      } else {
+        protocolStack = "Auto";
+      }
+    } else {
+      const nodeProto = outboundMetadata?.protocols?.[code] || item?.value?.type;
+      const nodeTransport = outboundMetadata?.transports?.[code];
+      const nodeSec = outboundMetadata?.securities?.[code];
+      protocolStack = formatProtocolStack(nodeProto, nodeTransport, nodeSec);
+    }
     return [
       {
         code,
         displayName,
+        cleanDisplayName,
+        subscriptionPrefix,
+        protocolStack,
         latency,
         type: priorityConfig ? "Priority" : urlTestConfig ? "URLTest" : item?.value.type || "URLTest",
         selected: selector?.value?.now === code,
@@ -4085,13 +4260,19 @@ function getOutboundMetadata(dashboardCache) {
   const names = objectMap(metadata?.names);
   const countries = objectMap(metadata?.countries);
   const descriptions = objectMap(metadata?.descriptions);
+  const protocols = objectMap(metadata?.protocols);
+  const transports = objectMap(metadata?.transports);
+  const securities = objectMap(metadata?.securities);
   if (!metadata || typeof metadata !== "object") {
     return void 0;
   }
   return {
     names,
     countries,
-    descriptions
+    descriptions,
+    protocols,
+    transports,
+    securities
   };
 }
 async function getDashboardSections() {
@@ -7722,6 +7903,68 @@ var styles = `
 
 .fkp_dashboard-page__outbound-grid__item__latency--red {
     color: var(--error-color-medium, red);
+}
+
+.fkp_dashboard-page__outbound-grid__item__latency-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.fkp_dashboard-page__outbound-grid__item__sub-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-color-medium, #aaa);
+    letter-spacing: 0.3px;
+}
+
+.fkp_dashboard-page__na-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 28px 0 14px 0;
+    color: var(--text-color-medium, #888);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.fkp_dashboard-page__na-separator::before,
+.fkp_dashboard-page__na-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px dashed var(--border-color-medium, rgba(255, 255, 255, 0.15));
+}
+
+.fkp_dashboard-page__na-separator:not(:empty)::before {
+    margin-right: 14px;
+}
+
+.fkp_dashboard-page__na-separator:not(:empty)::after {
+    margin-left: 14px;
+}
+
+.fkp_dashboard-page__outbound-grid--na {
+    margin-top: 0;
+}
+
+.fkp_dashboard-page__outbound-grid--na .fkp_dashboard-page__outbound-grid__item {
+    opacity: 0.62;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fkp_dashboard-page__outbound-grid--na .fkp_dashboard-page__outbound-grid__item:hover {
+    opacity: 1;
 }
 
 .fkp_dashboard-page__urltest-details {

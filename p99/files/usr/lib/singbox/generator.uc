@@ -1305,12 +1305,33 @@ function dashboard_country_metadata(section, state) {
     return metadata;
 }
 
-function selected_group_outbounds(group_names, group_outbounds) {
+function selected_group_outbounds(group_names, group_outbounds, state) {
     group_outbounds = object_or_empty(group_outbounds);
     let result = [];
     for (let group_name in array_or_empty(group_names))
         for (let tag_name in array_or_empty(group_outbounds[group_name]))
             push(result, tag_name);
+
+    if (type(state?.urltestGroups) == "object") {
+        let member_set = object_keys_set(result);
+        for (let group_tag, group in state.urltestGroups) {
+            for (let member in array_or_empty(group.outbounds)) {
+                if (member_set[as_string(member)]) {
+                    push(result, as_string(group_tag));
+                    break;
+                }
+            }
+        }
+    }
+
+    if (type(state?.outboundMetadata?.aliases) == "object") {
+        for (let member in keys(object_keys_set(result))) {
+            let alias = state.outboundMetadata.aliases[member];
+            if (alias)
+                push(result, as_string(alias));
+        }
+    }
+
     return unique_string_array(result);
 }
 
@@ -1346,8 +1367,8 @@ function dashboard_filtered_outbounds(section, selector_tags, state, group_outbo
         connections.dashboard_exclude_protocols(section),
         connections.dashboard_exclude_transports(section),
         connections.dashboard_exclude_securities(section),
-        selected_group_outbounds(connections.dashboard_include_groups(section), group_outbounds),
-        selected_group_outbounds(connections.dashboard_exclude_groups(section), group_outbounds)
+        selected_group_outbounds(connections.dashboard_include_groups(section), group_outbounds, state),
+        selected_group_outbounds(connections.dashboard_exclude_groups(section), group_outbounds, state)
     );
 }
 

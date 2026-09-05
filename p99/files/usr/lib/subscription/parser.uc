@@ -2411,8 +2411,6 @@ function xray_supported_source_tags(source_outbounds) {
         let outbound = source_outbounds[i];
         if (type(outbound) != "object" || !xray_outbound_supported(outbound))
             continue;
-        if (xray_outbound_is_local_chain(outbound))
-            continue;
 
         let tag = xray_source_tag(outbound, lc(as_string(outbound.protocol || "server")) + "-" + (i + 1));
         result[tag] = true;
@@ -2623,7 +2621,7 @@ function xray_add_converted_outbound(result, item, tag_map, visible, display_nam
         converted.__p99_description = as_string(server_description);
     if (profile_member)
         converted.__p99_profile_member = true;
-    if (!visible || profile_member || xray_outbound_is_local_chain(item.outbound))
+    if (!visible || profile_member)
         converted.__p99_hidden = true;
 
     let detour = xray_outbound_detour(item.outbound);

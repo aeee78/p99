@@ -2626,6 +2626,9 @@ msgstr ""
 msgid "Unavailability timeout"
 msgstr ""
 
+msgid "Unavailable servers"
+msgstr ""
+
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6334
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6383
 msgid "Unexpected ByeDPI strategy argument: %s"

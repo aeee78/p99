@@ -1823,6 +1823,9 @@ msgstr "Тип"
 msgid "UDP (Unprotected DNS)"
 msgstr "UDP (Незащищённый DNS)"
 
+msgid "Unavailable servers"
+msgstr "Недоступные серверы"
+
 msgid "Unable to validate the ByeDPI strategy through the backend parser."
 msgstr "Не удалось проверить стратегию ByeDPI через backend-парсер."
 

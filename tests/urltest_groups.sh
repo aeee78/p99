@@ -859,4 +859,239 @@ if (!urltest || length(urltest.outbounds || []) != 1 || urltest.outbounds[0] != 
     die("cached country.is metadata was not applied to URLTest filtering\n");
 ' "$country_is_config" || fail "URLTest country.is cached filtering"
 
+cat >"$WORK_DIR/happ-profiles.json" <<'JSON'
+[
+  {
+    "remarks": "Netherlands NEW",
+    "outbounds": [
+      {
+        "protocol": "vless",
+        "tag": "proxy",
+        "settings": {
+          "vnext": [
+            {
+              "address": "nl-new.example",
+              "port": 443,
+              "users": [ { "id": "00000000-0000-4000-8000-000000000021", "encryption": "none" } ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "security": "tls",
+          "tlsSettings": { "serverName": "nl-new.example" },
+          "sockopt": { "dialerProxy": "socks" }
+        }
+      },
+      {
+        "protocol": "vless",
+        "tag": "proxy-2",
+        "settings": {
+          "vnext": [
+            {
+              "address": "nl-new-b.example",
+              "port": 443,
+              "users": [ { "id": "00000000-0000-4000-8000-000000000022", "encryption": "none" } ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "security": "tls",
+          "tlsSettings": { "serverName": "nl-new-b.example" }
+        }
+      },
+      {
+        "protocol": "socks",
+        "tag": "socks",
+        "settings": {
+          "servers": [ { "address": "127.0.0.1", "port": 10808 } ]
+        }
+      },
+      {
+        "protocol": "freedom",
+        "tag": "direct"
+      }
+    ],
+    "routing": {
+      "balancers": [
+        {
+          "tag": "nl-balancer",
+          "selector": [ "proxy" ]
+        },
+        {
+          "tag": "nl-backup-balancer",
+          "selector": [ "proxy-2" ]
+        }
+      ]
+    }
+  },
+  {
+    "remarks": "Russia YouTube",
+    "outbounds": [
+      {
+        "protocol": "vless",
+        "tag": "proxy",
+        "settings": {
+          "vnext": [
+            {
+              "address": "ru-yt.example",
+              "port": 443,
+              "users": [ { "id": "00000000-0000-4000-8000-000000000023", "encryption": "none" } ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "security": "tls",
+          "tlsSettings": { "serverName": "ru-yt.example" }
+        }
+      },
+      {
+        "protocol": "vless",
+        "tag": "proxy-2",
+        "settings": {
+          "vnext": [
+            {
+              "address": "ru-yt-b.example",
+              "port": 443,
+              "users": [ { "id": "00000000-0000-4000-8000-000000000024", "encryption": "none" } ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "security": "tls",
+          "tlsSettings": { "serverName": "ru-yt-b.example" }
+        }
+      }
+    ],
+    "routing": {
+      "balancers": [
+        {
+          "tag": "ru-balancer",
+          "selector": [ "proxy" ]
+        }
+      ]
+    }
+  }
+]
+JSON
+
+happ_normalized="$WORK_DIR/happ-profiles-normalized.json"
+normalize_subscription "$WORK_DIR/happ-profiles.json" "$happ_normalized"
+ucode -e '
+let fs = require("fs");
+let value = json(fs.readfile(ARGV[0]));
+let visible = [];
+let hidden_tags = [];
+let socks = null;
+for (let outbound in value.outbounds || []) {
+    if (outbound.__p99_hidden === true || outbound.__p99_profile_member === true)
+        push(hidden_tags, outbound.tag);
+    else
+        push(visible, outbound);
+    if (outbound.type == "socks" && outbound.server == "127.0.0.1")
+        socks = outbound;
+}
+if (length(visible) != 2)
+    die("Happ JSON should expose one named profile per config, got " + length(visible) + "\n");
+let names = [];
+for (let outbound in visible) {
+    if (outbound.type != "urltest" || outbound.__p99_profile_group !== true)
+        die("visible Happ profile must be a profile URLTest group\n");
+    push(names, outbound.remark);
+}
+if (names[0] != "Netherlands NEW" || names[1] != "Russia YouTube")
+    die("Happ profile remarks were not used as visible names\n");
+for (let tag in hidden_tags)
+    if (tag == "Netherlands NEW" || tag == "Russia YouTube")
+        die("Happ profile groups must not be marked hidden\n");
+if (socks == null)
+    die("loopback socks detour should be retained as a hidden chain outbound\n");
+if (socks.__p99_hidden !== true)
+    die("loopback socks must be hidden\n");
+for (let outbound in value.outbounds || []) {
+    if (outbound.__p99_profile_member === true && as_string(outbound.remark || "") == "")
+        die("Happ balancer members should inherit the profile remark\n");
+}
+' "$happ_normalized" || fail "Happ JSON profile collapse"
+
+rm -rf "$WORK_DIR/subscriptions"
+prepare_subscription_cache proxy 1 "https://happ.example/sub" "$happ_normalized"
+
+cat >"$WORK_DIR/happ-groups-on-fixture.json" <<'JSON'
+{
+  "settings": {
+    ".name": "settings",
+    ".type": "settings",
+    "log_level": "warn"
+  },
+  "section": [
+    {
+      ".name": "proxy",
+      ".type": "section",
+      "enabled": "1",
+      "action": "connection",
+      "subscription_urls": [ "https://happ.example/sub" ]
+    }
+  ]
+}
+JSON
+
+cat >"$WORK_DIR/happ-groups-off-fixture.json" <<'JSON'
+{
+  "settings": {
+    ".name": "settings",
+    ".type": "settings",
+    "log_level": "warn"
+  },
+  "section": [
+    {
+      ".name": "proxy",
+      ".type": "section",
+      "enabled": "1",
+      "action": "connection",
+      "subscription_urls": [ "https://happ.example/sub" ],
+      "subscription_url_settings": "{\"https://happ.example/sub\":{\"include_urltest_groups\":\"0\"}}"
+    }
+  ]
+}
+JSON
+
+happ_on_config="$WORK_DIR/happ-groups-on-config.json"
+happ_off_config="$WORK_DIR/happ-groups-off-config.json"
+generate_config "$WORK_DIR/happ-groups-on-fixture.json" "$happ_on_config"
+generate_config "$WORK_DIR/happ-groups-off-fixture.json" "$happ_off_config"
+
+ucode -e '
+let fs = require("fs");
+function outbound_by_tag(config, tag) {
+    for (let outbound in config.outbounds || [])
+        if (outbound && outbound.tag == tag)
+            return outbound;
+    return null;
+}
+function contains(values, needle) {
+    for (let value in values || [])
+        if (value == needle)
+            return true;
+    return false;
+}
+function assert_happ_selector(config, label) {
+    let selector = outbound_by_tag(config, "proxy-out");
+    if (!selector)
+        die(label + ": missing selector\n");
+    if (length(selector.outbounds || []) != 2)
+        die(label + ": selector should contain two Happ profiles, got " + length(selector.outbounds || []) + "\n");
+    if (!contains(selector.outbounds, "Netherlands NEW") || !contains(selector.outbounds, "Russia YouTube"))
+        die(label + ": selector is missing Happ profile names\n");
+    for (let tag in selector.outbounds || [])
+        if (tag == "proxy" || tag == "proxy-2" || tag == "socks" || tag == "nl-balancer" || tag == "nl-backup-balancer" || tag == "ru-balancer")
+            die(label + ": selector leaked a technical Xray outbound " + tag + "\n");
+    for (let outbound in config.outbounds || []) {
+        if (outbound && outbound.type == "socks" && outbound.server == "127.0.0.1" && contains(selector.outbounds, outbound.tag))
+            die(label + ": loopback socks must not appear in the selector\n");
+    }
+}
+assert_happ_selector(json(fs.readfile(ARGV[0])), "include_urltest_groups=1");
+assert_happ_selector(json(fs.readfile(ARGV[1])), "include_urltest_groups=0");
+' "$happ_on_config" "$happ_off_config" || fail "Happ JSON selector hides technical outbounds"
+
 printf 'URLTest group checks passed\n'

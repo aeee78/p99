@@ -2194,6 +2194,38 @@ function is_generic_xray_tag(tag) {
     return tag == "" || tag == "proxy" || tag == "primary" || tag == "server" || match(tag, /^proxy[-_0-9]*$/) != null;
 }
 
+function xray_host_is_loopback(host) {
+    host = lc(trim(as_string(host)));
+    if (host == "localhost" || host == "::1" || host == "[::1]")
+        return true;
+    return match(host, /^127[.]/) != null;
+}
+
+function xray_outbound_address(outbound) {
+    if (type(outbound) != "object")
+        return "";
+
+    let protocol = lc(as_string(outbound.protocol || ""));
+    if (protocol == "vless") {
+        let vnext = xray_first_array_object(object_or_empty(outbound.settings).vnext);
+        return as_string(vnext.address || "");
+    }
+    if (protocol == "socks") {
+        let server_config = xray_first_array_object(object_or_empty(outbound.settings).servers);
+        return as_string(server_config.address || "");
+    }
+    if (protocol == "hysteria") {
+        let settings = object_or_empty(outbound.settings);
+        return as_string(settings.address || settings.server || "");
+    }
+    return "";
+}
+
+function xray_outbound_is_local_chain(outbound) {
+    return lc(as_string(object_or_empty(outbound).protocol || "")) == "socks" &&
+        xray_host_is_loopback(xray_outbound_address(outbound));
+}
+
 function xray_outbound_display_name(outbound, fallback) {
     if (type(outbound) != "object")
         return fallback;
@@ -2379,6 +2411,8 @@ function xray_supported_source_tags(source_outbounds) {
         let outbound = source_outbounds[i];
         if (type(outbound) != "object" || !xray_outbound_supported(outbound))
             continue;
+        if (xray_outbound_is_local_chain(outbound))
+            continue;
 
         let tag = xray_source_tag(outbound, lc(as_string(outbound.protocol || "server")) + "-" + (i + 1));
         result[tag] = true;
@@ -2401,6 +2435,8 @@ function xray_primary_source_tag(config, source_outbounds) {
     for (let i = 0; i < length(source_outbounds); i++) {
         let outbound = source_outbounds[i];
         if (type(outbound) != "object" || !xray_outbound_supported(outbound))
+            continue;
+        if (xray_outbound_is_local_chain(outbound))
             continue;
 
         let tag = xray_source_tag(outbound, lc(as_string(outbound.protocol || "server")) + "-" + (i + 1));
@@ -2505,9 +2541,11 @@ function xray_balancer_plans(config, source_outbounds) {
     return result;
 }
 
-function xray_balancer_group_base(plan, display_name, config_index, config_count, plan_index, plan_count) {
+function xray_balancer_group_base(plan, display_name, config_index, config_count, plan_index, plan_count, is_profile_group) {
     let balancer_tag = as_string(object_or_empty(plan).tag || "");
     display_name = as_string(display_name);
+    if (is_profile_group && display_name != "")
+        return display_name;
     if (plan_count == 1 && display_name != "")
         return display_name;
     if (balancer_tag != "")
@@ -2568,7 +2606,7 @@ function xray_server_description(config) {
     return as_string(meta.serverDescription || meta.server_description || object_or_empty(config)["server-description"] || "");
 }
 
-function xray_add_converted_outbound(result, item, tag_map, visible, display_name, server_description) {
+function xray_add_converted_outbound(result, item, tag_map, visible, display_name, server_description, profile_member) {
     let converted = convert_xray_outbound(item.outbound, item.tag);
     if (!converted)
         return;
@@ -2583,7 +2621,9 @@ function xray_add_converted_outbound(result, item, tag_map, visible, display_nam
     }
     if (visible && as_string(server_description) != "")
         converted.__p99_description = as_string(server_description);
-    if (!visible)
+    if (profile_member)
+        converted.__p99_profile_member = true;
+    if (!visible || profile_member || xray_outbound_is_local_chain(item.outbound))
         converted.__p99_hidden = true;
 
     let detour = xray_outbound_detour(item.outbound);
@@ -2606,6 +2646,7 @@ function xray_config_outbounds(config, config_index, config_count, taken) {
     let result = [];
 
     if (length(balancer_plans) > 0) {
+        let profile_group_added = false;
         for (let plan_index = 0; plan_index < length(balancer_plans); plan_index++) {
             let plan = balancer_plans[plan_index];
             let urltest_outbounds = [];
@@ -2617,16 +2658,32 @@ function xray_config_outbounds(config, config_index, config_count, taken) {
             }
 
             if (length(urltest_outbounds) > 0) {
-                let group_base = xray_balancer_group_base(plan, display_name, config_index, config_count, plan_index, length(balancer_plans));
+                let is_profile_group = !profile_group_added;
+                profile_group_added = true;
+                let group_base = xray_balancer_group_base(
+                    plan,
+                    display_name,
+                    config_index,
+                    config_count,
+                    plan_index,
+                    length(balancer_plans),
+                    is_profile_group
+                );
                 let group_tag = xray_unique_tag(group_base, taken);
                 taken[group_tag] = true;
+                let group_remark = display_name != "" && is_profile_group
+                    ? display_name
+                    : (group_base != "" ? group_base : group_tag);
                 let group = {
                     type: "urltest",
                     tag: group_tag,
                     outbounds: urltest_outbounds,
-                    remark: group_base != "" ? group_base : group_tag,
-                    __p99_allow_group: true
+                    remark: group_remark,
+                    __p99_allow_group: true,
+                    __p99_profile_group: true
                 };
+                if (!is_profile_group)
+                    group.__p99_hidden = true;
                 if (server_description != "")
                     group.__p99_description = server_description;
                 xray_apply_urltest_options(group, plan.urltest_options);
@@ -2649,12 +2706,21 @@ function xray_config_outbounds(config, config_index, config_count, taken) {
 
     for (let item in planned) {
         let visible = visible_source_tags[item.original_tag] === true;
+        let profile_member = visible_source_tags[item.original_tag] === false;
         let hidden = !visible;
-        if (visible || dependency_tags[item.original_tag] || visible_source_tags[item.original_tag] === false) {
+        if (visible || dependency_tags[item.original_tag] || profile_member) {
             let item_display_name = item.display_name != ""
                 ? item.display_name
-                : (visible && display_name != "" ? display_name : xray_display_name(item.original_tag));
-            xray_add_converted_outbound(result, item, tag_map, !hidden, item_display_name, server_description);
+                : (display_name != "" ? display_name : xray_display_name(item.original_tag));
+            xray_add_converted_outbound(
+                result,
+                item,
+                tag_map,
+                !hidden,
+                item_display_name,
+                server_description,
+                profile_member
+            );
         }
     }
 

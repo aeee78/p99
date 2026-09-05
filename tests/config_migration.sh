@@ -686,7 +686,7 @@ mkdir -p \
 printf '7\n' >"$WORK_DIR/cache-migration/runtime/cache-format"
 printf 'stale\n' >"$WORK_DIR/cache-migration/runtime/section-cache/stale.json"
 printf 'stale\n' >"$WORK_DIR/cache-migration/runtime/subscription-links/stale.json"
-printf '9\n' >"$WORK_DIR/cache-migration/persistent/cache-format"
+printf '10\n' >"$WORK_DIR/cache-migration/persistent/cache-format"
 cat >"$WORK_DIR/cache-migration/persistent/proxy-subscription-1.json" <<'JSON'
 {
   "version": 1,

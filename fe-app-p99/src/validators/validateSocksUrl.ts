@@ -3,11 +3,11 @@ import { isValidPort, parseHostPort } from './hostPort';
 
 export function validateSocksUrl(url: string): ValidationResult {
   try {
-    if (!/^socks(4|4a|5):\/\//.test(url)) {
+    if (!/^socks(4|4a|5)?:\/\//.test(url)) {
       return {
         valid: false,
         message: _(
-          'Invalid SOCKS URL: must start with socks4://, socks4a://, or socks5://',
+          'Invalid SOCKS URL: must start with socks://, socks4://, socks4a://, or socks5://',
         ),
       };
     }
@@ -19,7 +19,7 @@ export function validateSocksUrl(url: string): ValidationResult {
       };
     }
 
-    const body = url.replace(/^socks(4|4a|5):\/\//, '');
+    const body = url.replace(/^socks(4|4a|5)?:\/\//, '');
     const [authAndHost] = body.split('#'); // отбрасываем hash, если есть
     const [credentials, hostPortPart] = authAndHost.includes('@')
       ? authAndHost.split('@')

@@ -1,5 +1,5 @@
 import { insertIf } from '../../../../helpers';
-import { DIAGNOSTICS_CHECKS_MAP } from './contstants';
+import { DIAGNOSTICS_CHECKS_MAP } from './constants';
 import { P99ShellMethods } from '../../../methods';
 import type { IDiagnosticsChecksItem } from '../../../services';
 import { updateCheckStore } from './updateCheckStore';

@@ -1,7 +1,4 @@
-import {
-  DIAGNOSTICS_CHECKS,
-  DIAGNOSTICS_CHECKS_MAP,
-} from './checks/contstants';
+import { DIAGNOSTICS_CHECKS, DIAGNOSTICS_CHECKS_MAP } from './checks/constants';
 import { IDiagnosticsChecksStoreItem, StoreType } from '../../services';
 
 export interface DiagnosticsProviderOptions {

@@ -18,6 +18,7 @@ const validUrls = [
     'plain-user-ipv6',
     'ss://2022-blake3-aes-256-gcm:dmCly/Zh15Ww9+s+GFXiFTIkpw7c/qCISaBrai7WhhY=@[2001:db8::1]:27214?type=tcp#shadowsocks-ipv6',
   ],
+  ['legacy-base64', 'ss://YmYtY2ZiOnRlc3RAMTkyLjE2OC4xMDAuMTo4ODg4#legacy-ss'],
 ];
 
 const invalidUrls = [

@@ -1927,7 +1927,7 @@ function manual_socks_outbound(link, tag_name) {
         server_port: port,
         version: scheme == "socks4" || scheme == "socks4a" ? "4" : "5"
     };
-    if (scheme == "socks5") {
+    if (scheme == "socks5" || scheme == "socks") {
         let userinfo = url_userinfo(link);
         if (userinfo != "") {
             let colon = index(userinfo, ":");
@@ -2161,7 +2161,7 @@ function manual_link_outbound(link, tag_name) {
 
     link = url_strip_fragment_value(url_decode(link));
     scheme = url_scheme(link);
-    if (scheme == "socks4" || scheme == "socks4a" || scheme == "socks5")
+    if (scheme == "socks" || scheme == "socks4" || scheme == "socks4a" || scheme == "socks5")
         return manual_socks_outbound(link, tag_name);
     if (scheme == "ss")
         return manual_shadowsocks_outbound(link, tag_name);

@@ -1,6 +1,6 @@
 import type { StoreType } from '../../services';
 import type { DiagnosticsProviderOptions } from './diagnostic.store';
-import { DIAGNOSTICS_CHECKS } from './checks/contstants';
+import { DIAGNOSTICS_CHECKS } from './checks/constants';
 
 const DIAGNOSTIC_RUN_STORAGE_KEY = 'p99:diagnostic-run:v1';
 const DIAGNOSTIC_RUN_TTL_MS = 30 * 60 * 1000;

@@ -17,7 +17,7 @@ wget -qO- https://raw.githubusercontent.com/aeee78/p99/main/install.sh | sh
 
 ### ✨ Ключевые возможности
 
-- 🌐 **Любые подписки и протоколы**: VLESS (Reality/WS/gRPC/xHTTP), VMess, Trojan, Shadowsocks (SIP002), Hysteria2, SOCKS5, Clash YAML, sing-box JSON, base64-списки.
+- 🌐 **Любые подписки и протоколы**: VLESS (Reality/WS/gRPC/xHTTP), VMess, Trojan, Shadowsocks (SIP002 и классический base64), Hysteria2, SOCKS (socks/socks4/socks5), Clash YAML, sing-box JSON, base64-списки.
 - 📦 **Чистая установка без сторонних зеркал**: прямая загрузка пакетов и ruleset с GitHub (`aeee78/p99`) и официальных репозиториев OpenWrt (без подмены системных `distfeeds`).
 - ⚡ **Отказоустойчивые fallback-источники**: автоматическое переключение на jsDelivr CDN и сырые GitHub Raw адреса.
 - 🛡️ **Гибридная оркестрация DPI**: одновременная работа sing-box, zapret (nfqws v1), zapret2 (nfqws2) и ByeDPI (ciadpi).
@@ -277,9 +277,9 @@ P99 поддерживает совместное сосуществование
 ### 2.8. Парсер подписок (`p99/files/usr/lib/subscription/`)
 
 - `parser.uc` (свыше 3000 строк) парсит:
-  - Ссылки: `vless://`, `vmess://`, `trojan://`, `ss://` (SIP002), `hysteria2://`, `hy2://`, `socks5://`.
+  - Ссылки: `vless://`, `vmess://`, `trojan://`, `ss://` (SIP002 и классический base64 `ss://BASE64#tag`), `hysteria2://`, `hy2://`, `socks://`, `socks5://`.
   - Конфигурации: base64, Clash YAML, sing-box JSON, Xray JSON outbounds.
-  - Поддержка передовых технологий: VLESS Reality, TLS Fingerprint (chrome, edge), XTLS Vision flow, xHTTP транспорт.
+  - Поддержка передовых технологий: VLESS Reality, TLS Fingerprint (chrome, edge), XTLS Vision flow, xHTTP транспорт, гибкая нормализация TLS для VMess (`tls: 1` / `"1"` / `true`), сохранение учётных данных SOCKS при совпадении логина и пароля.
   - **Автоматическая дедупликация узлов**: автоматическое схлопывание дублирующихся аутбаундов из мультипрофильных подписок (включая несколько шаблонов/пресетов маршрутизации Remnawave/Happ) по сигнатуре подключения (протокол, сервер, порт, UUID/пароль, транспорт, SNI, Reality) с извлечением человекочитаемых названий и локаций из полей `remarks`/`name`/`ps` вместо сырых технических тегов `proxy`.
 - `cache.uc`:
   - **Эмуляция Happ по умолчанию**: запросы на скачивание подписок по умолчанию отправляются с `User-Agent: Happ/3.26.1` и `X-HWID`, обеспечивая полную совместимость с панелями Remnawave и доставку расширенных конфигураций; при необходимости User-Agent можно переопределить в настройках подписки в LuCI или UCI (`option user_agent`).
@@ -328,7 +328,7 @@ P99 поддерживает совместное сосуществование
 | **Новые поля в конфиге UCI или валидация** | `p99/files/etc/config/p99`<br>`p99/files/usr/lib/config/validator.uc`<br>`p99/files/usr/lib/config/connections.uc` | Схема UCI, валидация типов, связей секций и значений по умолчанию. |
 | **Миграция старых конфигов (Podkop / Forkop)** | `p99/files/usr/lib/config/migration.uc` | Автоматическая трансформация устаревших ключей UCI в новые. |
 | **Изменения в веб-интерфейсе LuCI** | `fe-app-p99/src/`<br>`luci-app-p99/htdocs/luci-static/resources/view/p99/` | TypeScript компоненты (Dashboard, Diagnostic, Updates) и LuCI views (`p99.js`, `settings.js`, `section.js`). |
-| **Скрипт установки на роутер** | `install.sh` | Определение opkg/apk, архитектуры роутера, памяти, зависимостей, fallback источников. |
+| **Скрипт установки на роутер** | `install.sh` | Определение opkg/apk, универсальная поддержка архитектур (x86_64, aarch64, mips и др.), проверка памяти, зависимостей, fallback источников. |
 | **Сборка релизных пакетов IPK / APK** | `build.sh`<br>`p99/Makefile`<br>`luci-app-p99/Makefile` | Загрузка OpenWrt SDK (24.10 и 25.12), компиляция пакетов. |
 
 ---

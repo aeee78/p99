@@ -22,14 +22,14 @@ export function validateVmessUrl(url: string): ValidationResult {
     if (!url.startsWith('vmess://')) {
       return {
         valid: false,
-        message: 'Invalid VMess URL: must start with vmess://',
+        message: _('Invalid VMess URL: must start with vmess://'),
       };
     }
 
     if (/\s/.test(url)) {
       return {
         valid: false,
-        message: 'Invalid VMess URL: must not contain spaces',
+        message: _('Invalid VMess URL: must not contain spaces'),
       };
     }
 
@@ -38,29 +38,29 @@ export function validateVmessUrl(url: string): ValidationResult {
     if (!encoded) {
       return {
         valid: false,
-        message: 'Invalid VMess URL: missing encoded config',
+        message: _('Invalid VMess URL: missing encoded config'),
       };
     }
 
     const config = decodeBase64Json(encoded);
     if (!config || typeof config !== 'object') {
-      return { valid: false, message: 'Invalid VMess URL: invalid config' };
+      return { valid: false, message: _('Invalid VMess URL: invalid config') };
     }
 
     const { add, port, id } = config as Record<string, unknown>;
     if (!add || typeof add !== 'string' || !isValidHost(add)) {
-      return { valid: false, message: 'Invalid VMess URL: invalid server' };
+      return { valid: false, message: _('Invalid VMess URL: invalid server') };
     }
 
     if (!isValidPort(port)) {
       return {
         valid: false,
-        message: 'Invalid VMess URL: invalid port number',
+        message: _('Invalid VMess URL: invalid port number'),
       };
     }
 
     if (!id || typeof id !== 'string') {
-      return { valid: false, message: 'Invalid VMess URL: missing UUID' };
+      return { valid: false, message: _('Invalid VMess URL: missing UUID') };
     }
 
     return { valid: true, message: _('Valid') };

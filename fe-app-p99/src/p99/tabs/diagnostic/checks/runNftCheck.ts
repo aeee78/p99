@@ -1,4 +1,4 @@
-import { DIAGNOSTICS_CHECKS_MAP } from './contstants';
+import { DIAGNOSTICS_CHECKS_MAP } from './constants';
 import { RemoteFakeIPMethods, P99ShellMethods } from '../../../methods';
 import { updateCheckStore } from './updateCheckStore';
 import { getMeta } from '../helpers/getMeta';

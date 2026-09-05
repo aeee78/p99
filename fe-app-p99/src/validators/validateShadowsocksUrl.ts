@@ -1,7 +1,19 @@
 import { ValidationResult } from './types';
 import { isValidPort, parseHostPort } from './hostPort';
 
-// TODO refactor current validation and add tests
+function safeBase64Decode(value: string): string | null {
+  try {
+    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      '=',
+    );
+    return atob(padded);
+  } catch (_e) {
+    return null;
+  }
+}
+
 export function validateShadowsocksUrl(url: string): ValidationResult {
   if (!url.startsWith('ss://')) {
     return {
@@ -18,65 +30,89 @@ export function validateShadowsocksUrl(url: string): ValidationResult {
       };
     }
 
-    const mainPart = url.includes('?') ? url.split('?')[0] : url.split('#')[0];
+    let body = url.slice('ss://'.length);
+    const hashIdx = body.indexOf('#');
+    if (hashIdx >= 0) {
+      body = body.slice(0, hashIdx);
+    }
+    const queryIdx = body.indexOf('?');
+    if (queryIdx >= 0) {
+      body = body.slice(0, queryIdx);
+    }
 
-    const encryptedPart = mainPart.split('/')[2]?.split('@')[0];
+    let userinfo: string;
+    let hostport: string;
 
-    if (!encryptedPart) {
+    const atIdx = body.lastIndexOf('@');
+    if (atIdx >= 0) {
+      userinfo = body.slice(0, atIdx);
+      hostport = body.slice(atIdx + 1);
+    } else {
+      // Legacy SIP002 format: ss://base64(method:password@host:port)
+      const decoded = safeBase64Decode(body);
+      if (!decoded) {
+        return {
+          valid: false,
+          message: _('Invalid Shadowsocks URL: missing server address'),
+        };
+      }
+      const decodedAtIdx = decoded.lastIndexOf('@');
+      if (decodedAtIdx < 0) {
+        return {
+          valid: false,
+          message: _('Invalid Shadowsocks URL: missing server address'),
+        };
+      }
+      userinfo = decoded.slice(0, decodedAtIdx);
+      hostport = decoded.slice(decodedAtIdx + 1);
+    }
+
+    if (!userinfo) {
       return {
         valid: false,
         message: _('Invalid Shadowsocks URL: missing credentials'),
       };
     }
 
-    try {
-      const decoded = atob(encryptedPart);
-
-      if (!decoded.includes(':')) {
-        return {
-          valid: false,
-          message: _(
-            'Invalid Shadowsocks URL: decoded credentials must contain method:password',
-          ),
-        };
-      }
-    } catch (_e) {
-      if (!encryptedPart.includes(':') && !encryptedPart.includes('-')) {
-        return {
-          valid: false,
-          message: _(
-            'Invalid Shadowsocks URL: missing method and password separator ":"',
-          ),
-        };
+    // Try decoding base64-encoded userinfo if not in plain format
+    if (!userinfo.includes(':')) {
+      const decodedUserinfo = safeBase64Decode(userinfo);
+      if (decodedUserinfo && decodedUserinfo.includes(':')) {
+        userinfo = decodedUserinfo;
       }
     }
 
-    const serverPart = url.split('@')[1];
+    if (!userinfo.includes(':') && !userinfo.includes('-')) {
+      return {
+        valid: false,
+        message: _(
+          'Invalid Shadowsocks URL: missing method and password separator ":"',
+        ),
+      };
+    }
 
-    if (!serverPart) {
+    if (!hostport) {
       return {
         valid: false,
         message: _('Invalid Shadowsocks URL: missing server address'),
       };
     }
 
-    const parsedHostPort = parseHostPort(serverPart);
+    const parsedHostPort = parseHostPort(hostport);
     if (!parsedHostPort) {
       return {
         valid: false,
         message: _('Invalid Shadowsocks URL: invalid server and port'),
       };
     }
-    const { host: server, port: portAndRest } = parsedHostPort;
 
+    const { host: server, port } = parsedHostPort;
     if (!server) {
       return {
         valid: false,
         message: _('Invalid Shadowsocks URL: missing server'),
       };
     }
-
-    const port = portAndRest ? portAndRest.split(/[?#]/)[0] : null;
 
     if (!port) {
       return {

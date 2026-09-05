@@ -60,9 +60,19 @@ expect_rejected 23.05.5 0
 expect_rejected 24.09.9 0
 expect_rejected 24.10.4 1
 expect_rejected 25.12.5 0
+
+# When no mirror is specified (GitHub Releases), any target and architecture is supported
+expect_supported 24.10.4 0 ramips/mt7621
+expect_supported 24.10.4 0 mediatek/filogic mipsel_24kc
+expect_supported 25.12.5 1 x86/64 x86_64
+
+# When mirror is configured, only mediatek/filogic and aarch64_cortex-a53 are supported
+MIRROR_BASE_URL="https://mirror.example.com"
+expect_supported 24.10.4 0 mediatek/filogic aarch64_cortex-a53
 expect_rejected 24.10.4 0 ramips/mt7621
 expect_rejected 24.10.4 0 mediatek/filogic mipsel_24kc
 expect_rejected 25.12.5 1 x86/64 x86_64
+MIRROR_BASE_URL=""
 
 interactive_terminal_available() { return 1; }
 SING_BOX_INSTALL_VARIANT=""

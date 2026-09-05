@@ -323,6 +323,18 @@ function validateOutboundJson(value, usedTags = []) {
 }
 
 // src/validators/validateShadowsocksUrl.ts
+function safeBase64Decode(value) {
+  try {
+    const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + (4 - normalized.length % 4) % 4,
+      "="
+    );
+    return atob(padded);
+  } catch (_e) {
+    return null;
+  }
+}
 function validateShadowsocksUrl(url) {
   if (!url.startsWith("ss://")) {
     return {
@@ -337,56 +349,79 @@ function validateShadowsocksUrl(url) {
         message: _("Invalid Shadowsocks URL: must not contain spaces")
       };
     }
-    const mainPart = url.includes("?") ? url.split("?")[0] : url.split("#")[0];
-    const encryptedPart = mainPart.split("/")[2]?.split("@")[0];
-    if (!encryptedPart) {
+    let body = url.slice("ss://".length);
+    const hashIdx = body.indexOf("#");
+    if (hashIdx >= 0) {
+      body = body.slice(0, hashIdx);
+    }
+    const queryIdx = body.indexOf("?");
+    if (queryIdx >= 0) {
+      body = body.slice(0, queryIdx);
+    }
+    let userinfo;
+    let hostport;
+    const atIdx = body.lastIndexOf("@");
+    if (atIdx >= 0) {
+      userinfo = body.slice(0, atIdx);
+      hostport = body.slice(atIdx + 1);
+    } else {
+      const decoded = safeBase64Decode(body);
+      if (!decoded) {
+        return {
+          valid: false,
+          message: _("Invalid Shadowsocks URL: missing server address")
+        };
+      }
+      const decodedAtIdx = decoded.lastIndexOf("@");
+      if (decodedAtIdx < 0) {
+        return {
+          valid: false,
+          message: _("Invalid Shadowsocks URL: missing server address")
+        };
+      }
+      userinfo = decoded.slice(0, decodedAtIdx);
+      hostport = decoded.slice(decodedAtIdx + 1);
+    }
+    if (!userinfo) {
       return {
         valid: false,
         message: _("Invalid Shadowsocks URL: missing credentials")
       };
     }
-    try {
-      const decoded = atob(encryptedPart);
-      if (!decoded.includes(":")) {
-        return {
-          valid: false,
-          message: _(
-            "Invalid Shadowsocks URL: decoded credentials must contain method:password"
-          )
-        };
-      }
-    } catch (_e) {
-      if (!encryptedPart.includes(":") && !encryptedPart.includes("-")) {
-        return {
-          valid: false,
-          message: _(
-            'Invalid Shadowsocks URL: missing method and password separator ":"'
-          )
-        };
+    if (!userinfo.includes(":")) {
+      const decodedUserinfo = safeBase64Decode(userinfo);
+      if (decodedUserinfo && decodedUserinfo.includes(":")) {
+        userinfo = decodedUserinfo;
       }
     }
-    const serverPart = url.split("@")[1];
-    if (!serverPart) {
+    if (!userinfo.includes(":") && !userinfo.includes("-")) {
+      return {
+        valid: false,
+        message: _(
+          'Invalid Shadowsocks URL: missing method and password separator ":"'
+        )
+      };
+    }
+    if (!hostport) {
       return {
         valid: false,
         message: _("Invalid Shadowsocks URL: missing server address")
       };
     }
-    const parsedHostPort = parseHostPort(serverPart);
+    const parsedHostPort = parseHostPort(hostport);
     if (!parsedHostPort) {
       return {
         valid: false,
         message: _("Invalid Shadowsocks URL: invalid server and port")
       };
     }
-    const { host: server, port: portAndRest } = parsedHostPort;
+    const { host: server, port } = parsedHostPort;
     if (!server) {
       return {
         valid: false,
         message: _("Invalid Shadowsocks URL: missing server")
       };
     }
-    const port = portAndRest ? portAndRest.split(/[?#]/)[0] : null;
     if (!port) {
       return {
         valid: false,
@@ -431,12 +466,12 @@ function validateVlessUrl(url) {
     if (!url.startsWith("vless://"))
       return {
         valid: false,
-        message: "Invalid VLESS URL: must start with vless://"
+        message: _("Invalid VLESS URL: must start with vless://")
       };
     if (/\s/.test(url))
       return {
         valid: false,
-        message: "Invalid VLESS URL: must not contain spaces"
+        message: _("Invalid VLESS URL: must not contain spaces")
       };
     const body = url.slice("vless://".length);
     const [mainPart] = body.split("#");
@@ -444,34 +479,37 @@ function validateVlessUrl(url) {
     if (!userHostPort)
       return {
         valid: false,
-        message: "Invalid VLESS URL: missing host and UUID"
+        message: _("Invalid VLESS URL: missing host and UUID")
       };
     const [userPart, hostPortPart] = userHostPort.split("@");
     if (!userPart)
-      return { valid: false, message: "Invalid VLESS URL: missing UUID" };
+      return { valid: false, message: _("Invalid VLESS URL: missing UUID") };
     if (!hostPortPart)
-      return { valid: false, message: "Invalid VLESS URL: missing server" };
+      return { valid: false, message: _("Invalid VLESS URL: missing server") };
     const parsedHostPort = parseHostPort(hostPortPart);
     if (!parsedHostPort)
       return {
         valid: false,
-        message: "Invalid VLESS URL: invalid host and port"
+        message: _("Invalid VLESS URL: invalid host and port")
       };
     const { host, port } = parsedHostPort;
     if (!host)
-      return { valid: false, message: "Invalid VLESS URL: missing hostname" };
+      return {
+        valid: false,
+        message: _("Invalid VLESS URL: missing hostname")
+      };
     if (!port)
-      return { valid: false, message: "Invalid VLESS URL: missing port" };
+      return { valid: false, message: _("Invalid VLESS URL: missing port") };
     const cleanedPort = port.replace("/", "");
     if (!isValidPort(cleanedPort))
       return {
         valid: false,
-        message: "Invalid VLESS URL: invalid port number"
+        message: _("Invalid VLESS URL: invalid port number")
       };
     if (!queryString)
       return {
         valid: false,
-        message: "Invalid VLESS URL: missing query parameters"
+        message: _("Invalid VLESS URL: missing query parameters")
       };
     const params = parseQueryString(queryString);
     const validTypes = [
@@ -490,29 +528,31 @@ function validateVlessUrl(url) {
     if (!validTypes.includes(transportType))
       return {
         valid: false,
-        message: "Invalid VLESS URL: unsupported or missing type"
+        message: _("Invalid VLESS URL: unsupported or missing type")
       };
     if (!params.security || !validSecurities.includes(params.security))
       return {
         valid: false,
-        message: "Invalid VLESS URL: unsupported or missing security"
+        message: _("Invalid VLESS URL: unsupported or missing security")
       };
     if (params.security === "reality") {
       if (!params.pbk)
         return {
           valid: false,
-          message: "Invalid VLESS URL: missing pbk for reality"
+          message: _("Invalid VLESS URL: missing pbk for reality")
         };
       if (!params.fp)
         return {
           valid: false,
-          message: "Invalid VLESS URL: missing fp for reality"
+          message: _("Invalid VLESS URL: missing fp for reality")
         };
     }
     if (params.flow === "xtls-rprx-vision-udp443") {
       return {
         valid: false,
-        message: "Invalid VLESS URL: flow xtls-rprx-vision-udp443 is not supported"
+        message: _(
+          "Invalid VLESS URL: flow xtls-rprx-vision-udp443 is not supported"
+        )
       };
     }
     return { valid: true, message: _("Valid") };
@@ -539,13 +579,13 @@ function validateVmessUrl(url) {
     if (!url.startsWith("vmess://")) {
       return {
         valid: false,
-        message: "Invalid VMess URL: must start with vmess://"
+        message: _("Invalid VMess URL: must start with vmess://")
       };
     }
     if (/\s/.test(url)) {
       return {
         valid: false,
-        message: "Invalid VMess URL: must not contain spaces"
+        message: _("Invalid VMess URL: must not contain spaces")
       };
     }
     const body = url.slice("vmess://".length);
@@ -553,25 +593,25 @@ function validateVmessUrl(url) {
     if (!encoded) {
       return {
         valid: false,
-        message: "Invalid VMess URL: missing encoded config"
+        message: _("Invalid VMess URL: missing encoded config")
       };
     }
     const config = decodeBase64Json(encoded);
     if (!config || typeof config !== "object") {
-      return { valid: false, message: "Invalid VMess URL: invalid config" };
+      return { valid: false, message: _("Invalid VMess URL: invalid config") };
     }
     const { add, port, id } = config;
     if (!add || typeof add !== "string" || !isValidHost(add)) {
-      return { valid: false, message: "Invalid VMess URL: invalid server" };
+      return { valid: false, message: _("Invalid VMess URL: invalid server") };
     }
     if (!isValidPort(port)) {
       return {
         valid: false,
-        message: "Invalid VMess URL: invalid port number"
+        message: _("Invalid VMess URL: invalid port number")
       };
     }
     if (!id || typeof id !== "string") {
-      return { valid: false, message: "Invalid VMess URL: missing UUID" };
+      return { valid: false, message: _("Invalid VMess URL: missing UUID") };
     }
     return { valid: true, message: _("Valid") };
   } catch (_e) {
@@ -601,30 +641,36 @@ function validateTrojanUrl(url) {
     if (!userHostPort)
       return {
         valid: false,
-        message: "Invalid Trojan URL: missing credentials and host"
+        message: _("Invalid Trojan URL: missing credentials and host")
       };
     if (!userPart)
-      return { valid: false, message: "Invalid Trojan URL: missing password" };
+      return {
+        valid: false,
+        message: _("Invalid Trojan URL: missing password")
+      };
     if (!hostPortPart)
       return {
         valid: false,
-        message: "Invalid Trojan URL: missing hostname and port"
+        message: _("Invalid Trojan URL: missing hostname and port")
       };
     const parsedHostPort = parseHostPort(hostPortPart);
     if (!parsedHostPort)
       return {
         valid: false,
-        message: "Invalid Trojan URL: invalid host and port"
+        message: _("Invalid Trojan URL: invalid host and port")
       };
     const { host, port } = parsedHostPort;
     if (!host)
-      return { valid: false, message: "Invalid Trojan URL: missing hostname" };
+      return {
+        valid: false,
+        message: _("Invalid Trojan URL: missing hostname")
+      };
     if (!port)
-      return { valid: false, message: "Invalid Trojan URL: missing port" };
+      return { valid: false, message: _("Invalid Trojan URL: missing port") };
     if (!isValidPort(port))
       return {
         valid: false,
-        message: "Invalid Trojan URL: invalid port number"
+        message: _("Invalid Trojan URL: invalid port number")
       };
   } catch (_e) {
     return { valid: false, message: _("Invalid Trojan URL: parsing failed") };
@@ -635,11 +681,11 @@ function validateTrojanUrl(url) {
 // src/validators/validateSocksUrl.ts
 function validateSocksUrl(url) {
   try {
-    if (!/^socks(4|4a|5):\/\//.test(url)) {
+    if (!/^socks(4|4a|5)?:\/\//.test(url)) {
       return {
         valid: false,
         message: _(
-          "Invalid SOCKS URL: must start with socks4://, socks4a://, or socks5://"
+          "Invalid SOCKS URL: must start with socks://, socks4://, socks4a://, or socks5://"
         )
       };
     }
@@ -649,7 +695,7 @@ function validateSocksUrl(url) {
         message: _("Invalid SOCKS URL: must not contain spaces")
       };
     }
-    const body = url.replace(/^socks(4|4a|5):\/\//, "");
+    const body = url.replace(/^socks(4|4a|5)?:\/\//, "");
     const [authAndHost] = body.split("#");
     const [credentials, hostPortPart] = authAndHost.includes("@") ? authAndHost.split("@") : [null, authAndHost];
     if (credentials) {
@@ -824,7 +870,7 @@ function validateProxyUrl(url) {
   if (trimmedUrl.startsWith("trojan://")) {
     return validateTrojanUrl(trimmedUrl);
   }
-  if (/^socks(4|4a|5):\/\//.test(trimmedUrl)) {
+  if (/^socks(4|4a|5)?:\/\//.test(trimmedUrl)) {
     return validateSocksUrl(trimmedUrl);
   }
   if (trimmedUrl.startsWith("hysteria2://") || trimmedUrl.startsWith("hy2://")) {
@@ -833,7 +879,7 @@ function validateProxyUrl(url) {
   return {
     valid: false,
     message: _(
-      "URL must start with vless://, vmess://, ss://, trojan://, socks4://, socks4a://, socks5://, hysteria2://, or hy2://"
+      "URL must start with vless://, vmess://, ss://, trojan://, socks://, socks4://, socks4a://, socks5://, hysteria2://, or hy2://"
     )
   };
 }
@@ -4551,7 +4597,7 @@ function getCheckTitle(name) {
   return `${name} ${_("checks")}`;
 }
 
-// src/p99/tabs/diagnostic/checks/contstants.ts
+// src/p99/tabs/diagnostic/checks/constants.ts
 var DIAGNOSTICS_CHECKS = /* @__PURE__ */ ((DIAGNOSTICS_CHECKS2) => {
   DIAGNOSTICS_CHECKS2["DNS"] = "DNS";
   DIAGNOSTICS_CHECKS2["SINGBOX"] = "SINGBOX";

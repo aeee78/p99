@@ -8,10 +8,7 @@ import { runFakeIPCheck } from './checks/runFakeIPCheck';
 import { runZapretCheck } from './checks/runZapretCheck';
 import { runZapret2Check } from './checks/runZapret2Check';
 import { runByedpiCheck } from './checks/runByedpiCheck';
-import {
-  DIAGNOSTICS_CHECKS,
-  DIAGNOSTICS_CHECKS_MAP,
-} from './checks/contstants';
+import { DIAGNOSTICS_CHECKS, DIAGNOSTICS_CHECKS_MAP } from './checks/constants';
 import {
   DiagnosticsProviderOptions,
   getDiagnosticsChecks,

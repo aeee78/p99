@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: P99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 14:53+0300\n"
-"PO-Revision-Date: 2026-09-02 14:53+0300\n"
+"POT-Creation-Date: 2026-09-05 22:37+0300\n"
+"PO-Revision-Date: 2026-09-05 22:37+0300\n"
 "Last-Translator: Михаил <mrpushistik1@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -16,45 +16,45 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1988
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2590
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2605
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2803
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2818
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3054
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3206
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3216
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1995
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2607
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2622
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2820
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2835
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3073
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3225
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3235
 msgid "-- Select --"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7324
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7443
 msgid "+ Add JSON outbound"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2970
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2989
 msgid "+ Add level"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7410
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7529
 msgid "+ Add priority"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7351
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7470
 msgid "+ Add URLTest"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1763
-#: src/p99/tabs/dashboard/initController.ts:1774
+#: src/p99/tabs/dashboard/initController.ts:1887
+#: src/p99/tabs/dashboard/initController.ts:1898
 msgid "✔ Running"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1764
-#: src/p99/tabs/dashboard/initController.ts:1775
+#: src/p99/tabs/dashboard/initController.ts:1888
+#: src/p99/tabs/dashboard/initController.ts:1899
 msgid "✘ Stopped"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6965
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6994
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6982
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7011
 msgid "Action"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 msgid "Active Bootstrap DNS"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1721
+#: src/p99/tabs/dashboard/initController.ts:1845
 msgid "Active Connections"
 msgstr ""
 
@@ -75,35 +75,41 @@ msgstr ""
 msgid "Active Main DNS"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:346
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:341
 msgid "Add a section"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:360
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:110
+msgid "Add a subscription"
 msgstr ""
 
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:119
 msgid "Add at least one DNS server"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2321
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2331
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:257
 msgid "Add prefix to nodes"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7805
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7924
 msgid "Add URLs or local paths to .lst lists containing domains and subnets."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7826
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7945
 msgid "Add URLs or local paths to .lst lists containing domains. IP entries are ignored."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7780
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7899
 msgid "Add URLs or local paths to .srs / .json lists. Only domain rules are supported."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7745
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7864
 msgid "Add URLs or local paths to .srs / .json lists. Subnets are ignored by default."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3228
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3247
 msgid "Add URLTest / Priority group"
 msgstr ""
 
@@ -111,21 +117,21 @@ msgstr ""
 msgid "Additional marking rules found"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2520
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2730
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2531
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2747
 msgid "Additionally exclude servers by protocol, transport, and security. Exclude only servers matching the specified parameters."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2503
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2712
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2514
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2729
 msgid "Additionally filter servers by protocol, transport, and security. Add only servers matching the specified parameters."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3128
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3147
 msgid "Additionally hide servers by protocol, transport, and security. Hide servers matching the specified parameters."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3108
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3127
 msgid "Additionally show servers by protocol, transport, and security. Add only servers matching the specified parameters."
 msgstr ""
 
@@ -134,31 +140,35 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1885
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1892
 msgid "All except selected"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1895
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1902
 msgid "All remaining except selected"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1893
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1900
 msgid "All remaining servers"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2686
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2703
 msgid "All remaining servers means every server not already assigned to a higher-priority level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1884
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1891
 msgid "All servers"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7858
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:84
+msgid "All subscriptions updated successfully"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7977
 msgid "All traffic from these IP addresses will be routed through the section unconditionally, ignoring all other conditions."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5018
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5035
 msgid "Allowed domain prefixes are full:, keyword:, and regex:"
 msgstr ""
 
@@ -166,27 +176,27 @@ msgstr ""
 msgid "Allows access to YACD from the WAN. Make sure to open the appropriate port in your firewall."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2480
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2491
 msgid "Allows limiting the list of servers for URLTest"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7849
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7968
 msgid "Apply section rules only to the specified local IP addresses"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1046
+#: src/p99/tabs/dashboard/initController.ts:1048
 msgid "Applying P99 configuration…"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1036
+#: src/p99/tabs/dashboard/initController.ts:1038
 msgid "Applying…"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5049
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5066
 msgid "At least one valid domain must be specified."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5131
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5148
 msgid "At least one valid IP or subnet must be specified."
 msgstr ""
 
@@ -194,11 +204,16 @@ msgstr ""
 msgid "Auto refresh"
 msgstr ""
 
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:212
+msgid "Auto update"
+msgstr ""
+
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:501
 msgid "Automatic component update checks"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2322
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2332
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:258
 msgid "Automatically add text to the name of each server from this subscription for convenient filtering."
 msgstr ""
 
@@ -206,8 +221,8 @@ msgstr ""
 msgid "Automatically check installed components for new versions"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2920
-#: src/p99/tabs/dashboard/initController.ts:1259
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2937
+#: src/p99/tabs/dashboard/initController.ts:1261
 msgid "Automatically select the fastest node in the current level"
 msgstr ""
 
@@ -215,9 +230,9 @@ msgstr ""
 msgid "Available actions"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5264
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5709
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6121
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5281
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5726
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6138
 msgid "Backend validation failed: %s"
 msgstr ""
 
@@ -242,31 +257,31 @@ msgstr ""
 msgid "Browser is using FakeIP correctly"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7699
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7719
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7818
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7838
 msgid "Built-in rule sets"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1902
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1909
 msgid "By flag emoji from name"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6190
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6207
 msgid "ByeDPI listen address and port are assigned by P99 and must not be set in the strategy."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6367
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6384
 msgid "ByeDPI option does not accept a compact value: %s"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6296
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6313
 msgid "ByeDPI option does not accept a value: %s"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6288
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6314
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6348
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6357
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6305
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6331
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6365
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6374
 msgid "ByeDPI option requires a value: %s"
 msgstr ""
 
@@ -294,23 +309,23 @@ msgstr ""
 msgid "ByeDPI sing-box outbound is not configured"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7166
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7183
 msgid "ByeDPI Strategy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6393
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6410
 msgid "ByeDPI strategy cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:623
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:678
 msgid "Cache File Path"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:637
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:692
 msgid "Cache file path cannot be empty"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1119
+#: src/p99/tabs/dashboard/initController.ts:1121
 msgid "Cancel"
 msgstr ""
 
@@ -325,21 +340,29 @@ msgstr ""
 msgid "Cannot receive checks result"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3356
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3375
 msgid "Cannot save settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7443
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7383
+msgid "Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7342
+msgid "Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7562
 msgid "Cascade connection"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2408
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2871
-#: src/p99/tabs/dashboard/initController.ts:1246
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2417
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2888
+#: src/p99/tabs/dashboard/initController.ts:1248
 msgid "Check interval"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2884
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2901
 msgid "Check timeout after which the server is considered dead"
 msgstr ""
 
@@ -347,13 +370,13 @@ msgstr ""
 msgid "Check update"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2434
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2858
-#: src/p99/tabs/dashboard/initController.ts:1244
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2443
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2875
+#: src/p99/tabs/dashboard/initController.ts:1246
 msgid "Check URL"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/initController.ts:1081
+#: src/p99/tabs/diagnostic/initController.ts:1079
 #: src/p99/tabs/diagnostic/checks/runByedpiCheck.ts:14
 #: src/p99/tabs/diagnostic/checks/runDnsCheck.ts:15
 #: src/p99/tabs/diagnostic/checks/runFakeIPCheck.ts:15
@@ -370,14 +393,14 @@ msgstr ""
 msgid "checks"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/helpers/getMeta.ts:26
 #: src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:10
+#: src/p99/tabs/diagnostic/helpers/getMeta.ts:26
 msgid "Checks failed"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/helpers/getMeta.ts:13
 #: src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:23
 #: src/p99/tabs/diagnostic/checks/runFakeIPCheck.ts:43
+#: src/p99/tabs/diagnostic/helpers/getMeta.ts:13
 msgid "Checks passed"
 msgstr ""
 
@@ -389,10 +412,10 @@ msgstr ""
 msgid "CIDR must be between 0 and 32 for IPv4 or 0 and 128 for IPv6"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3423
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3442
 #: src/partials/modal/renderModal.ts:263
-#: src/p99/tabs/dashboard/initController.ts:1000
-#: src/p99/tabs/dashboard/initController.ts:1378
+#: src/p99/tabs/dashboard/initController.ts:1002
+#: src/p99/tabs/dashboard/initController.ts:1380
 #: src/p99/tabs/monitoring/initController.ts:832
 #: src/p99/tabs/monitoring/initController.ts:882
 msgid "Close"
@@ -421,7 +444,7 @@ msgstr ""
 msgid "Component update check interval"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:404
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:416
 msgid "Components"
 msgstr ""
 
@@ -429,23 +452,23 @@ msgstr ""
 msgid "compressed"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6953
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6970
 msgid "Conditions"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:610
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:665
 msgid "Config File Path"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4431
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4450
 msgid "Configure User-Agent in the item settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7481
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7600
 msgid "Connect through"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7204
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7221
 msgid "Connection URL"
 msgstr ""
 
@@ -469,11 +492,11 @@ msgstr ""
 msgid "Could not compare FakeIP and control public IPs"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7498
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7617
 msgid "Current section cannot be used as its own transit section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2313
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2323
 msgid "Current section cannot download its own subscription"
 msgstr ""
 
@@ -481,15 +504,19 @@ msgstr ""
 msgid "Currently unavailable"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7319
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:130
+msgid "Custom name for this subscription. If empty, the URL hostname will be used."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7438
 msgid "Custom outbound configurations in JSON format"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:380
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:392
 msgid "Dashboard"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:34
+#: src/p99/tabs/dashboard/partials/renderSections.ts:41
 msgid "Dashboard currently unavailable"
 msgstr ""
 
@@ -505,9 +532,9 @@ msgstr ""
 msgid "Delay value cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2490
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2699
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3095
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2501
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2716
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3114
 msgid "Detect server country"
 msgstr ""
 
@@ -515,11 +542,11 @@ msgstr ""
 msgid "detour must be a non-empty string"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7848
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7967
 msgid "Device filter"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6659
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6676
 msgid "Device or IP"
 msgstr ""
 
@@ -531,11 +558,11 @@ msgstr ""
 msgid "DHCP is managed manually"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:368
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:380
 msgid "Diagnostics"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2676
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2693
 msgid "Direct connection"
 msgstr ""
 
@@ -551,13 +578,17 @@ msgstr ""
 msgid "Disable the QUIC protocol to improve compatibility or fix issues with video streaming"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5791
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5808
 msgid "Disabling interception is incompatible with action=zapret2 because P99 sends matched traffic through NFQUEUE."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2390
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2847
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2399
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2864
 msgid "Display name"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:247
+msgid "Display subscription traffic and expiry information in the dashboard"
 msgstr ""
 
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:196
@@ -568,18 +599,18 @@ msgstr ""
 msgid "DNS on router"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1770
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1777
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:163
 msgid "DNS over HTTPS (DoH)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1771
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1778
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:164
 msgid "DNS over TLS (DoT)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2357
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7015
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2366
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7032
 msgid "DNS protocol"
 msgstr ""
 
@@ -587,12 +618,12 @@ msgstr ""
 msgid "DNS Protocol Type"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2358
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7016
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2367
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7033
 msgid "DNS protocol used by the resolver"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7059
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7076
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:259
 msgid "DNS requests through section"
 msgstr ""
@@ -601,18 +632,18 @@ msgstr ""
 msgid "DNS Rewrite TTL"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2367
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7028
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2376
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7045
 msgid "DNS server"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7037
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7054
 #: src/validators/validateDns.ts:8
 msgid "DNS server address cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2368
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7029
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2377
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7046
 msgid "DNS server used by the resolver"
 msgstr ""
 
@@ -632,7 +663,7 @@ msgstr ""
 msgid "DNS through proxy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7047
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7064
 msgid "DNS through section"
 msgstr ""
 
@@ -644,27 +675,27 @@ msgstr ""
 msgid "Do not panic, everything can be fixed, just..."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2563
-msgid "Do not test servers from these countries."
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2578
+msgid "Do not test servers from these countries. E.g. RU, CN (2-letter ISO codes)."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2579
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2596
 msgid "Do not test servers whose names match the expression."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2524
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2535
 msgid "Do not test servers with one of the selected protocols."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2530
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2541
 msgid "Do not test servers with one of the selected security types."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2527
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2538
 msgid "Do not test servers with one of the selected transports."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2571
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2588
 msgid "Do not test specified servers."
 msgstr ""
 
@@ -672,28 +703,28 @@ msgstr ""
 msgid "Does not resolve"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7804
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7923
 msgid "Domain and IP lists"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7825
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7944
 msgid "Domain lists"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2348
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2357
 msgid "Domain Resolver"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7660
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7779
 msgid "Domains"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:601
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:656
 msgid "Dont Touch My DHCP!"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1647
-#: src/p99/tabs/dashboard/initController.ts:1685
+#: src/p99/tabs/dashboard/initController.ts:1771
+#: src/p99/tabs/dashboard/initController.ts:1809
 msgid "Downlink"
 msgstr ""
 
@@ -701,35 +732,35 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:582
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:637
 msgid "Download component packages via the selected section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:589
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:644
 msgid "Download components through"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:581
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:636
 msgid "Download components through a section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:569
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:624
 msgid "Download lists through"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:561
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:616
 msgid "Download lists through a section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:562
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:617
 msgid "Download remote lists and rule sets via the selected section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2287
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2297
 msgid "Download subscription through a section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2288
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2298
 msgid "Download subscriptions via the selected section"
 msgstr ""
 
@@ -737,7 +768,7 @@ msgstr ""
 msgid "Download support report"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2296
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2306
 msgid "Download through"
 msgstr ""
 
@@ -746,7 +777,7 @@ msgstr ""
 msgid "Downloaded"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:340
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:335
 msgid "Drag rows to change priority. The rule at the top is checked first."
 msgstr ""
 
@@ -754,23 +785,31 @@ msgstr ""
 msgid "Duplicate JSON outbound tag"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4490
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4509
 msgid "Duplicate value"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:989
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:134
+msgid "e.g. European Fast"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:263
+msgid "e.g. MyVPN"
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:991
 msgid "Edit"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:64
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:67
 msgid "Edit rule action"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1124
+#: src/p99/tabs/dashboard/initController.ts:1126
 msgid "Edit URLTest"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6955
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6972
 msgid "Enable"
 msgstr ""
 
@@ -782,7 +821,7 @@ msgstr ""
 msgid "Enable autostart"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2349
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2358
 msgid "Enable built-in DNS resolver for domains handled by this section"
 msgstr ""
 
@@ -790,11 +829,11 @@ msgstr ""
 msgid "Enable list updates"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7519
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7638
 msgid "Enable Mixed Proxy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7558
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7677
 msgid "Enable Mixed Proxy Authentication"
 msgstr ""
 
@@ -810,95 +849,112 @@ msgstr ""
 msgid "Enable YACD WAN Access"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3757
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:156
+msgid "Enabled"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3776
 msgid "Enter a complete sing-box outbound object"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2402
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2852
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3712
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3728
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2411
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2869
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3731
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3747
 msgid "Enter a display name"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2649
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2670
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2666
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2687
 msgid "Enter a level name"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7040
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:573
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:577
+msgid "Enter a number between 100 and 60000 ms"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7057
 msgid "Enter a valid DNS server address"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7230
-msgid "Enter the subscription URL"
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:608
+msgid "Enter a valid duration (e.g. 20m, 1h, 30s)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2519
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2729
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3127
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7247
+msgid "Enter direct subscription URLs (mutually exclusive with pre-configured Subscriptions below)"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2530
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2746
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3146
 msgid "Exclude by proxy parameters"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2578
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2791
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3187
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2595
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2808
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3206
 msgid "Exclude by regular expression"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2562
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2775
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3171
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2577
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2792
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3190
 msgid "Exclude countries"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:675
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:730
 msgid "Exclude NTP"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:676
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:731
 msgid "Exclude NTP protocol traffic from the tunnel to prevent it from being routed through the proxy or VPN"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2570
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2783
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3179
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2587
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2800
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3198
 msgid "Exclude servers"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2737
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2754
 msgid "Exclude servers with one of the selected protocols from this level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2743
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2760
 msgid "Exclude servers with one of the selected security types from this level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2740
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2757
 msgid "Exclude servers with one of the selected transports from this level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3242
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3261
 msgid "Exclude URLTest / Priority group"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:50
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:237
+msgid "Expecting a valid duration string, e.g. 4h, 1d, 30m"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:53
 msgid "Expecting: %s"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:121
+#: src/p99/tabs/dashboard/partials/renderSections.ts:128
 msgid "Expires"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7520
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7639
 msgid "Expose this section as a local HTTP+SOCKS proxy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5325
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5342
 msgid "External nfqws config files bypass P99 queue management and explicit validation."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5770
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5787
 msgid "External nfqws2 config files bypass P99 queue management and explicit validation."
 msgstr ""
 
@@ -920,8 +976,8 @@ msgstr ""
 msgid "Failed to create support report"
 msgstr ""
 
-#: src/p99/methods/shell/index.ts:170
-#: src/p99/methods/shell/index.ts:177
+#: src/p99/methods/shell/index.ts:169
+#: src/p99/methods/shell/index.ts:176
 #: src/p99/tabs/updates/initController.ts:509
 #: src/p99/tabs/updates/initController.ts:510
 #: src/p99/tabs/updates/initController.ts:570
@@ -929,15 +985,16 @@ msgstr ""
 msgid "Failed to execute"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1094
+#: src/p99/tabs/dashboard/initController.ts:1096
 msgid "Failed to save URLTest settings"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:202
-#: src/p99/tabs/dashboard/initController.ts:292
-#: src/p99/tabs/dashboard/initController.ts:293
-#: src/p99/tabs/dashboard/initController.ts:358
-#: src/p99/tabs/dashboard/initController.ts:1433
+#: src/p99/tabs/dashboard/initController.ts:204
+#: src/p99/tabs/dashboard/initController.ts:294
+#: src/p99/tabs/dashboard/initController.ts:295
+#: src/p99/tabs/dashboard/initController.ts:360
+#: src/p99/tabs/dashboard/initController.ts:1435
+#: src/p99/tabs/dashboard/initController.ts:1492
 msgid "Failed to update subscriptions"
 msgstr ""
 
@@ -953,16 +1010,16 @@ msgstr ""
 msgid "FakeIP works; public IP comparison is inconclusive"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2931
-#: src/p99/tabs/dashboard/initController.ts:1265
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2948
+#: src/p99/tabs/dashboard/initController.ts:1267
 msgid "Faster server search interval"
 msgstr ""
 
-#: src/p99/methods/custom/getDashboardSections.ts:655
+#: src/p99/methods/custom/getDashboardSections.ts:710
 msgid "Fastest"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3084
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3103
 msgid "Filter the servers that will be displayed on the dashboard."
 msgstr ""
 
@@ -970,15 +1027,15 @@ msgstr ""
 msgid "Firewall WAN port"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3357
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3376
 msgid "Fix the highlighted fields and save again."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7857
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7976
 msgid "Forced device routing"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5788
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5805
 msgid "Fuzzing is not supported here because P99 needs deterministic runtime validation."
 msgstr ""
 
@@ -990,7 +1047,7 @@ msgstr ""
 msgid "Get global check"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/initController.ts:735
+#: src/p99/tabs/diagnostic/initController.ts:733
 msgid "Global check"
 msgstr ""
 
@@ -998,31 +1055,31 @@ msgstr ""
 msgid "Global check could not be collected."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3180
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3199
 msgid "Hide selected servers."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3243
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3262
 msgid "Hide servers from selected groups without repeating their filtering criteria."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3172
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3191
 msgid "Hide servers from the specified countries."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3188
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3207
 msgid "Hide servers whose names match the expression."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3135
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3154
 msgid "Hide servers with one of the selected protocols."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3139
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3158
 msgid "Hide servers with one of the selected security types."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3136
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3155
 msgid "Hide servers with one of the selected transports."
 msgstr ""
 
@@ -1030,8 +1087,8 @@ msgstr ""
 msgid "Hide values"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2895
-#: src/p99/tabs/dashboard/initController.ts:1251
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2912
+#: src/p99/tabs/dashboard/initController.ts:1253
 msgid "Higher-level check interval"
 msgstr ""
 
@@ -1044,11 +1101,11 @@ msgstr ""
 msgid "Host"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2896
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2913
 msgid "How often higher priority levels are checked while a lower level is active"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2872
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2889
 msgid "How often the currently selected server is checked"
 msgstr ""
 
@@ -1064,63 +1121,72 @@ msgstr ""
 msgid "HTTP error"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2447
-#: src/p99/tabs/dashboard/initController.ts:889
-#: src/p99/tabs/dashboard/initController.ts:1130
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:148
+msgid "HTTP or HTTPS subscription link"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2456
+#: src/p99/tabs/dashboard/initController.ts:891
+#: src/p99/tabs/dashboard/initController.ts:1132
 msgid "Idle timeout"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2336
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2346
 msgid "Import subscription URLTest groups"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2337
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:270
+msgid "Import URLTest groups"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2347
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:271
 msgid "Import URLTest groups returned by this subscription provider"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2502
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2711
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3107
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2513
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2728
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3126
 msgid "Include by proxy parameters"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2554
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2767
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3163
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2567
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2784
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3182
 msgid "Include by regular expression"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2538
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2751
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3147
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2549
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2768
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3166
 msgid "Include countries"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3832
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3851
 msgid "Include IP addresses and subnets"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2546
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2759
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3155
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2559
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2776
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3174
 msgid "Include servers"
 msgstr ""
 
 #: src/p99/tabs/updates/initController.ts:755
-#: src/p99/tabs/updates/initController.ts:887
+#: src/p99/tabs/updates/initController.ts:883
 msgid "Install"
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:1165
+#: src/p99/tabs/updates/initController.ts:1161
 msgid "Install another build:"
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:961
+#: src/p99/tabs/updates/initController.ts:957
 msgid "Installed (Mirror edition)"
 msgstr ""
 
 #: src/p99/tabs/updates/initController.ts:287
-#: src/p99/tabs/updates/initController.ts:1023
+#: src/p99/tabs/updates/initController.ts:1019
 msgid "Installed version is newer than release"
 msgstr ""
 
@@ -1136,28 +1202,32 @@ msgstr ""
 msgid "Interface monitoring for Bad WAN"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2461
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2947
-#: src/p99/tabs/dashboard/initController.ts:891
-#: src/p99/tabs/dashboard/initController.ts:1131
-#: src/p99/tabs/dashboard/initController.ts:1271
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2470
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2964
+#: src/p99/tabs/dashboard/initController.ts:893
+#: src/p99/tabs/dashboard/initController.ts:1133
+#: src/p99/tabs/dashboard/initController.ts:1273
 msgid "Interrupt connections"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2948
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2965
 msgid "Interrupt connections when priority failover switches server"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2462
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2471
 msgid "Interrupt connections when URLTest switches the selected server"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:887
-#: src/p99/tabs/dashboard/initController.ts:1128
+#: src/p99/tabs/dashboard/initController.ts:889
+#: src/p99/tabs/dashboard/initController.ts:1130
 msgid "Interval"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7187
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:597
+msgid "Interval between automatic latency checks in the shared pool (e.g., 20m, 1h). Default is 20m."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7204
 msgid "Invalid ByeDPI strategy"
 msgstr ""
 
@@ -1173,7 +1243,7 @@ msgstr ""
 msgid "Invalid DNS server port"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4998
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5015
 #: src/validators/validateDomain.ts:67
 #: src/validators/validateDomain.ts:73
 msgid "Invalid domain address"
@@ -1248,7 +1318,7 @@ msgstr ""
 msgid "Invalid JSON format"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7144
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7161
 msgid "Invalid NFQWS2 strategy"
 msgstr ""
 
@@ -1256,56 +1326,54 @@ msgstr ""
 msgid "Invalid path format. Path must start with \"/\" and contain valid characters"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7551
-#: src/validators/validateShadowsocksUrl.ts:91
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7670
+#: src/validators/validateShadowsocksUrl.ts:127
 msgid "Invalid port number. Must be between 1 and 65535"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5147
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5164
 msgid "Invalid port or range. Use 80 or 1000-2000"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4360
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4379
 msgid "Invalid regular expression"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:38
-msgid "Invalid Shadowsocks URL: decoded credentials must contain method:password"
-msgstr ""
-
-#: src/validators/validateShadowsocksUrl.ts:67
+#: src/validators/validateShadowsocksUrl.ts:105
 msgid "Invalid Shadowsocks URL: invalid server and port"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:28
+#: src/validators/validateShadowsocksUrl.ts:73
 msgid "Invalid Shadowsocks URL: missing credentials"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:47
+#: src/validators/validateShadowsocksUrl.ts:88
 msgid "Invalid Shadowsocks URL: missing method and password separator \":\""
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:84
+#: src/validators/validateShadowsocksUrl.ts:120
 msgid "Invalid Shadowsocks URL: missing port"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:75
+#: src/validators/validateShadowsocksUrl.ts:113
 msgid "Invalid Shadowsocks URL: missing server"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:59
+#: src/validators/validateShadowsocksUrl.ts:56
+#: src/validators/validateShadowsocksUrl.ts:63
+#: src/validators/validateShadowsocksUrl.ts:97
 msgid "Invalid Shadowsocks URL: missing server address"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:17
+#: src/validators/validateShadowsocksUrl.ts:29
 msgid "Invalid Shadowsocks URL: must not contain spaces"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:9
+#: src/validators/validateShadowsocksUrl.ts:21
 msgid "Invalid Shadowsocks URL: must start with ss://"
 msgstr ""
 
-#: src/validators/validateShadowsocksUrl.ts:97
+#: src/validators/validateShadowsocksUrl.ts:133
 msgid "Invalid Shadowsocks URL: parsing failed"
 msgstr ""
 
@@ -1338,11 +1406,39 @@ msgid "Invalid SOCKS URL: must not contain spaces"
 msgstr ""
 
 #: src/validators/validateSocksUrl.ts:9
-msgid "Invalid SOCKS URL: must start with socks4://, socks4a://, or socks5://"
+msgid "Invalid SOCKS URL: must start with socks://, socks4://, socks4a://, or socks5://"
 msgstr ""
 
 #: src/validators/validateSocksUrl.ts:72
 msgid "Invalid SOCKS URL: parsing failed"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:48
+msgid "Invalid Trojan URL: invalid host and port"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:64
+msgid "Invalid Trojan URL: invalid port number"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:29
+msgid "Invalid Trojan URL: missing credentials and host"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:55
+msgid "Invalid Trojan URL: missing hostname"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:41
+msgid "Invalid Trojan URL: missing hostname and port"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:35
+msgid "Invalid Trojan URL: missing password"
+msgstr ""
+
+#: src/validators/validateTrojanUrl.ts:59
+msgid "Invalid Trojan URL: missing port"
 msgstr ""
 
 #: src/validators/validateTrojanUrl.ts:16
@@ -1353,26 +1449,114 @@ msgstr ""
 msgid "Invalid Trojan URL: must start with trojan://"
 msgstr ""
 
-#: src/validators/validateTrojanUrl.ts:61
+#: src/validators/validateTrojanUrl.ts:67
 msgid "Invalid Trojan URL: parsing failed"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4459
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4478
 #: src/validators/validateUrl.ts:9
 #: src/validators/validateUrl.ts:35
 #: src/validators/validateUrl.ts:38
 msgid "Invalid URL format"
 msgstr ""
 
+#: src/validators/validateVlessUrl.ts:111
+msgid "Invalid VLESS URL: flow xtls-rprx-vision-udp443 is not supported"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:43
+msgid "Invalid VLESS URL: invalid host and port"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:57
+msgid "Invalid VLESS URL: invalid port number"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:103
+msgid "Invalid VLESS URL: missing fp for reality"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:28
+msgid "Invalid VLESS URL: missing host and UUID"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:48
+msgid "Invalid VLESS URL: missing hostname"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:98
+msgid "Invalid VLESS URL: missing pbk for reality"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:51
+msgid "Invalid VLESS URL: missing port"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:63
+msgid "Invalid VLESS URL: missing query parameters"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:37
+msgid "Invalid VLESS URL: missing server"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:34
+msgid "Invalid VLESS URL: missing UUID"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:16
+msgid "Invalid VLESS URL: must not contain spaces"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:10
+msgid "Invalid VLESS URL: must start with vless://"
+msgstr ""
+
 #: src/validators/validateVlessUrl.ts:117
 msgid "Invalid VLESS URL: parsing failed"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:91
+msgid "Invalid VLESS URL: unsupported or missing security"
+msgstr ""
+
+#: src/validators/validateVlessUrl.ts:85
+msgid "Invalid VLESS URL: unsupported or missing type"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:47
+msgid "Invalid VMess URL: invalid config"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:58
+msgid "Invalid VMess URL: invalid port number"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:52
+msgid "Invalid VMess URL: invalid server"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:41
+msgid "Invalid VMess URL: missing encoded config"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:63
+msgid "Invalid VMess URL: missing UUID"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:32
+msgid "Invalid VMess URL: must not contain spaces"
+msgstr ""
+
+#: src/validators/validateVmessUrl.ts:25
+msgid "Invalid VMess URL: must start with vmess://"
 msgstr ""
 
 #: src/validators/validateVmessUrl.ts:68
 msgid "Invalid VMess URL: parsing failed"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7689
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7808
 msgid "IPs"
 msgstr ""
 
@@ -1384,15 +1568,15 @@ msgstr ""
 msgid "IPv6 only"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/helpers/getMeta.ts:20
 #: src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:17
+#: src/p99/tabs/diagnostic/helpers/getMeta.ts:20
 msgid "Issues detected"
 msgstr ""
 
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1063
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3756
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3992
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7318
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3775
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4011
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7437
 msgid "JSON outbound"
 msgstr ""
 
@@ -1412,25 +1596,21 @@ msgstr ""
 msgid "JSON outbound must contain a non-empty type field"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3780
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3799
 msgid "JSON outbound settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2957
-msgid "Keep Priority before latency-sorted servers"
-msgstr ""
-
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2471
-msgid "Keep URLTest before latency-sorted servers"
-msgstr ""
-
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4370
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4389
 msgid "Keyword must not contain spaces or commas"
 msgstr ""
 
-#: src/p99/methods/shell/index.ts:481
-#: src/p99/methods/shell/index.ts:502
+#: src/p99/methods/shell/index.ts:475
+#: src/p99/methods/shell/index.ts:496
 msgid "Latency test failed"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:561
+msgid "Latency test timeout (ms)"
 msgstr ""
 
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:545
@@ -1438,23 +1618,27 @@ msgid "Latency test URL"
 msgstr ""
 
 #: src/p99/tabs/updates/initController.ts:290
-#: src/p99/tabs/updates/initController.ts:1021
+#: src/p99/tabs/updates/initController.ts:1017
 msgid "Latest version is installed"
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:1023
+#: src/p99/tabs/updates/initController.ts:1019
 msgid "Latest version:"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1207
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:282
+msgid "Leave empty for default (Happ/3.26.1) or specify e.g. sing-box, clash.meta, v2ray"
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:1209
 msgid "Level"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2665
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2682
 msgid "Level name"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6858
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6875
 msgid "List must be an HTTP(S) URL or a local .lst path"
 msgstr ""
 
@@ -1471,15 +1655,15 @@ msgstr ""
 msgid "Loading connections"
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:900
-#: src/p99/tabs/updates/initController.ts:911
-#: src/p99/tabs/updates/initController.ts:922
-#: src/p99/tabs/updates/initController.ts:935
-#: src/p99/tabs/updates/initController.ts:948
+#: src/p99/tabs/updates/initController.ts:896
+#: src/p99/tabs/updates/initController.ts:907
+#: src/p99/tabs/updates/initController.ts:918
+#: src/p99/tabs/updates/initController.ts:931
+#: src/p99/tabs/updates/initController.ts:944
 msgid "Loading..."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:659
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:714
 msgid "Log Level"
 msgstr ""
 
@@ -1491,11 +1675,16 @@ msgstr ""
 msgid "Main DNS server. If multiple servers are selected, a timeout switches to a backup."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7690
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:352
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:48
+msgid "Manage remote subscriptions. Configure subscriptions once and select them in any section."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7809
 msgid "Match destination IPs or subnets"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7869
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7988
 msgid "Match destination ports. Use a single port or a range"
 msgstr ""
 
@@ -1503,23 +1692,27 @@ msgstr ""
 msgid "Maximum time to wait for example.com to resolve during a DNS health check."
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1725
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:562
+msgid "Maximum wait time in milliseconds for server ping and latency tests. Default is 2000 ms."
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:1849
 msgid "Memory Usage"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2421
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2430
 msgid "Minimum latency difference in milliseconds that triggers switching to a faster server."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7603
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7722
 msgid "Mixed Proxy Password"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7533
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7652
 msgid "Mixed Proxy Port"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7572
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7691
 msgid "Mixed Proxy Username"
 msgstr ""
 
@@ -1527,34 +1720,38 @@ msgstr ""
 msgid "Monitored Interfaces"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:392
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:404
 msgid "Monitoring"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:128
+#: src/p99/tabs/dashboard/partials/renderSections.ts:135
 msgid "More details"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2000
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2015
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2007
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2022
 msgid "Must be a number in the range of 0 - 10000"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2391
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2848
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:129
+msgid "Name"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2400
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2865
 msgid "Name displayed on the dashboard"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2666
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2683
 msgid "Name shown in the priority level list"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1815
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7277
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1822
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7396
 msgid "Network Interface"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3547
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3566
 msgid "Network interface settings"
 msgstr ""
 
@@ -1572,26 +1769,26 @@ msgstr ""
 msgid "NFQUEUE range overlaps with another rule"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7076
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7093
 msgid "NFQWS Strategy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5455
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5472
 msgid "NFQWS strategy cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7123
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7140
 msgid "NFQWS2 Strategy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5929
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5946
 msgid "NFQWS2 strategy cannot be empty"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:755
-#: src/p99/tabs/dashboard/initController.ts:759
-#: src/p99/tabs/dashboard/initController.ts:835
-#: src/p99/tabs/dashboard/initController.ts:1162
+#: src/p99/tabs/dashboard/initController.ts:757
+#: src/p99/tabs/dashboard/initController.ts:761
+#: src/p99/tabs/dashboard/initController.ts:837
+#: src/p99/tabs/dashboard/initController.ts:1164
 msgid "No"
 msgstr ""
 
@@ -1631,13 +1828,13 @@ msgstr ""
 msgid "No rules use Zapret2"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:976
-#: src/p99/tabs/dashboard/initController.ts:1363
+#: src/p99/tabs/dashboard/initController.ts:978
+#: src/p99/tabs/dashboard/initController.ts:1365
 msgid "Node list is empty"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:915
-#: src/p99/tabs/dashboard/initController.ts:1295
+#: src/p99/tabs/dashboard/initController.ts:917
+#: src/p99/tabs/dashboard/initController.ts:1297
 msgid "Nodes"
 msgstr ""
 
@@ -1656,10 +1853,10 @@ msgstr ""
 
 #: src/p99/helpers/singBoxVariant.ts:29
 #: src/p99/helpers/singBoxVariant.ts:37
-#: src/p99/tabs/updates/initController.ts:925
-#: src/p99/tabs/updates/initController.ts:938
-#: src/p99/tabs/updates/initController.ts:951
-#: src/p99/tabs/updates/initController.ts:962
+#: src/p99/tabs/updates/initController.ts:921
+#: src/p99/tabs/updates/initController.ts:934
+#: src/p99/tabs/updates/initController.ts:947
+#: src/p99/tabs/updates/initController.ts:958
 msgid "Not installed"
 msgstr ""
 
@@ -1680,52 +1877,52 @@ msgstr ""
 
 #: src/p99/tabs/diagnostic/diagnostic.store.ts:129
 #: src/p99/tabs/diagnostic/initController.ts:118
-#: src/p99/tabs/diagnostic/initController.ts:399
-#: src/p99/tabs/diagnostic/initController.ts:456
-#: src/p99/tabs/diagnostic/initController.ts:542
+#: src/p99/tabs/diagnostic/initController.ts:397
+#: src/p99/tabs/diagnostic/initController.ts:454
+#: src/p99/tabs/diagnostic/initController.ts:540
 msgid "Not running"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2752
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2769
 msgid "Only from the specified countries."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1886
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1894
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1893
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1901
 msgid "Only selected"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1887
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1896
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1894
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1903
 msgid "Only selected except exclusions"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2768
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2785
 msgid "Only servers whose names match the expression."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2719
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2736
 msgid "Only servers with one of the selected protocols."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2723
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2740
 msgid "Only servers with one of the selected security types."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2720
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2737
 msgid "Only servers with one of the selected transports."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2760
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2777
 msgid "Only the specified servers."
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:1014
-#: src/p99/tabs/updates/initController.ts:1036
+#: src/p99/tabs/updates/initController.ts:1010
+#: src/p99/tabs/updates/initController.ts:1032
 msgid "Open"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3724
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3743
 msgid "Open priority settings and enter a display name"
 msgstr ""
 
@@ -1734,21 +1931,21 @@ msgid "Open Project Page"
 msgstr ""
 
 #: src/helpers/withTimeout.ts:7
-#: src/p99/methods/shell/index.ts:451
-#: src/p99/methods/shell/index.ts:539
+#: src/p99/methods/shell/index.ts:445
+#: src/p99/methods/shell/index.ts:533
 msgid "Operation timed out"
 msgstr ""
 
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1380
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6534
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6551
 msgid "Option \"%s\" contains an invalid input value."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5533
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5550
 msgid "Optional values must be attached with '=' here; a separate token would be ignored by nfqws."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6007
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6024
 msgid "Optional values must be attached with '=' here; a separate token would be ignored by nfqws2."
 msgstr ""
 
@@ -1768,19 +1965,19 @@ msgstr ""
 msgid "P99 logs could not be collected."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6199
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6216
 msgid "P99 manages ciadpi pid files itself, so pidfile options are not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6196
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6213
 msgid "P99 manages the ciadpi process lifecycle itself, so daemon mode is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5343
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5360
 msgid "P99 manages the nfqws process lifecycle itself, so daemon mode is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5794
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5811
 msgid "P99 manages the nfqws2 process lifecycle itself, so daemon mode is not allowed here."
 msgstr ""
 
@@ -1792,11 +1989,11 @@ msgstr ""
 msgid "P99 service is stopped. Start the service to display the dashboard."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:602
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:657
 msgid "P99 will not modify your DHCP configuration"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:291
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:288
 msgid "P99 X Settings"
 msgstr ""
 
@@ -1840,7 +2037,7 @@ msgstr ""
 msgid "P99-managed nfqws2 runtime is ready"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7624
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7743
 msgid "Password cannot be empty"
 msgstr ""
 
@@ -1848,15 +2045,15 @@ msgstr ""
 msgid "Path cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:641
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:696
 msgid "Path must be absolute (start with /)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:650
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:705
 msgid "Path must contain at least one directory (like /tmp/cache.db)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:645
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:700
 msgid "Path must end with cache.db"
 msgstr ""
 
@@ -1870,16 +2067,28 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2921
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2938
 msgid "Periodically check the current level and switch to a faster server even when the current one works."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2470
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2956
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2479
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2973
 msgid "Pin on dashboard"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7543
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2974
+msgid "Pin Priority group to the top of the dashboard outbound list, before latency-sorted servers"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2480
+msgid "Pin URLTest group to the top of the dashboard outbound list, before latency-sorted servers"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:586
+msgid "Pings all subscription proxy nodes once globally on a shared schedule instead of creating separate ping timers per section. Sections independently select their fastest alive node."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7662
 msgid "Port cannot be empty"
 msgstr ""
 
@@ -1887,19 +2096,19 @@ msgstr ""
 msgid "Port conflict"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7534
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7653
 msgid "Port for the local mixed proxy of this section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5154
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5171
 msgid "Port must be between 1 and 65535"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5158
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5175
 msgid "Port range start must be less than or equal to end"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7868
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7987
 msgid "Ports"
 msgstr ""
 
@@ -1911,44 +2120,44 @@ msgstr ""
 msgid "Prefer IPv6"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2329
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2339
 msgid "Prefix text"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7404
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7523
 msgid "Priority"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1390
-#: src/p99/tabs/dashboard/partials/renderSections.ts:370
-#: src/p99/tabs/dashboard/partials/renderSections.ts:371
+#: src/p99/tabs/dashboard/initController.ts:1392
+#: src/p99/tabs/dashboard/partials/renderSections.ts:383
+#: src/p99/tabs/dashboard/partials/renderSections.ts:384
 msgid "Priority details"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1232
+#: src/p99/tabs/dashboard/initController.ts:1234
 msgid "Priority details are unavailable"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3611
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3612
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3630
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3631
 msgid "Priority level settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2965
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2984
 msgid "Priority levels"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3669
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3674
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3675
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3688
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3693
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3694
 msgid "Priority settings"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:126
+#: src/p99/tabs/dashboard/partials/renderSections.ts:133
 msgid "Profile"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1956
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1963
 msgid "Protocol"
 msgstr ""
 
@@ -1956,64 +2165,64 @@ msgstr ""
 msgid "Public host"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:122
+#: src/p99/tabs/dashboard/partials/renderSections.ts:129
 msgid "Refill"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1054
+#: src/p99/tabs/dashboard/initController.ts:1056
 msgid "Refreshing Dashboard…"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5040
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5057
 msgid "Regular expression must not contain spaces or commas"
 msgstr ""
 
 #: src/p99/tabs/updates/initController.ts:800
-#: src/p99/tabs/updates/initController.ts:878
+#: src/p99/tabs/updates/initController.ts:874
 msgid "Remove"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2776
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2793
 msgid "Remove servers from the specified countries from this level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2792
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2809
 msgid "Remove servers whose names match the expression from this level."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2784
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2801
 msgid "Remove the specified servers from this level."
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1075
+#: src/p99/tabs/dashboard/initController.ts:1077
 msgid "Removing user settings…"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7559
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7678
 msgid "Require a username and password for the local mixed proxy"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7635
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7754
 msgid "Resolve domain names before routing so sing-box can use real destination IPs."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7634
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7753
 msgid "Resolve real IP for routing"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5328
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5345
 msgid "Resource selection by hostname inside nfqws is not supported here; sing-box selects resources before NFQUEUE."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5773
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5790
 msgid "Resource selection by hostname inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5331
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5348
 msgid "Resource selection by IP or CIDR inside nfqws is not supported here; sing-box selects resources before NFQUEUE."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5776
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5793
 msgid "Resource selection by IP or CIDR inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE."
 msgstr ""
 
@@ -2034,7 +2243,7 @@ msgstr ""
 msgid "Route main DNS requests through the selected section."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7048
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7065
 msgid "Route requests to this DNS server through another section."
 msgstr ""
 
@@ -2044,16 +2253,16 @@ msgstr ""
 msgid "Routing rules"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6849
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6866
 msgid "Rule set must be an HTTP(S) URL or a local .srs / .json path"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3839
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3858
 msgid "Rule set settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7744
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7779
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7863
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7898
 msgid "Rule sets"
 msgstr ""
 
@@ -2085,12 +2294,12 @@ msgstr ""
 msgid "Run Diagnostic"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3432
-#: src/p99/tabs/dashboard/initController.ts:1114
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3451
+#: src/p99/tabs/dashboard/initController.ts:1116
 msgid "Save"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1058
+#: src/p99/tabs/dashboard/initController.ts:1060
 msgid "Saving URLTest settings…"
 msgstr ""
 
@@ -2102,56 +2311,56 @@ msgstr ""
 msgid "Secret key for authenticating remote access to YACD when WAN access is enabled."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:345
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:340
 msgid "Section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6981
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6998
 msgid "Section name"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:339
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:334
 msgid "Sections"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1968
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1975
 msgid "Security"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7283
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7402
 msgid "Select a network interface"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7700
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7819
 msgid "Select a predefined domain list"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7720
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7839
 msgid "Select a predefined IP rule set from b4geoip-p99"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7069
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7086
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:84
 msgid "Select a section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2310
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2320
 msgid "Select a section for downloading this subscription"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7482
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7601
 msgid "Select a transit section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1866
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1873
 msgid "Select an existing network interface"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3067
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3086
 msgid "Select an existing URLTest or Priority group"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7495
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7614
 msgid "Select an intermediate section"
 msgstr ""
 
@@ -2159,24 +2368,28 @@ msgstr ""
 msgid "Select DNS protocol to use"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7278
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7397
 msgid "Select network interface for VPN connection"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:624
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:679
 msgid "Select or enter path for sing-box cache file. Change this ONLY if you know what you are doing"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:611
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:666
 msgid "Select path for sing-box config file. Change this ONLY if you know what you are doing"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2909
-#: src/p99/tabs/dashboard/initController.ts:1255
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7358
+msgid "Select pre-configured subscriptions from the Subscriptions tab (mutually exclusive with direct Subscription URLs above)"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2926
+#: src/p99/tabs/dashboard/initController.ts:1257
 msgid "Select the fastest node"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:660
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:715
 msgid "Select the log level for sing-box"
 msgstr ""
 
@@ -2192,8 +2405,8 @@ msgstr ""
 msgid "Select the WAN interfaces to be monitored"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:883
-#: src/p99/tabs/dashboard/initController.ts:1241
+#: src/p99/tabs/dashboard/initController.ts:885
+#: src/p99/tabs/dashboard/initController.ts:1243
 msgid "Selected"
 msgstr ""
 
@@ -2201,16 +2414,16 @@ msgstr ""
 msgid "Selector and URLTest outbounds must contain a non-empty outbounds array"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2479
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2685
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2490
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2702
 msgid "Server filtering"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7346
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7465
 msgid "Server group for automatic lowest-latency selection"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7405
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7524
 msgid "Server group for priority failover"
 msgstr ""
 
@@ -2226,60 +2439,72 @@ msgstr ""
 msgid "server_port must be a number from 1 to 65535"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3083
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3102
 msgid "Servers on dashboard"
 msgstr ""
 
-#: src/p99/methods/shell/index.ts:373
-#: src/p99/methods/shell/index.ts:423
-#: src/p99/tabs/diagnostic/initController.ts:647
+#: src/p99/methods/shell/index.ts:367
+#: src/p99/methods/shell/index.ts:417
+#: src/p99/tabs/diagnostic/initController.ts:645
 msgid "Service action failed"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7703
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7723
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7822
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7842
 msgid "Service list"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1758
+#: src/p99/tabs/dashboard/initController.ts:1882
 msgid "Services info"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:356
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:368
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1124
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6952
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6969
 msgid "Settings"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3156
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:585
+msgid "Shared latency pool for subscriptions"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:596
+msgid "Shared latency test interval"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:246
+msgid "Show in dashboard"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3175
 msgid "Show only selected servers."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3115
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3134
 msgid "Show only servers with one of the selected protocols."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3121
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3140
 msgid "Show only servers with one of the selected security types."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3118
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3137
 msgid "Show only servers with one of the selected transports."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3229
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3248
 msgid "Show servers from selected groups without repeating their filtering criteria."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3148
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3167
 msgid "Show servers only from the specified countries."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3164
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3183
 msgid "Show servers whose names match the expression."
 msgstr ""
 
-#: src/p99/tabs/diagnostic/initController.ts:804
+#: src/p99/tabs/diagnostic/initController.ts:802
 #: src/p99/tabs/diagnostic/partials/renderAvailableActions.ts:119
 msgid "Show sing-box config"
 msgstr ""
@@ -2316,11 +2541,17 @@ msgstr ""
 msgid "Sing-box version is compatible (newer than 1.12.4)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7507
+#: src/p99/tabs/dashboard/partials/renderSections.ts:467
+msgid "Sort"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7626
+#: src/p99/tabs/dashboard/partials/renderSections.ts:454
+#: src/p99/tabs/dashboard/partials/renderSections.ts:455
 msgid "Sort by latency"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7508
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7627
 msgid "Sorts servers in this section by lowest latency in the dashboard."
 msgstr ""
 
@@ -2381,7 +2612,7 @@ msgstr ""
 msgid "Start P99"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2448
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2457
 msgid "Stop checking when URLTest group is not used. Use sing-box duration format like 1d, 12h or 30m."
 msgstr ""
 
@@ -2389,44 +2620,67 @@ msgstr ""
 msgid "Stop P99"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3833
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3852
 msgid "Subnets from the list will be extracted and added to nftables"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2264
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:359
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:109
+#: src/p99/tabs/dashboard/partials/renderSections.ts:412
+msgid "Subscription"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2274
 msgid "Subscription auto update"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:136
+#: src/p99/tabs/dashboard/partials/renderSections.ts:143
 msgid "Subscription info:"
 msgstr ""
 
-#: src/p99/methods/shell/index.ts:739
-#: src/p99/methods/shell/index.ts:759
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:78
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:186
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:202
+#: src/p99/methods/shell/index.ts:733
+#: src/p99/methods/shell/index.ts:753
 msgid "Subscription update failed"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2273
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2283
 msgid "Subscription update interval"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7229
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:192
+msgid "Subscription updated successfully"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7246
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:147
 msgid "Subscription URL"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4456
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:17
+msgid "Subscription URL cannot be empty"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4475
 msgid "Subscription URL must use HTTP or HTTPS"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3536
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3555
 msgid "Subscription URL settings"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:318
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:351
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7357
+msgid "Subscriptions"
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:320
 msgid "Subscriptions updated"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:127
+#: src/p99/tabs/dashboard/partials/renderSections.ts:134
 msgid "Support"
 msgstr ""
 
@@ -2434,7 +2688,11 @@ msgstr ""
 msgid "Support report downloaded"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1718
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:161
+msgid "Sync"
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:1842
 msgid "System info"
 msgstr ""
 
@@ -2450,52 +2708,52 @@ msgstr ""
 msgid "Tailscale endpoint"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:229
-#: src/p99/tabs/dashboard/partials/renderSections.ts:237
-#: src/p99/tabs/dashboard/partials/renderSections.ts:457
+#: src/p99/tabs/dashboard/partials/renderSections.ts:236
+#: src/p99/tabs/dashboard/partials/renderSections.ts:244
+#: src/p99/tabs/dashboard/partials/renderSections.ts:549
 msgid "Test latency"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2547
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2560
 msgid "Test only selected servers."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2507
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2518
 msgid "Test only servers with one of the selected protocols."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2513
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2524
 msgid "Test only servers with one of the selected security types."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2510
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2521
 msgid "Test only servers with one of the selected transports."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2539
-msgid "Test servers only from the specified countries."
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2550
+msgid "Test servers only from the specified countries. E.g. DE, NL, US (2-letter ISO codes)."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2555
-msgid "Test servers whose names match the expression."
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2568
+msgid "Test servers whose names match the expression. E.g. (?i)fast|direct|premium"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:886
-#: src/p99/tabs/dashboard/initController.ts:1127
+#: src/p99/tabs/dashboard/initController.ts:888
+#: src/p99/tabs/dashboard/initController.ts:1129
 msgid "Testing URL"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5340
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5785
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5357
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5802
 msgid "The desync fwmark is managed by P99 for loop prevention and must not be overridden here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5337
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5782
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5354
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5799
 msgid "The NFQUEUE number is assigned by P99 for each rule and must not be overridden here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7661
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7780
 msgid "The rule applies to the domain and all its subdomains. Use full:, keyword:, or regex: prefixes for exact match, keyword match, or regular expression."
 msgstr ""
 
@@ -2511,33 +2769,33 @@ msgstr ""
 msgid "There are rules using Zapret2"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6202
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6219
 msgid "This field must start a working ciadpi strategy; help/version options exit immediately and are not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5346
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5363
 msgid "This field must start a working nfqws strategy; --dry-run exits immediately and is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5349
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5366
 msgid "This field must start a working nfqws strategy; --version exits immediately and is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5797
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5814
 msgid "This field must start a working nfqws2 strategy; --dry-run exits immediately and is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5800
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5817
 msgid "This field must start a working nfqws2 strategy; --version exits immediately and is not allowed here."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5518
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5992
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5535
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6009
 msgid "This flag does not accept a value."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5549
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6023
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5566
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6040
 msgid "This option requires a value."
 msgstr ""
 
@@ -2554,34 +2812,34 @@ msgstr ""
 msgid "tiny"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2420
-#: src/p99/tabs/dashboard/initController.ts:888
-#: src/p99/tabs/dashboard/initController.ts:1129
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2429
+#: src/p99/tabs/dashboard/initController.ts:890
+#: src/p99/tabs/dashboard/initController.ts:1131
 msgid "Tolerance"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2966
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2985
 msgid "Top level has the highest priority; lower levels are used as fallback"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1644
-#: src/p99/tabs/dashboard/partials/renderSections.ts:117
+#: src/p99/tabs/dashboard/initController.ts:1768
+#: src/p99/tabs/dashboard/partials/renderSections.ts:124
 msgid "Traffic"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2677
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2694
 msgid "Traffic for this level goes directly."
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1678
+#: src/p99/tabs/dashboard/initController.ts:1802
 msgid "Traffic Total"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6193
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6210
 msgid "Transparent proxy mode is incompatible with action=byedpi because P99 connects to ciadpi through SOCKS."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1962
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1969
 msgid "Transport"
 msgstr ""
 
@@ -2606,31 +2864,32 @@ msgstr ""
 msgid "UDP (Unprotected DNS)"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6117
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6134
 msgid "Unable to validate the ByeDPI strategy through the backend parser."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5260
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6598
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7103
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5277
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6615
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7120
 msgid "Unable to validate the NFQWS strategy through the backend parser."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5705
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6607
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5722
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6624
 msgid "Unable to validate the NFQWS2 strategy through the backend parser."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2883
-#: src/p99/tabs/dashboard/initController.ts:1249
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2900
+#: src/p99/tabs/dashboard/initController.ts:1251
 msgid "Unavailability timeout"
 msgstr ""
 
+#: src/p99/tabs/dashboard/partials/renderSections.ts:565
 msgid "Unavailable servers"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6334
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6383
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6351
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6400
 msgid "Unexpected ByeDPI strategy argument: %s"
 msgstr ""
 
@@ -2646,12 +2905,12 @@ msgstr ""
 msgid "Unexpected P99-managed nfqws2 runtime is running"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5498
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5972
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5515
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5989
 msgid "Unexpected standalone token. Use explicit flags such as --name or --name=value."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:50
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:53
 msgid "unique UCI identifier"
 msgstr ""
 
@@ -2670,9 +2929,9 @@ msgstr ""
 msgid "unknown"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6303
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6325
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6376
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6320
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6342
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6393
 msgid "Unknown ByeDPI option: %s"
 msgstr ""
 
@@ -2684,11 +2943,11 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5509
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5526
 msgid "Unknown NFQWS flag."
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5983
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6000
 msgid "Unknown NFQWS2 flag."
 msgstr ""
 
@@ -2700,26 +2959,61 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:99
+#: src/p99/tabs/dashboard/initController.ts:1731
+msgid "Update all subscriptions"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:67
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:93
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:176
+msgid "Update failed"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:222
+msgid "Update interval"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:235
+msgid "Update interval is required"
+msgstr ""
+
 #: src/p99/tabs/updates/initController.ts:283
 msgid "Update is available"
 msgstr ""
 
-#: src/p99/tabs/updates/initController.ts:1000
+#: src/p99/tabs/updates/initController.ts:996
 msgid "Update is available:"
 msgstr ""
 
-#: src/p99/tabs/dashboard/partials/renderSections.ts:206
-#: src/p99/tabs/dashboard/partials/renderSections.ts:219
-#: src/p99/tabs/dashboard/partials/renderSections.ts:220
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:162
+msgid "Update now"
+msgstr ""
+
+#: src/p99/tabs/dashboard/partials/renderSections.ts:213
+#: src/p99/tabs/dashboard/partials/renderSections.ts:226
+#: src/p99/tabs/dashboard/partials/renderSections.ts:227
 msgid "Update subscriptions"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2265
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2275
 msgid "Update this subscription automatically"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1646
-#: src/p99/tabs/dashboard/initController.ts:1681
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:213
+msgid "Update this subscription automatically according to the interval"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:62
+msgid "Updating all subscriptions..."
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:171
+msgid "Updating subscription..."
+msgstr ""
+
+#: src/p99/tabs/dashboard/initController.ts:1770
+#: src/p99/tabs/dashboard/initController.ts:1805
 msgid "Uplink"
 msgstr ""
 
@@ -2728,50 +3022,50 @@ msgstr ""
 msgid "Uploaded"
 msgstr ""
 
-#: src/validators/validateProxyUrl.ts:42
-msgid "URL must start with vless://, vmess://, ss://, trojan://, socks4://, socks4a://, socks5://, hysteria2://, or hy2://"
+#: src/validators/validateProxyUrl.ts:41
+msgid "URL must start with vless://, vmess://, ss://, trojan://, socks://, socks4://, socks4a://, socks5://, hysteria2://, or hy2://"
 msgstr ""
 
 #: src/validators/validateUrl.ts:18
 msgid "URL must use one of the following protocols:"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2859
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2876
 msgid "URL used to check whether a server is alive"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2435
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2444
 msgid "URL used to test server latency"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7345
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7464
 msgid "URLTest"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1149
-#: src/p99/tabs/dashboard/partials/renderSections.ts:351
-#: src/p99/tabs/dashboard/partials/renderSections.ts:352
+#: src/p99/tabs/dashboard/initController.ts:1151
+#: src/p99/tabs/dashboard/partials/renderSections.ts:364
+#: src/p99/tabs/dashboard/partials/renderSections.ts:365
 msgid "URLTest details"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:874
+#: src/p99/tabs/dashboard/initController.ts:876
 msgid "URLTest details are unavailable"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3568
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3569
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3587
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3588
 msgid "URLTest settings"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1084
+#: src/p99/tabs/dashboard/initController.ts:1086
 msgid "URLTest settings reset"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1072
+#: src/p99/tabs/dashboard/initController.ts:1074
 msgid "URLTest settings saved"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7444
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7563
 msgid "Use another section as an intermediate hop to connect to servers in this section. Does not apply to network interfaces or JSON outbounds."
 msgstr ""
 
@@ -2779,21 +3073,22 @@ msgstr ""
 msgid "Use sing-box duration format like 10s, 1m or 2m30s"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2274
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2409
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2932
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4404
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4411
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4418
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2284
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2418
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2949
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4423
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4430
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4437
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:466
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:488
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:495
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:511
 #: ../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:539
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:223
 msgid "Use sing-box duration format like 1d, 12h or 30m"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:1105
+#: src/p99/tabs/dashboard/initController.ts:1107
 msgid "Use source values"
 msgstr ""
 
@@ -2801,12 +3096,16 @@ msgstr ""
 msgid "Used by"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7593
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:281
+msgid "User-Agent"
+msgstr ""
+
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7712
 msgid "Username cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5033
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5046
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5050
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5063
 #: src/validators/validateDns.ts:25
 #: src/validators/validateDns.ts:29
 #: src/validators/validateDomain.ts:57
@@ -2815,38 +3114,38 @@ msgstr ""
 #: src/validators/validateIp.ts:25
 #: src/validators/validateOutboundJson.ts:118
 #: src/validators/validatePath.ts:16
-#: src/validators/validateShadowsocksUrl.ts:101
+#: src/validators/validateShadowsocksUrl.ts:137
 #: src/validators/validateSocksUrl.ts:75
 #: src/validators/validateSubnet.ts:42
-#: src/validators/validateTrojanUrl.ts:64
+#: src/validators/validateTrojanUrl.ts:70
 #: src/validators/validateUrl.ts:32
 #: src/validators/validateVlessUrl.ts:115
 #: src/validators/validateVmessUrl.ts:66
 msgid "Valid"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4486
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4505
 msgid "Validation errors:"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5023
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5040
 msgid "Value cannot be empty"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1903
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1910
 msgid "Via country.is"
 msgstr ""
 
-#: src/p99/tabs/diagnostic/initController.ts:770
+#: src/p99/tabs/diagnostic/initController.ts:768
 #: src/p99/tabs/diagnostic/partials/renderAvailableActions.ts:110
 msgid "View logs"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6982
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6999
 msgid "Visible name of this section"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7205
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7222
 msgid "vless://, vmess://, ss://, trojan://, socks4/5://, hy2/hysteria2:// links"
 msgstr ""
 
@@ -2858,11 +3157,11 @@ msgstr ""
 msgid "WAN public IP"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6995
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7012
 msgid "What P99 should do when this section matches"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2910
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2927
 msgid "When switching to another level, test every server and select the fastest instead of the first working one."
 msgstr ""
 
@@ -2870,7 +3169,7 @@ msgstr ""
 msgid "YACD Secret Key"
 msgstr ""
 
-#: src/p99/tabs/dashboard/initController.ts:755
+#: src/p99/tabs/dashboard/initController.ts:757
 msgid "Yes"
 msgstr ""
 
@@ -2878,7 +3177,7 @@ msgstr ""
 msgid "You can select Output Network Interface, by default autodetect"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5334
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5351
 msgid "Zapret hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS strategies."
 msgstr ""
 
@@ -2906,7 +3205,7 @@ msgstr ""
 msgid "Zapret sing-box outbound is not configured"
 msgstr ""
 
-#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5779
+#: ../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5796
 msgid "Zapret2 hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS2 strategies."
 msgstr ""
 

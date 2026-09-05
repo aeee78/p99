@@ -10,6 +10,7 @@ const copyableLinks = [
   'hysteria2://password@example.com:443',
   'hy2://password@example.com:443',
   'tuic://uuid:password@example.com:443',
+  'socks://example.com:1080',
   'socks4://example.com:1080',
   'socks4a://example.com:1080',
   'socks5://user:pass@example.com:1080',

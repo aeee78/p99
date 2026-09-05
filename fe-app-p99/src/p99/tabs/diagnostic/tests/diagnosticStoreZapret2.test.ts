@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DIAGNOSTICS_CHECKS } from '../checks/contstants';
+import { DIAGNOSTICS_CHECKS } from '../checks/constants';
 import { getDiagnosticsChecks } from '../diagnostic.store';
 
 describe('diagnostic store provider checks', () => {

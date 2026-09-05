@@ -1809,16 +1809,18 @@ check_system() {
             [ "$PKG_IS_APK" -eq 0 ] || fail "OpenWrt $release must use opkg/IPK packages"
             ;;
         24.*)
-            fail "The mirror supports OpenWrt 24.10.x, but not $release"
+            fail "OpenWrt 24 requires 24.10.x or newer (detected: $release)"
             ;;
         *)
             [ "$PKG_IS_APK" -eq 1 ] || fail "OpenWrt $release is expected to use apk packages"
             ;;
     esac
-    [ "$target" = "mediatek/filogic" ] ||
-        fail "The mirror currently supports only the mediatek/filogic target (detected: ${target:-unknown})"
-    [ "$architecture" = "aarch64_cortex-a53" ] ||
-        fail "The mirror currently supports only aarch64_cortex-a53 (detected: ${architecture:-unknown})"
+    if [ -n "$MIRROR_BASE_URL" ]; then
+        [ "$target" = "mediatek/filogic" ] ||
+            fail "The mirror currently supports only the mediatek/filogic target (detected: ${target:-unknown})"
+        [ "$architecture" = "aarch64_cortex-a53" ] ||
+            fail "The mirror currently supports only aarch64_cortex-a53 (detected: ${architecture:-unknown})"
+    fi
 
     msg "OpenWrt $release, target $target, architecture $architecture"
 
@@ -2627,7 +2629,11 @@ main() {
     remove_legacy_backup
 
     msg "P99 $P99_PACKAGE_VERSION has been installed successfully"
-    msg "Source mirror: ${MIRROR_BASE_URL} (${P99_RELEASE_TAG})"
+    if [ -n "$MIRROR_BASE_URL" ]; then
+        msg "Source mirror: ${MIRROR_BASE_URL} (${P99_RELEASE_TAG})"
+    else
+        msg "Source: GitHub Releases (${P99_RELEASE_TAG})"
+    fi
     if [ "$P99_CONFIG_READY" -eq 1 ]; then
         warn "Open LuCI and review your rules before enabling P99"
     else

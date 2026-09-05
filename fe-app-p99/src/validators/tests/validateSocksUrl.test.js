@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { validateSocksUrl } from '../validateSocksUrl';
 
 const validUrls = [
+  ['socks basic', 'socks://127.0.0.1:1080'],
+  ['socks with username/password', 'socks://user:pass@127.0.0.1:1080'],
   ['socks4 basic', 'socks4://127.0.0.1:1080'],
   ['socks4a basic', 'socks4a://127.0.0.1:1080'],
   ['socks5 basic', 'socks5://127.0.0.1:1080'],

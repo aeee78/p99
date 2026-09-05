@@ -826,8 +826,6 @@ function process_socks(raw, url) {
         if (colon >= 0) {
             username = urldecode(substr(url.userinfo, 0, colon));
             password = urldecode(substr(url.userinfo, colon + 1));
-            if (username == password)
-                password = "";
         }
         else {
             username = urldecode(url.userinfo);
@@ -1019,7 +1017,7 @@ function process_vmess_json(raw, decoded) {
         outbound.alter_id = alter_id;
 
     let network = string_value(vmess.net);
-    if (vmess.tls === true || vmess.tls == "tls" || vmess.tls == "true") {
+    if (vmess.tls == "tls" || is_true(vmess.tls)) {
         let fingerprint = normalize_utls_fingerprint(string_value(vmess.fp));
         let tls = { enabled: true };
         if (string_value(vmess.sni) != "")

@@ -1008,7 +1008,7 @@ if (socks == null)
 if (socks.__p99_hidden !== true)
     die("loopback socks must be hidden\n");
 for (let outbound in value.outbounds || []) {
-    if (outbound.__p99_profile_member === true && as_string(outbound.remark || "") == "")
+    if (outbound.__p99_profile_member === true && (outbound.remark == null || outbound.remark == ""))
         die("Happ balancer members should inherit the profile remark\n");
 }
 ' "$happ_normalized" || fail "Happ JSON profile collapse"

@@ -15227,11 +15227,590 @@ function injectGlobalStyles() {
   );
 }
 
+// src/p99/section/duration.ts
+var SING_BOX_DURATION_REGEX = /^(?=.*[1-9])([0-9]+(?:\.[0-9]+)?(?:ns|us|ms|s|m|h|d))+$/;
+function isSingBoxDuration(value) {
+  if (typeof value !== "string") {
+    return false;
+  }
+  return SING_BOX_DURATION_REGEX.test(value.trim());
+}
+function validateOptionalSingBoxDuration(value, errorMessage = "Use sing-box duration format like 1d, 12h or 30m") {
+  const normalized = typeof value === "string" ? value.trim() : "";
+  if (!normalized.length) {
+    return true;
+  }
+  if (isSingBoxDuration(normalized)) {
+    return true;
+  }
+  return errorMessage;
+}
+function validateRequiredSingBoxDuration(value, errorMessage = "Use sing-box duration format like 1d, 12h or 30m") {
+  const normalized = typeof value === "string" ? value.trim() : "";
+  if (!normalized.length) {
+    return errorMessage;
+  }
+  if (isSingBoxDuration(normalized)) {
+    return true;
+  }
+  return errorMessage;
+}
+
+// src/p99/section/dpiStrategies.ts
+var NFQWS_REQUIRED_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--ctrack-timeouts",
+  "--dpi-desync",
+  "--dpi-desync-badack-increment",
+  "--dpi-desync-badseq-increment",
+  "--dpi-desync-cutoff",
+  "--dpi-desync-fake-dht",
+  "--dpi-desync-fake-discord",
+  "--dpi-desync-fake-http",
+  "--dpi-desync-fake-quic",
+  "--dpi-desync-fake-stun",
+  "--dpi-desync-fake-syndata",
+  "--dpi-desync-fake-tcp-mod",
+  "--dpi-desync-fake-tls",
+  "--dpi-desync-fake-tls-mod",
+  "--dpi-desync-fake-unknown",
+  "--dpi-desync-fake-unknown-udp",
+  "--dpi-desync-fake-wireguard",
+  "--dpi-desync-fakedsplit-mod",
+  "--dpi-desync-fakedsplit-pattern",
+  "--dpi-desync-fooling",
+  "--dpi-desync-fwmark",
+  "--dpi-desync-hostfakesplit-midhost",
+  "--dpi-desync-hostfakesplit-mod",
+  "--dpi-desync-ipfrag-pos-tcp",
+  "--dpi-desync-ipfrag-pos-udp",
+  "--dpi-desync-repeats",
+  "--dpi-desync-split-http-req",
+  "--dpi-desync-split-pos",
+  "--dpi-desync-split-seqovl",
+  "--dpi-desync-split-seqovl-pattern",
+  "--dpi-desync-split-tls",
+  "--dpi-desync-start",
+  "--dpi-desync-ts-increment",
+  "--dpi-desync-ttl",
+  "--dpi-desync-ttl6",
+  "--dpi-desync-udplen-increment",
+  "--dpi-desync-udplen-pattern",
+  "--dup",
+  "--dup-badack-increment",
+  "--dup-badseq-increment",
+  "--dup-cutoff",
+  "--dup-fooling",
+  "--dup-ip-id",
+  "--dup-start",
+  "--dup-ts-increment",
+  "--dup-ttl",
+  "--dup-ttl6",
+  "--filter-l3",
+  "--filter-l7",
+  "--filter-tcp",
+  "--filter-udp",
+  "--hostlist",
+  "--hostlist-auto",
+  "--hostlist-auto-debug",
+  "--hostlist-auto-fail-threshold",
+  "--hostlist-auto-fail-time",
+  "--hostlist-auto-retrans-threshold",
+  "--hostlist-domains",
+  "--hostlist-exclude",
+  "--hostlist-exclude-domains",
+  "--hostspell",
+  "--ip-id",
+  "--ipcache-lifetime",
+  "--ipset",
+  "--ipset-exclude",
+  "--ipset-exclude-ip",
+  "--ipset-ip",
+  "--orig-mod-cutoff",
+  "--orig-mod-start",
+  "--orig-ttl",
+  "--orig-ttl6",
+  "--pidfile",
+  "--qnum",
+  "--uid",
+  "--user",
+  "--wsize",
+  "--wssize",
+  "--wssize-cutoff",
+  "--wssize-forced-cutoff"
+]);
+var NFQWS_OPTIONAL_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--comment",
+  "--ctrack-disable",
+  "--debug",
+  "--dpi-desync-any-protocol",
+  "--dpi-desync-autottl",
+  "--dpi-desync-autottl6",
+  "--dpi-desync-skip-nosni",
+  "--dpi-desync-tcp-flags-set",
+  "--dpi-desync-tcp-flags-unset",
+  "--dup-autottl",
+  "--dup-autottl6",
+  "--dup-replace",
+  "--dup-tcp-flags-set",
+  "--dup-tcp-flags-unset",
+  "--ipcache-hostname",
+  "--orig-autottl",
+  "--orig-autottl6",
+  "--orig-tcp-flags-set",
+  "--orig-tcp-flags-unset",
+  "--synack-split"
+]);
+var NFQWS_NO_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--bind-fix4",
+  "--bind-fix6",
+  "--daemon",
+  "--domcase",
+  "--dry-run",
+  "--hostcase",
+  "--hostnospace",
+  "--methodeol",
+  "--new",
+  "--skip",
+  "--version"
+]);
+var NFQWS2_REQUIRED_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--blob",
+  "--cookie",
+  "--ctrack-timeouts",
+  "--filter-l3",
+  "--filter-l7",
+  "--filter-tcp",
+  "--filter-udp",
+  "--fwmark",
+  "--fuzz",
+  "--hostlist",
+  "--hostlist-auto",
+  "--hostlist-auto-debug",
+  "--hostlist-auto-fail-threshold",
+  "--hostlist-auto-fail-time",
+  "--hostlist-auto-retrans-threshold",
+  "--hostlist-domains",
+  "--hostlist-exclude",
+  "--hostlist-exclude-domains",
+  "--import",
+  "--in-range",
+  "--ipcache-lifetime",
+  "--ipset",
+  "--ipset-exclude",
+  "--ipset-exclude-ip",
+  "--ipset-ip",
+  "--lua-gc",
+  "--lua-init",
+  "--lua-desync",
+  "--name",
+  "--out-range",
+  "--payload",
+  "--pidfile",
+  "--qnum",
+  "--uid",
+  "--user"
+]);
+var NFQWS2_OPTIONAL_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--chdir",
+  "--comment",
+  "--ctrack-disable",
+  "--debug",
+  "--hostlist-auto-retrans-reset",
+  "--intercept",
+  "--ipcache-hostname",
+  "--new",
+  "--payload-disable",
+  "--reasm-disable",
+  "--server",
+  "--template",
+  "--writeable"
+]);
+var NFQWS2_NO_ARG_OPTIONS = /* @__PURE__ */ new Set([
+  "--bind-fix4",
+  "--bind-fix6",
+  "--daemon",
+  "--dry-run",
+  "--skip",
+  "--version"
+]);
+var BYEDPI_LONG_VALUE_OPTIONS = /* @__PURE__ */ new Set([
+  "--max-conn",
+  "--conn-ip",
+  "--buf-size",
+  "--debug",
+  "--def-ttl",
+  "--auto",
+  "--auto-mode",
+  "--cache-ttl",
+  "--cache-dump",
+  "--timeout",
+  "--proto",
+  "--hosts",
+  "--ipset",
+  "--pf",
+  "--round",
+  "--split",
+  "--disorder",
+  "--oob",
+  "--disoob",
+  "--fake",
+  "--fake-sni",
+  "--ttl",
+  "--fake-offset",
+  "--fake-data",
+  "--fake-tls-mod",
+  "--oob-data",
+  "--mod-http",
+  "--tlsrec",
+  "--tlsminor",
+  "--udp-fake"
+]);
+var BYEDPI_LONG_FLAG_OPTIONS = /* @__PURE__ */ new Set([
+  "--md5sig",
+  "--tfo",
+  "--drop-sack",
+  "--no-domain",
+  "--no-udp"
+]);
+var BYEDPI_SHORT_VALUE_OPTIONS = /* @__PURE__ */ new Set([
+  "-c",
+  "-I",
+  "-b",
+  "-x",
+  "-g",
+  "-A",
+  "-L",
+  "-u",
+  "-y",
+  "-T",
+  "-K",
+  "-H",
+  "-j",
+  "-V",
+  "-R",
+  "-s",
+  "-d",
+  "-o",
+  "-q",
+  "-f",
+  "-n",
+  "-t",
+  "-O",
+  "-l",
+  "-Q",
+  "-e",
+  "-M",
+  "-r",
+  "-m",
+  "-a"
+]);
+var BYEDPI_SHORT_FLAG_OPTIONS = /* @__PURE__ */ new Set([
+  "-N",
+  "-U",
+  "-F",
+  "-S",
+  "-Y"
+]);
+function getNfqwsOptionArgumentMode(option) {
+  if (NFQWS_REQUIRED_ARG_OPTIONS.has(option)) return "required";
+  if (NFQWS_OPTIONAL_ARG_OPTIONS.has(option)) return "optional";
+  if (NFQWS_NO_ARG_OPTIONS.has(option)) return "none";
+  return "unknown";
+}
+function getNfqws2OptionArgumentMode(option) {
+  if (NFQWS2_REQUIRED_ARG_OPTIONS.has(option)) return "required";
+  if (NFQWS2_OPTIONAL_ARG_OPTIONS.has(option)) return "optional";
+  if (NFQWS2_NO_ARG_OPTIONS.has(option)) return "none";
+  return "unknown";
+}
+function normalizeNfqwsStrategyWhitespace(value) {
+  return value ? `${value}`.replace(/\s+/g, " ").trim() : "";
+}
+function normalizeNfqws2StrategyValue(value) {
+  return normalizeNfqwsStrategyWhitespace(value);
+}
+function normalizeByedpiStrategyWhitespace(value) {
+  return normalizeNfqwsStrategyWhitespace(value);
+}
+function normalizeByedpiStrategyValue(value) {
+  return normalizeNfqwsStrategyWhitespace(value);
+}
+function getNfqwsForbiddenTokenInfo(token, _index) {
+  const normalized = `${token || ""}`.trim();
+  const lower = normalized.toLowerCase();
+  if (lower === "--config" || lower.startsWith("--config=")) {
+    return {
+      reason: "External nfqws config files bypass P99 queue management and explicit validation.",
+      captureNextValue: !normalized.includes("=")
+    };
+  }
+  if (lower === "--hostlist" || lower.startsWith("--hostlist=") || lower === "--hostlist-exclude" || lower.startsWith("--hostlist-exclude=") || lower === "--hostlist-domains" || lower.startsWith("--hostlist-domains=")) {
+    return {
+      reason: "Resource selection by hostname inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
+      captureNextValue: !normalized.includes("=")
+    };
+  }
+  if (lower === "--ipset" || lower.startsWith("--ipset=") || lower === "--ipset-exclude" || lower.startsWith("--ipset-exclude=")) {
+    return {
+      reason: "Resource selection by IP or CIDR inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
+      captureNextValue: !normalized.includes("=")
+    };
+  }
+  if (lower === "<hostlist>" || lower === "<hostlist_noauto>") {
+    return {
+      reason: "Zapret hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS strategies.",
+      captureNextValue: false
+    };
+  }
+  if (lower === "--qnum" || lower.startsWith("--qnum=")) {
+    return {
+      reason: "The NFQUEUE number is assigned by P99 for each rule and must not be overridden here.",
+      captureNextValue: !normalized.includes("=")
+    };
+  }
+  if (lower === "--dpi-desync-fwmark" || lower.startsWith("--dpi-desync-fwmark=") || lower === "--fwmark" || lower.startsWith("--fwmark=")) {
+    return {
+      reason: "The desync fwmark is managed by P99 for loop prevention and must not be overridden here.",
+      captureNextValue: !normalized.includes("=")
+    };
+  }
+  if (lower === "--daemon" || lower === "-k" || lower === "-q") {
+    return {
+      reason: "P99 manages the nfqws process lifecycle itself, so daemon mode is not allowed here.",
+      captureNextValue: false
+    };
+  }
+  if (lower === "--dry-run") {
+    return {
+      reason: "This field must start a working nfqws strategy; --dry-run exits immediately and is not allowed here.",
+      captureNextValue: false
+    };
+  }
+  if (lower === "--version" || lower === "-v") {
+    return {
+      reason: "Version queries exit immediately and are not valid run strategies.",
+      captureNextValue: false
+    };
+  }
+  return null;
+}
+function getNfqws2ForbiddenTokenInfo(token, _index) {
+  return getNfqwsForbiddenTokenInfo(token, _index);
+}
+function byedpiTokenLooksLikeOption(token) {
+  return token.startsWith("-");
+}
+function getByedpiShortOptionName(token) {
+  if (token.startsWith("-") && !token.startsWith("--") && token.length >= 2) {
+    return token.slice(0, 2);
+  }
+  return null;
+}
+function getByedpiControlledTokenInfo(token) {
+  const shortOpt = getByedpiShortOptionName(token);
+  if (token === "-i" || token.startsWith("-i=") || token === "--ip" || token.startsWith("--ip=")) {
+    return {
+      controlled: true,
+      reason: "Listen IP is controlled by P99 (:1080) and cannot be overridden."
+    };
+  }
+  if (token === "-p" || token.startsWith("-p=") || token === "--port" || token.startsWith("--port=")) {
+    return {
+      controlled: true,
+      reason: "Listen port is controlled by P99 and cannot be overridden."
+    };
+  }
+  if (shortOpt === "-i" || shortOpt === "-p") {
+    return {
+      controlled: true,
+      reason: "Listen address/port is managed by P99."
+    };
+  }
+  return { controlled: false };
+}
+
+// src/p99/section/rulesets.ts
+var SECONDARY_RULESET_RAW_PREFIX = "https://raw.githubusercontent.com/Greeg0ry/b4geoip-p99/main/srs/";
+var SECONDARY_RULESET_CDN_PREFIX = "https://cdn.jsdelivr.net/gh/Greeg0ry/b4geoip-p99@main/srs/";
+function secondaryRulesetUrl(value) {
+  return `${SECONDARY_RULESET_RAW_PREFIX}${value}.srs`;
+}
+function secondaryRulesetId(reference, secondaryOptions = SECONDARY_RULESET_OPTIONS) {
+  const value = `${reference || ""}`;
+  const prefix = value.startsWith(SECONDARY_RULESET_RAW_PREFIX) ? SECONDARY_RULESET_RAW_PREFIX : value.startsWith(SECONDARY_RULESET_CDN_PREFIX) ? SECONDARY_RULESET_CDN_PREFIX : "";
+  if (!prefix || !value.endsWith(".srs")) return "";
+  const id = value.slice(prefix.length, -4);
+  return Object.prototype.hasOwnProperty.call(secondaryOptions, id) ? id : "";
+}
+function isBuiltinRulesetValue(value, domainListOptions = DOMAIN_LIST_OPTIONS) {
+  return Object.prototype.hasOwnProperty.call(domainListOptions, value);
+}
+function normalizeReferenceForExtensionCheck(reference) {
+  const value = `${reference || ""}`.trim();
+  const queryIndex = value.indexOf("?");
+  const withoutQuery = queryIndex >= 0 ? value.slice(0, queryIndex) : value;
+  const hashIndex = withoutQuery.indexOf("#");
+  return hashIndex >= 0 ? withoutQuery.slice(0, hashIndex) : withoutQuery;
+}
+function hasAllowedReferenceExtension(value, extensions) {
+  const normalized = normalizeReferenceForExtensionCheck(value);
+  return extensions.some((extension) => normalized.endsWith(extension));
+}
+function validateFileReference(value, extensions, errorMessage, options = {}) {
+  const str = typeof value === "string" ? value.trim() : "";
+  if (!str.length) {
+    return true;
+  }
+  if (str.startsWith("http://") || str.startsWith("https://")) {
+    const validation = validateUrl(str);
+    if (validation.valid && (options.allowRemoteWithoutExtension || hasAllowedReferenceExtension(str, extensions))) {
+      return true;
+    }
+    return errorMessage;
+  }
+  if (str.startsWith("/")) {
+    const validation = validatePath(str);
+    if (validation.valid && hasAllowedReferenceExtension(str, extensions)) {
+      return true;
+    }
+    return errorMessage;
+  }
+  return errorMessage;
+}
+function validateCustomRulesetReference(value, errorMessage = "Rule set must be an HTTP(S) URL or a local .srs / .json path") {
+  return validateFileReference(value, [".srs", ".json"], errorMessage, {
+    allowRemoteWithoutExtension: true
+  });
+}
+function validatePlainListReference(value, errorMessage = "List must be an HTTP(S) URL or a local .lst path") {
+  return validateFileReference(value, [".lst"], errorMessage, {
+    allowRemoteWithoutExtension: true
+  });
+}
+
+// src/p99/section/childItems.ts
+function normalizeDynamicListItems(value) {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.filter(Boolean).map((item) => `${item}`.trim()).filter(Boolean);
+  }
+  return `${value}`.split(/\s+/).map((item) => item.trim()).filter(Boolean);
+}
+function uniqueDynamicListItems(value) {
+  return Array.from(new Set(normalizeDynamicListItems(value)));
+}
+function childOwnerOption(ownerOption) {
+  return ownerOption || "section";
+}
+function childItemOrder(item) {
+  const record = item && typeof item === "object" ? item : null;
+  const value = record ? record.order : null;
+  const parsed = Number.parseInt(value == null ? "0" : `${value}`, 10);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function compactItemSettings(values) {
+  const result = {};
+  const record = values && typeof values === "object" ? values : {};
+  Object.entries(record).forEach(([key, value]) => {
+    if (value === void 0 || value === null || value === "") {
+      return;
+    }
+    if (Array.isArray(value)) {
+      const items = value.map((item) => `${item || ""}`.trim()).filter((item) => item.length > 0);
+      if (items.length) {
+        result[key] = items;
+      }
+      return;
+    }
+    result[key] = `${value}`;
+  });
+  return result;
+}
+function cleanFormSectionData(sectionData) {
+  const result = {};
+  if (!sectionData || typeof sectionData !== "object") {
+    return result;
+  }
+  Object.entries(sectionData).forEach(([key, value]) => {
+    if (key.startsWith(".")) return;
+    if (value !== void 0 && value !== null && value !== "") {
+      result[key] = value;
+    }
+  });
+  return result;
+}
+
+// src/p99/section/textListAnalysis.ts
+function parseCommentAwareListTokens(value) {
+  const text = value ? `${value}` : "";
+  const tokens = [];
+  const lines = text.split(/\r\n|\r|\n/);
+  let offset = 0;
+  lines.forEach((line, index) => {
+    const hashIndex = line.indexOf("#");
+    const slashIndex = line.indexOf("//");
+    let commentIndex = -1;
+    if (hashIndex >= 0 && slashIndex >= 0) {
+      commentIndex = Math.min(hashIndex, slashIndex);
+    } else if (hashIndex >= 0) {
+      commentIndex = hashIndex;
+    } else if (slashIndex >= 0) {
+      commentIndex = slashIndex;
+    }
+    const source = commentIndex >= 0 ? line.slice(0, commentIndex) : line;
+    const matcher = /[^,\s]+/g;
+    let match;
+    while ((match = matcher.exec(source)) !== null) {
+      tokens.push({
+        value: match[0],
+        start: offset + match.index,
+        end: offset + match.index + match[0].length,
+        line: index + 1
+      });
+    }
+    offset += line.length + 1;
+  });
+  return tokens;
+}
+function uniqueDomainTextValues(values) {
+  const seen = /* @__PURE__ */ new Set();
+  return values.map((val) => `${val ?? ""}`.trim()).filter((value) => {
+    const key = value.toLowerCase();
+    if (!key || seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+function parseDomainTokenPrefix(token) {
+  const raw = `${token || ""}`.trim();
+  const prefixes = ["domain:", "full:", "keyword:", "regex:"];
+  for (const prefix of prefixes) {
+    if (raw.startsWith(prefix)) {
+      return {
+        prefix: prefix.slice(0, -1),
+        value: raw.slice(prefix.length)
+      };
+    }
+  }
+  return {
+    prefix: "",
+    value: raw
+  };
+}
+
 // src/main.ts
 if (typeof structuredClone !== "function")
   globalThis.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
 return baseclass.extend({
   BOOTSTRAP_DNS_SERVER_OPTIONS,
+  BYEDPI_LONG_FLAG_OPTIONS,
+  BYEDPI_LONG_VALUE_OPTIONS,
+  BYEDPI_SHORT_FLAG_OPTIONS,
+  BYEDPI_SHORT_VALUE_OPTIONS,
   DEFAULT_LATENCY_TEST_TIMEOUT,
   DEFAULT_LATENCY_TEST_URL,
   DEFAULT_SHARED_LATENCY_INTERVAL,
@@ -15242,26 +15821,65 @@ return baseclass.extend({
   DiagnosticTab,
   LATENCY_TEST_URL_OPTIONS,
   MonitoringTab,
+  NFQWS2_NO_ARG_OPTIONS,
+  NFQWS2_OPTIONAL_ARG_OPTIONS,
+  NFQWS2_REQUIRED_ARG_OPTIONS,
+  NFQWS_NO_ARG_OPTIONS,
+  NFQWS_OPTIONAL_ARG_OPTIONS,
+  NFQWS_REQUIRED_ARG_OPTIONS,
   P99ShellMethods,
   P99_ACTION_PROVIDERS_AVAILABILITY_EVENT,
   P99_UCI_PACKAGE,
+  SECONDARY_RULESET_CDN_PREFIX,
   SECONDARY_RULESET_OPTIONS,
+  SECONDARY_RULESET_RAW_PREFIX,
   UpdatesTab,
   applyUiStateToStore,
   bulkValidate,
+  byedpiTokenLooksLikeOption,
+  childItemOrder,
+  childOwnerOption,
+  cleanFormSectionData,
+  compactItemSettings,
   coreService,
+  getByedpiControlledTokenInfo,
+  getByedpiShortOptionName,
   getClashUIUrl,
+  getNfqws2ForbiddenTokenInfo,
+  getNfqws2OptionArgumentMode,
+  getNfqwsForbiddenTokenInfo,
+  getNfqwsOptionArgumentMode,
   getProxyUrlName,
+  hasAllowedReferenceExtension,
   injectGlobalStyles,
+  isBuiltinRulesetValue,
+  isSingBoxDuration,
+  normalizeByedpiStrategyValue,
+  normalizeByedpiStrategyWhitespace,
+  normalizeDynamicListItems,
+  normalizeNfqws2StrategyValue,
+  normalizeNfqwsStrategyWhitespace,
+  normalizeReferenceForExtensionCheck,
+  parseCommentAwareListTokens,
+  parseDomainTokenPrefix,
   parseValueList,
+  secondaryRulesetId,
+  secondaryRulesetUrl,
   showToast,
   store,
+  uniqueDomainTextValues,
+  uniqueDynamicListItems,
+  validateCustomRulesetReference,
   validateDNS,
   validateDomain,
+  validateFileReference,
   validateIP,
+  validateOptionalSingBoxDuration,
   validateOutboundJson,
   validatePath,
+  validatePlainListReference,
   validateProxyUrl,
+  validateRequiredSingBoxDuration,
   validateSubnet,
   validateUrl
 });

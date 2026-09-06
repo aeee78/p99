@@ -42,3 +42,56 @@ export {
   P99_ACTION_PROVIDERS_AVAILABILITY_EVENT,
   P99_UCI_PACKAGE,
 } from './constants';
+export {
+  isSingBoxDuration,
+  validateOptionalSingBoxDuration,
+  validateRequiredSingBoxDuration,
+} from './p99/section/duration';
+export {
+  getNfqwsOptionArgumentMode,
+  getNfqws2OptionArgumentMode,
+  normalizeNfqwsStrategyWhitespace,
+  normalizeNfqws2StrategyValue,
+  normalizeByedpiStrategyWhitespace,
+  normalizeByedpiStrategyValue,
+  getNfqwsForbiddenTokenInfo,
+  getNfqws2ForbiddenTokenInfo,
+  byedpiTokenLooksLikeOption,
+  getByedpiShortOptionName,
+  getByedpiControlledTokenInfo,
+  NFQWS_REQUIRED_ARG_OPTIONS,
+  NFQWS_OPTIONAL_ARG_OPTIONS,
+  NFQWS_NO_ARG_OPTIONS,
+  NFQWS2_REQUIRED_ARG_OPTIONS,
+  NFQWS2_OPTIONAL_ARG_OPTIONS,
+  NFQWS2_NO_ARG_OPTIONS,
+  BYEDPI_LONG_VALUE_OPTIONS,
+  BYEDPI_LONG_FLAG_OPTIONS,
+  BYEDPI_SHORT_VALUE_OPTIONS,
+  BYEDPI_SHORT_FLAG_OPTIONS,
+} from './p99/section/dpiStrategies';
+export {
+  secondaryRulesetUrl,
+  secondaryRulesetId,
+  isBuiltinRulesetValue,
+  normalizeReferenceForExtensionCheck,
+  hasAllowedReferenceExtension,
+  validateFileReference,
+  validateCustomRulesetReference,
+  validatePlainListReference,
+  SECONDARY_RULESET_RAW_PREFIX,
+  SECONDARY_RULESET_CDN_PREFIX,
+} from './p99/section/rulesets';
+export {
+  normalizeDynamicListItems,
+  uniqueDynamicListItems,
+  childOwnerOption,
+  childItemOrder,
+  compactItemSettings,
+  cleanFormSectionData,
+} from './p99/section/childItems';
+export {
+  parseCommentAwareListTokens,
+  uniqueDomainTextValues,
+  parseDomainTokenPrefix,
+} from './p99/section/textListAnalysis';

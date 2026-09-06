@@ -700,6 +700,9 @@ function loadOutboundNameChoices(section_id) {
 }
 
 function normalizeDynamicListItems(value) {
+  if (typeof main !== "undefined" && main.normalizeDynamicListItems) {
+    return main.normalizeDynamicListItems(value);
+  }
   if (!value) {
     return [];
   }
@@ -715,6 +718,9 @@ function normalizeDynamicListItems(value) {
 }
 
 function uniqueDynamicListItems(value) {
+  if (typeof main !== "undefined" && main.uniqueDynamicListItems) {
+    return main.uniqueDynamicListItems(value);
+  }
   const seen = new Set();
   const result = [];
 
@@ -746,6 +752,9 @@ function readItemSettingsMap(section_id, settingsKey) {
 }
 
 function compactItemSettings(values) {
+  if (typeof main !== "undefined" && main.compactItemSettings) {
+    return main.compactItemSettings(values);
+  }
   const result = {};
 
   Object.entries(values || {}).forEach(([key, value]) => {
@@ -4390,7 +4399,9 @@ function validateKeyword(_section_id, value) {
 }
 
 function isSingBoxDuration(value) {
-  return /^(?=.*[1-9])([0-9]+(?:\.[0-9]+)?(?:ns|us|ms|s|m|h|d))+$/.test(value);
+  return typeof main !== "undefined" && main.isSingBoxDuration
+    ? main.isSingBoxDuration(value)
+    : /^(?=.*[1-9])([0-9]+(?:\.[0-9]+)?(?:ns|us|ms|s|m|h|d))+$/.test(value);
 }
 
 function writeOptionalDurationOption(section_id, key, value) {
@@ -6789,24 +6800,27 @@ const SECONDARY_RULESET_CDN_PREFIX =
   "https://cdn.jsdelivr.net/gh/Greeg0ry/b4geoip-p99@main/srs/";
 
 function secondaryRulesetUrl(value) {
-  return `${SECONDARY_RULESET_RAW_PREFIX}${value}.srs`;
+  return typeof main !== "undefined" && main.secondaryRulesetUrl
+    ? main.secondaryRulesetUrl(value)
+    : `${SECONDARY_RULESET_RAW_PREFIX}${value}.srs`;
 }
 
 function secondaryRulesetId(reference) {
-  const value = `${reference || ""}`;
-  const prefix = value.startsWith(SECONDARY_RULESET_RAW_PREFIX)
-    ? SECONDARY_RULESET_RAW_PREFIX
-    : value.startsWith(SECONDARY_RULESET_CDN_PREFIX)
-      ? SECONDARY_RULESET_CDN_PREFIX
-      : "";
-  if (!prefix || !value.endsWith(".srs")) return "";
-  const id = value.slice(prefix.length, -4);
-  return Object.prototype.hasOwnProperty.call(
-    main.SECONDARY_RULESET_OPTIONS || {},
-    id,
-  )
-    ? id
-    : "";
+  return typeof main !== "undefined" && main.secondaryRulesetId
+    ? main.secondaryRulesetId(reference)
+    : (function (ref) {
+        const val = `${ref || ""}`;
+        const pfx = val.startsWith(SECONDARY_RULESET_RAW_PREFIX)
+          ? SECONDARY_RULESET_RAW_PREFIX
+          : val.startsWith(SECONDARY_RULESET_CDN_PREFIX)
+            ? SECONDARY_RULESET_CDN_PREFIX
+            : "";
+        if (!pfx || !val.endsWith(".srs")) return "";
+        const id = val.slice(pfx.length, -4);
+        const options =
+          (typeof main !== "undefined" && main.SECONDARY_RULESET_OPTIONS) || {};
+        return Object.prototype.hasOwnProperty.call(options, id) ? id : "";
+      })(reference);
 }
 
 function getSecondaryRulesetReferences(section_id) {

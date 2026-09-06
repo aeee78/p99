@@ -8,7 +8,9 @@
 const UCI_PACKAGE = main.P99_UCI_PACKAGE;
 
 function isSingBoxDuration(value) {
-  return /^(?=.*[1-9])([0-9]+(?:\.[0-9]+)?(?:ns|us|ms|s|m|h|d))+$/.test(value);
+  return typeof main !== "undefined" && main.isSingBoxDuration
+    ? main.isSingBoxDuration(value)
+    : /^(?=.*[1-9])([0-9]+(?:\.[0-9]+)?(?:ns|us|ms|s|m|h|d))+$/.test(value);
 }
 
 function latencyTestUrlChoices() {

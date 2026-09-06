@@ -427,8 +427,9 @@ EOF
 
   cat > "$scripts_dir/backend-pre-upgrade.sh" <<'EOF'
 #!/usr/bin/ucode
-if (getenv("IPKG_INSTROOT") == null || getenv("IPKG_INSTROOT") == "")
-    exit(system("/usr/bin/p99 package_prerm upgrade >/dev/null 2>&1"));
+if (getenv("IPKG_INSTROOT") == null || getenv("IPKG_INSTROOT") == "") {
+    system("P99_LIB=/usr/lib/p99 ucode -L /usr/lib/p99 /usr/lib/p99/service/package.uc prerm upgrade >/dev/null 2>&1 || /usr/bin/p99 package_prerm upgrade >/dev/null 2>&1 || true");
+}
 exit(0);
 EOF
 

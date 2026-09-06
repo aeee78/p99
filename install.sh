@@ -2520,6 +2520,10 @@ download_p99_packages() {
 }
 
 install_backend_package() {
+    if [ -f /usr/bin/p99 ] && grep -Fq 'include(module);' /usr/bin/p99 2>/dev/null; then
+        sed -i 's/include(module);/system("ucode -L " + LIB_DIR + " " + module + " " + spec[1]);/' /usr/bin/p99 2>/dev/null || true
+    fi
+
     pkg_install_files "$P99_BACKEND_FILE" || fail "p99 installation failed"
 
     [ -x /usr/bin/p99 ] || fail "p99 executable is missing after package installation"

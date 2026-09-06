@@ -3872,7 +3872,7 @@ function buildUrlTestInfo({
   const childCodes = uniqueCodes(
     groupCache?.outbounds?.length ? groupCache.outbounds : entry?.value.all || []
   );
-  const selectedCode = entry?.value.now || "";
+  const selectedCode = entry?.value.now || groupCache?.last_active || (groupCache?.outbounds?.length === 1 ? groupCache.outbounds[0] : "");
   const outbounds = sortUrlTestMembers(
     childCodes.flatMap((childCode) => {
       const childEntry = proxyByCode.get(childCode);
@@ -4135,22 +4135,24 @@ function buildProxyGroupOutbounds(section, proxies, outboundMetadata, urltestGro
     const isRuntimeUrlTest = isUrlTestProxyEntry(item);
     const _hasUrlTestInfo = Boolean(urlTestConfig || isRuntimeUrlTest);
     const isPinned = priorityConfig ? priorityConfig.pinDashboard !== false : Boolean(urlTestConfig?.pinDashboard);
+    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPriority = Boolean(priorityConfig);
+    const groupCache = isPriority ? priorityGroups[code] : urltestGroups[code];
+    const activeChildCode = item?.value?.now || (groupCache && "last_active" in groupCache ? groupCache.last_active : void 0) || (groupCache?.outbounds?.length === 1 ? groupCache.outbounds[0] : void 0);
     let latency = normalizeLatency(
       item?.value.history?.[0]?.delay,
       latencyTestTimeout
     );
-    if (latency <= 0 && isPinned && item?.value?.now) {
-      const selectedChild = proxyByCode.get(item.value.now);
+    if (latency <= 0 && isPinned && activeChildCode) {
+      const selectedChild = proxyByCode.get(activeChildCode);
       latency = normalizeLatency(
         selectedChild?.value.history?.[0]?.delay,
         latencyTestTimeout
       );
     }
     let protocolStack = "";
-    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
-    const isPriority = Boolean(priorityConfig);
     if (isUrlTest || isPriority) {
-      const activeCode = item?.value?.now;
+      const activeCode = activeChildCode;
       if (activeCode) {
         const childProto = outboundMetadata?.protocols?.[activeCode] || proxyByCode.get(activeCode)?.value?.type;
         const childTransport = outboundMetadata?.transports?.[activeCode];

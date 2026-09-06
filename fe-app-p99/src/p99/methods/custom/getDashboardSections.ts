@@ -999,7 +999,10 @@ function buildUrlTestInfo({
       ? groupCache.outbounds
       : entry?.value.all || [],
   );
-  const selectedCode = entry?.value.now || '';
+  const selectedCode =
+    entry?.value.now ||
+    groupCache?.last_active ||
+    (groupCache?.outbounds?.length === 1 ? groupCache.outbounds[0] : '');
   const outbounds = sortUrlTestMembers(
     childCodes.flatMap((childCode) => {
       const childEntry = proxyByCode.get(childCode);
@@ -1365,13 +1368,25 @@ function buildProxyGroupOutbounds(
     const isPinned = priorityConfig
       ? priorityConfig.pinDashboard !== false
       : Boolean(urlTestConfig?.pinDashboard);
+    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
+    const isPriority = Boolean(priorityConfig);
+
+    const groupCache = isPriority ? priorityGroups[code] : urltestGroups[code];
+    const activeChildCode =
+      item?.value?.now ||
+      (groupCache && 'last_active' in groupCache
+        ? (groupCache as UrlTestCacheGroup).last_active
+        : undefined) ||
+      (groupCache?.outbounds?.length === 1
+        ? groupCache.outbounds[0]
+        : undefined);
 
     let latency = normalizeLatency(
       item?.value.history?.[0]?.delay,
       latencyTestTimeout,
     );
-    if (latency <= 0 && isPinned && item?.value?.now) {
-      const selectedChild = proxyByCode.get(item.value.now);
+    if (latency <= 0 && isPinned && activeChildCode) {
+      const selectedChild = proxyByCode.get(activeChildCode);
       latency = normalizeLatency(
         selectedChild?.value.history?.[0]?.delay,
         latencyTestTimeout,
@@ -1379,11 +1394,9 @@ function buildProxyGroupOutbounds(
     }
 
     let protocolStack = '';
-    const isUrlTest = Boolean(urlTestConfig || isRuntimeUrlTest);
-    const isPriority = Boolean(priorityConfig);
 
     if (isUrlTest || isPriority) {
-      const activeCode = item?.value?.now;
+      const activeCode = activeChildCode;
       if (activeCode) {
         const childProto =
           outboundMetadata?.protocols?.[activeCode] ||

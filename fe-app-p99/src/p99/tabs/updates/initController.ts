@@ -410,7 +410,8 @@ function patchSystemInfoAfterMutation(result: P99.ComponentActionResult) {
     nextSystemInfo.direct_proxy_enabled = result.action === 'enable' ? 1 : 0;
   }
   if (result.component === 'packet_steering') {
-    nextSystemInfo.packet_steering_mode = result.action === 'enable' ? '2' : '0';
+    nextSystemInfo.packet_steering_mode =
+      result.action === 'enable' ? '2' : '0';
   }
   if (result.component === 'torrserver_direct') {
     nextSystemInfo.torrserver_direct_enabled =

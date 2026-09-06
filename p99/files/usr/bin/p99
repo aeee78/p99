@@ -201,25 +201,23 @@ function run_spec(command, spec, user_args) {
         return 1;
     }
 
-    ARGV = [ spec[1] ];
+    let args = [ "ucode", "-L", LIB_DIR, module, spec[1] ];
     let count = int(spec[2] || 0);
     for (let i = 0; i < count; i++)
-        push(ARGV, user_args[i] || "");
+        push(args, user_args[i] || "");
 
-    try {
-        include(module);
-    }
-    catch (e) {
-        warn("Error executing '", module, "': ", e, "\n");
-        restore_dnsmasq_failsafe_on_loader_failure(command);
-        return 1;
-    }
-
-    return 0;
+    return normalize_status(system(command_from_args(args)));
 }
 
 function main() {
     let command = ARGV[0] || "";
+    if (fs.stat("/tmp/p99-full-uninstall.lock") != null &&
+        index([ "start", "main", "restart", "reload", "enable", "service_action_async",
+            "component_action", "component_action_async", "subscription_update",
+            "subscription_update_async", "subscription_update_if_due", "list_update", "list_update_if_due" ], command) >= 0) {
+        warn("P99 full removal is in progress\n");
+        return 1;
+    }
     let spec = command_spec(command);
     if (spec == null) {
         show_help();

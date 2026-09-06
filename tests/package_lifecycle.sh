@@ -257,4 +257,15 @@ P99_RT_TABLES="$WORK_DIR/rt_tables_upgrade" \
 [ ! -e "$P99_PACKAGE_UPGRADE_STATE" ] ||
   fail "package pre-upgrade must not mark an already stopped service"
 
+rm -f "$WORK_DIR/config-p99"
+P99_PACKAGE_TEST_MODE=1 \
+P99_LIB="$P99_LIB" \
+P99_INIT="$WORK_DIR/upgrade-init" \
+P99_CONFIG_PATH="$WORK_DIR/config-p99" \
+P99_DEFAULT_CONFIG_PATH="$WORK_DIR/default-p99" \
+P99_UCI_STATE_FILE="$WORK_DIR/config.state" \
+  ucode "$P99_BIN" package_postinst
+cmp -s "$WORK_DIR/default-p99" "$WORK_DIR/config-p99" ||
+  fail "p99 package_postinst CLI dispatch must work without module loading errors"
+
 printf 'package lifecycle checks passed\n'

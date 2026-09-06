@@ -47,7 +47,8 @@ function opkg_installed(package_name) {
         return false;
 
     let prefix = package_name + " - ";
-    for (let line in split(command_output([ "opkg", "list-installed" ]), "\n")) {
+    let opkg_args = package_name != "" ? [ "opkg", "list-installed", package_name ] : [ "opkg", "list-installed" ];
+    for (let line in split(command_output(opkg_args), "\n")) {
         line = trim(as_string(line));
         if (substr(line, 0, length(prefix)) == prefix)
             return true;
@@ -166,7 +167,8 @@ function opkg_version(package_name) {
         return "";
 
     let prefix = package_name + " - ";
-    for (let line in split(command_output([ "opkg", "list-installed" ]), "\n")) {
+    let opkg_args = package_name != "" ? [ "opkg", "list-installed", package_name ] : [ "opkg", "list-installed" ];
+    for (let line in split(command_output(opkg_args), "\n")) {
         line = trim(as_string(line));
         if (substr(line, 0, length(prefix)) == prefix)
             return substr(line, length(prefix));

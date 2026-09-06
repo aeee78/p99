@@ -7,36 +7,15 @@ function as_string(value) {
     return value == null ? "" : "" + value;
 }
 
+let ucode_trim = trim;
+
 function trim(value) {
-    value = as_string(value);
-    let start = 0;
-    let end = length(value);
-
-    while (start < end) {
-        let c = substr(value, start, 1);
-        if (c != " " && c != "\t" && c != "\r" && c != "\n")
-            break;
-        start++;
-    }
-
-    while (end > start) {
-        let c = substr(value, end - 1, 1);
-        if (c != " " && c != "\t" && c != "\r" && c != "\n")
-            break;
-        end--;
-    }
-
-    return substr(value, start, end - start);
+    return ucode_trim(as_string(value));
 }
 
 function first_non_ws_char(value) {
-    value = as_string(value);
-    for (let i = 0; i < length(value); i++) {
-        let c = substr(value, i, 1);
-        if (c != " " && c != "\t" && c != "\r" && c != "\n")
-            return c;
-    }
-    return "";
+    let t = ucode_trim(as_string(value));
+    return length(t) > 0 ? substr(t, 0, 1) : "";
 }
 
 function starts_with(value, prefix) {

@@ -52,42 +52,31 @@ function object_or_empty(value) {
 }
 
 function trim_string(value) {
-    let text = as_string(value);
-    let start_match = match(text, /^[ \t\r\n]*/);
-    let start = start_match ? length(start_match[0]) : 0;
-    let end = length(text);
-
-    while (end > start && match(substr(text, end - 1, 1), /[ \t\r\n]/))
-        end--;
-
-    return substr(text, start, end - start);
+    return trim(as_string(value));
 }
 
 function sort_values(values) {
     sort(values, function(first, second) {
-        first = sprintf("%J", first);
-        second = sprintf("%J", second);
-        return first == second ? 0 : (first < second ? -1 : 1);
+        let k1 = type(first) == "object" ? sprintf("%J", first) : as_string(first);
+        let k2 = type(second) == "object" ? sprintf("%J", second) : as_string(second);
+        return k1 == k2 ? 0 : (k1 < k2 ? -1 : 1);
     });
     return values;
 }
 
 function unique_values(values) {
-    values = sort_values(values);
+    let seen = {};
     let result = [];
-    let previous = null;
-    let has_previous = false;
 
     for (let value in values) {
-        let encoded = sprintf("%J", value);
-        if (!has_previous || encoded != previous) {
+        let key = type(value) == "object" ? sprintf("%J", value) : as_string(value);
+        if (!seen[key]) {
+            seen[key] = true;
             push(result, value);
-            previous = encoded;
-            has_previous = true;
         }
     }
 
-    return result;
+    return sort_values(result);
 }
 
 function create_source(path) {

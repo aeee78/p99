@@ -2131,7 +2131,7 @@ function convert_crlf_to_lf(path) {
     if (data == null || index(data, "\r") < 0)
         return;
 
-        log_message("Converting CRLF line endings to LF in " + as_string(path), "debug");
+    log_message("Converting CRLF line endings to LF in " + as_string(path), "debug");
     write_file(path, replace(data, /\r/g, ""));
 }
 

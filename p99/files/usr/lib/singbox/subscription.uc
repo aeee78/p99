@@ -50,7 +50,7 @@ function persistent_metadata_path(source_section) {
 }
 
 function trim_string(value) {
-    return replace(as_string(value), /^[ \t\r\n]+|[ \t\r\n]+$/g, "");
+    return trim(as_string(value));
 }
 
 function parse_source_entry(entry) {

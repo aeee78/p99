@@ -82,11 +82,7 @@ function remove_rt_tables_entry() {
 }
 
 function ascii_lower(value) {
-    let upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let lower = "abcdefghijklmnopqrstuvwxyz";
-    return replace(as_string(value), /[A-Z]/g, function(ch) {
-        return substr(lower, index(upper, ch), 1);
-    });
+    return lc(as_string(value));
 }
 
 function truthy(value) {

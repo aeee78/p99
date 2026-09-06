@@ -37,9 +37,13 @@ function new_urltest_enabled_sections(previous_sections, current_sections, previ
     if (!arg_bool(previous_known))
         return "";
 
+    let prev_map = {};
+    for (let section in whitespace_fields(previous_sections))
+        prev_map[section] = true;
+
     let result = [];
     for (let section in whitespace_fields(current_sections))
-        if (!list_has_item(previous_sections, section))
+        if (!prev_map[section])
             push(result, section);
 
     return join(" ", result);

@@ -117,6 +117,9 @@ function show_help() {
     print("                            Validate an NFQWS2 strategy and print JSON result\n");
     print("    validate_byedpi_strategy_json\n");
     print("                            Validate a ByeDPI ciadpi strategy and print JSON result\n");
+    print("    dns_failover_apply      Apply DNS failover configuration\n");
+    print("    urltest_override_save   Save URLTest proxy override settings\n");
+    print("    urltest_override_reset  Reset URLTest proxy override settings\n");
 }
 
 function command_spec(command) {

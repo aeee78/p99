@@ -87,6 +87,13 @@ function list_has_value(values, needle) {
     if (needle == "")
         return false;
 
+    if (type(values) == "array") {
+        for (let value in values)
+            if (as_string(value) == needle)
+                return true;
+        return false;
+    }
+
     for (let value in whitespace_values(values))
         if (value == needle)
             return true;

@@ -160,4 +160,7 @@ verification="$(ucode -L "$P99_LIB" "$FAILOVER" verification-plan-fixture "$WORK
 printf '%s' "$verification" | grep -Eq '"main"[[:space:]]*:[[:space:]]*false' || fail "bootstrap-only switch must not require a dead main DNS to recover"
 printf '%s' "$verification" | grep -Eq '"bootstrap"[[:space:]]*:[[:space:]]*true' || fail "bootstrap-only switch must verify the selected bootstrap DNS"
 
+confirmation="$(ucode -L "$P99_LIB" "$FAILOVER" confirmation-fixture 3 4)"
+printf '%s' "$confirmation" | grep -Eq '\[[[:space:]]*false,[[:space:]]*false,[[:space:]]*true,[[:space:]]*true[[:space:]]*\]' || fail "failover confirmation threshold must require repeated failures"
+
 printf 'DNS failover checks passed\n'

@@ -32,6 +32,12 @@ function getEmptyUpdatesActions(): StoreType['updatesActions'] {
     byedpiRemove: { loading: false },
     zapretManagerInstall: { loading: false },
     zapretManagerRemove: { loading: false },
+    packetSteeringEnable: { loading: false },
+    packetSteeringRestore: { loading: false },
+    directProxyEnable: { loading: false },
+    directProxyDisable: { loading: false },
+    torrserverDirectEnable: { loading: false },
+    torrserverDirectDisable: { loading: false },
   };
 }
 

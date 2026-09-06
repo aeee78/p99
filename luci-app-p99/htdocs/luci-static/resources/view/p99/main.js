@@ -1723,6 +1723,38 @@ function renderBookOpenTextIcon24() {
   );
 }
 
+// src/icons/renderCopyIcon24.ts
+function renderCopyIcon24() {
+  return svgEl(
+    "svg",
+    {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: "24",
+      height: "24",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      class: "lucide lucide-copy-icon lucide-copy"
+    },
+    [
+      svgEl("rect", {
+        width: "14",
+        height: "14",
+        x: "8",
+        y: "8",
+        rx: "2",
+        ry: "2"
+      }),
+      svgEl("path", {
+        d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+      })
+    ]
+  );
+}
+
 // src/icons/renderDownloadIcon24.ts
 function renderDownloadIcon24() {
   const NS = "http://www.w3.org/2000/svg";
@@ -2631,6 +2663,7 @@ var P99;
     AvailableMethods2["ENABLE"] = "enable";
     AvailableMethods2["DISABLE"] = "disable";
     AvailableMethods2["GLOBAL_CHECK"] = "global_check";
+    AvailableMethods2["SUPPORT_REPORT"] = "support_report";
     AvailableMethods2["SHOW_SING_BOX_CONFIG"] = "show_sing_box_config";
     AvailableMethods2["CHECK_LOGS"] = "check_logs";
     AvailableMethods2["CHECK_SING_BOX_LOGS"] = "check_sing_box_logs";
@@ -2694,6 +2727,7 @@ var COMPONENT_ACTION_SELF_UPDATE_SETTLE_MS = 3e4;
 var COMPONENT_ACTION_TRANSIENT_RPC_GRACE_MS = 3e4;
 var COMPONENT_ACTION_STATE_DIR = "/var/run/p99/component-actions";
 var GET_UI_STATE_RPC_TIMEOUT_MS = 3e3;
+var SUPPORT_REPORT_RPC_TIMEOUT_MS = 6e4;
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -2899,6 +2933,12 @@ var P99ShellMethods = {
   globalCheck: async (masked = true) => callBaseMethod(P99.AvailableMethods.GLOBAL_CHECK, [
     masked ? "masked" : "raw"
   ]),
+  supportReport: async () => callBaseMethod(
+    P99.AvailableMethods.SUPPORT_REPORT,
+    [],
+    "/usr/bin/p99",
+    { timeout: SUPPORT_REPORT_RPC_TIMEOUT_MS }
+  ),
   showSingBoxConfig: async (masked = true) => callBaseMethod(P99.AvailableMethods.SHOW_SING_BOX_CONFIG, [
     masked ? "masked" : "raw"
   ]),
@@ -4715,6 +4755,14 @@ var initialDiagnosticStore = {
     byedpi_version: "loading",
     byedpi_installed: 0,
     zapret_manager_installed: 0,
+    packet_steering_mode: "",
+    direct_proxy_enabled: 0,
+    direct_proxy_address: "",
+    direct_proxy_port: "2080",
+    torrserver_running: 0,
+    torrserver_direct_available: 0,
+    torrserver_direct_enabled: 0,
+    torrserver_direct_active: 0,
     server_inbounds_enabled_count: -1,
     openwrt_version: "loading",
     device_model: "loading"
@@ -4769,7 +4817,13 @@ var initialDiagnosticStore = {
     byedpiInstall: { loading: false },
     byedpiRemove: { loading: false },
     zapretManagerInstall: { loading: false },
-    zapretManagerRemove: { loading: false }
+    zapretManagerRemove: { loading: false },
+    packetSteeringEnable: { loading: false },
+    packetSteeringRestore: { loading: false },
+    directProxyEnable: { loading: false },
+    directProxyDisable: { loading: false },
+    torrserverDirectEnable: { loading: false },
+    torrserverDirectDisable: { loading: false }
   },
   updatesChecks: {
     p99: { status: null, latest_version: "", release_url: "" },
@@ -4777,7 +4831,10 @@ var initialDiagnosticStore = {
     zapret: { status: null, latest_version: "", release_url: "" },
     zapret2: { status: null, latest_version: "", release_url: "" },
     byedpi: { status: null, latest_version: "", release_url: "" },
-    zapret_manager: { status: null, latest_version: "", release_url: "" }
+    zapret_manager: { status: null, latest_version: "", release_url: "" },
+    packet_steering: { status: null, latest_version: "", release_url: "" },
+    direct_proxy: { status: null, latest_version: "", release_url: "" },
+    torrserver_direct: { status: null, latest_version: "", release_url: "" }
   }
 };
 
@@ -5123,7 +5180,13 @@ var componentActionKeyMap = {
   "byedpi:install": "byedpiInstall",
   "byedpi:remove": "byedpiRemove",
   "zapret_manager:install": "zapretManagerInstall",
-  "zapret_manager:remove": "zapretManagerRemove"
+  "zapret_manager:remove": "zapretManagerRemove",
+  "packet_steering:enable": "packetSteeringEnable",
+  "packet_steering:restore": "packetSteeringRestore",
+  "direct_proxy:enable": "directProxyEnable",
+  "direct_proxy:disable": "directProxyDisable",
+  "torrserver_direct:enable": "torrserverDirectEnable",
+  "torrserver_direct:disable": "torrserverDirectDisable"
 };
 function getComponentActionKey(component, action) {
   return componentActionKeyMap[`${component}:${action}`];
@@ -5232,7 +5295,13 @@ function getEmptyUpdatesActions() {
     byedpiInstall: { loading: false },
     byedpiRemove: { loading: false },
     zapretManagerInstall: { loading: false },
-    zapretManagerRemove: { loading: false }
+    zapretManagerRemove: { loading: false },
+    packetSteeringEnable: { loading: false },
+    packetSteeringRestore: { loading: false },
+    directProxyEnable: { loading: false },
+    directProxyDisable: { loading: false },
+    torrserverDirectEnable: { loading: false },
+    torrserverDirectDisable: { loading: false }
   };
 }
 function getEmptyDiagnosticsActions() {
@@ -9083,6 +9152,14 @@ var UNKNOWN_SYSTEM_INFO = {
   byedpi_version: _("unknown"),
   byedpi_installed: 0,
   zapret_manager_installed: 0,
+  packet_steering_mode: "",
+  direct_proxy_enabled: 0,
+  direct_proxy_address: "",
+  direct_proxy_port: "2080",
+  torrserver_running: 0,
+  torrserver_direct_available: 0,
+  torrserver_direct_enabled: 0,
+  torrserver_direct_active: 0,
   server_inbounds_enabled_count: -1,
   openwrt_version: _("unknown"),
   device_model: _("unknown")
@@ -10241,7 +10318,8 @@ var SING_BOX_MASKED_KEYS = /* @__PURE__ */ new Set([
   "domain_keyword",
   "domain_regex",
   "ip_cidr",
-  "source_ip_cidr"
+  "source_ip_cidr",
+  "excluded_source_ip_cidr"
 ]);
 var P99_MASK_AFTER_TOKEN = [
   "option proxy_string",
@@ -10270,6 +10348,7 @@ var P99_MASK_AFTER_TOKEN_SPACE = [
   "list domain_regex",
   "list ip_cidr",
   "list source_ip_cidr",
+  "list excluded_source_ip_cidr",
   "list fully_routed_ips",
   "option dns_server",
   "option bootstrap_dns_server",
@@ -10403,15 +10482,6 @@ function maskGlobalCheckText(text = "") {
     return maskedLine;
   }).join("\n");
 }
-function maskSupportReportText(text = "") {
-  return maskGlobalCheckText(text).replace(
-    /\b(?:vless|vmess|trojan|ss|ssr|hysteria2|hy2|tuic|socks4a?|socks5):\/\/\S+/gi,
-    MASKED_VALUE
-  ).replace(
-    /(https?:\/\/\S*[?&](?:token|key|uuid|password|secret)=)\S+/gi,
-    "$1" + MASKED_VALUE
-  );
-}
 
 // src/p99/tabs/diagnostic/initController.ts
 var SERVICE_STATUS_REFRESH_INTERVAL_MS = 2e3;
@@ -10486,25 +10556,11 @@ function downloadSupportReport(text) {
 async function handleDownloadSupportReport() {
   setDiagnosticActionLoading("supportReport", true);
   try {
-    const [globalCheck, logs] = await Promise.all([
-      P99ShellMethods.globalCheck(),
-      P99ShellMethods.checkLogs()
-    ]);
-    const globalText = globalCheck.success ? String(globalCheck.data ?? "") : _("Global check could not be collected.");
-    const logsText = logs.success ? String(logs.data ?? "") : _("P99 logs could not be collected.");
-    downloadSupportReport(
-      [
-        "P99 support report",
-        `Generated: ${(/* @__PURE__ */ new Date()).toISOString()}`,
-        "",
-        "=== Global check (sensitive values masked) ===",
-        maskSupportReportText(globalText).trim(),
-        "",
-        "=== Recent P99 logs ===",
-        maskSupportReportText(logsText).trim(),
-        ""
-      ].join("\n")
-    );
+    const report = await P99ShellMethods.supportReport();
+    if (!report.success) {
+      throw new Error(report.error || "Support report collection failed");
+    }
+    downloadSupportReport(String(report.data ?? ""));
     showToast(_("Support report downloaded"), "success");
   } catch (error) {
     logger.error("[DIAGNOSTIC]", "handleDownloadSupportReport - e", error);
@@ -13617,6 +13673,134 @@ function shouldExposeCheckResults({
   return mounted && cacheResolved;
 }
 
+// src/p99/tabs/updates/fullUninstall.ts
+var removing = false;
+function confirmRemoval() {
+  if (removing) return;
+  const progress = E("p", { role: "status" });
+  const cancel = renderButton({
+    text: _("Cancel"),
+    onClick: () => ui.hideModal()
+  });
+  const confirm = renderButton({
+    text: _("Remove permanently"),
+    classNames: ["cbi-button-negative"],
+    onClick: () => {
+      removing = true;
+      confirm.disabled = true;
+      cancel.disabled = true;
+      progress.textContent = _("Removing P99\u2026");
+      void (async () => {
+        try {
+          const response = await executeShellCommand({
+            command: "/usr/bin/p99",
+            args: ["full_uninstall"],
+            timeout: 15e3
+          });
+          const result = JSON.parse(response.stdout || "{}");
+          if (response.code || !result.success || !/^\/p99-uninstall\.[A-Za-z0-9]+\.json$/.test(
+            result.status_url || ""
+          )) {
+            throw new Error(
+              _(
+                "Could not start removal. Another component action may be running."
+              )
+            );
+          }
+          const deadline = Date.now() + 18e4;
+          while (Date.now() < deadline) {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            let status;
+            try {
+              const reply = await fetch(result.status_url, {
+                cache: "no-store"
+              });
+              if (!reply.ok) continue;
+              status = await reply.json();
+            } catch {
+              continue;
+            }
+            if (status.state === "complete") {
+              progress.textContent = _(
+                "P99 and sing-box have been removed. Original repositories have been restored."
+              );
+              cancel.textContent = _("Open LuCI");
+              cancel.disabled = false;
+              cancel.onclick = () => window.location.assign("/cgi-bin/luci/");
+              return;
+            }
+            if (status.state === "failed") {
+              throw new Error(
+                status.phase === "preflight" ? _(
+                  "Original repositories could not be restored. Removal was cancelled before deleting packages."
+                ) : _(
+                  "Removal did not finish. See the removal log in /tmp/p99-uninstall.*/output.log."
+                )
+              );
+            }
+          }
+          throw new Error(
+            _(
+              "Could not confirm completion. Check the removal log before retrying."
+            )
+          );
+        } catch (error) {
+          progress.textContent = error instanceof Error ? error.message : String(error);
+          cancel.disabled = false;
+          cancel.onclick = () => window.location.assign("/cgi-bin/luci/");
+          cancel.textContent = _("Open LuCI");
+        }
+      })();
+    }
+  });
+  ui.showModal(
+    _("Full removal"),
+    E("div", {}, [
+      E(
+        "p",
+        {},
+        _(
+          "Remove P99, sing-box, their settings and cache, and restore the original device repositories?"
+        )
+      ),
+      E(
+        "p",
+        {},
+        _(
+          "This permanently deletes saved sections and subscriptions. Other components remain installed."
+        )
+      ),
+      progress,
+      E("div", { class: "right" }, [cancel, confirm])
+    ])
+  );
+}
+function renderFullUninstall(disabled) {
+  return E("div", { class: "fkp_updates-page__component" }, [
+    E("div", { class: "fkp_updates-page__component__header" }, [
+      E(
+        "b",
+        { class: "fkp_updates-page__component__title" },
+        _("Full removal")
+      )
+    ]),
+    E(
+      "p",
+      {},
+      _(
+        "Remove P99 and sing-box with their settings and restore the original device repositories."
+      )
+    ),
+    renderButton({
+      text: _("Remove P99 completely"),
+      icon: renderXIcon24,
+      classNames: ["cbi-button-negative"],
+      disabled: disabled || removing,
+      onClick: confirmRemoval
+    })
+  ]);
+}
+
 // src/p99/tabs/updates/initController.ts
 var updatesLifecycleRegistered = false;
 var updatesControllerInitialized = false;
@@ -13864,6 +14048,16 @@ function patchSystemInfoAfterMutation(result) {
   }
   if (result.component === "zapret_manager") {
     nextSystemInfo.zapret_manager_installed = result.action === "remove" ? 0 : 1;
+  }
+  if (result.component === "direct_proxy") {
+    nextSystemInfo.direct_proxy_enabled = result.action === "enable" ? 1 : 0;
+  }
+  if (result.component === "packet_steering") {
+    nextSystemInfo.packet_steering_mode = result.action === "enable" ? "2" : "0";
+  }
+  if (result.component === "torrserver_direct") {
+    nextSystemInfo.torrserver_direct_enabled = result.action === "enable" ? 1 : 0;
+    nextSystemInfo.torrserver_direct_active = result.action === "enable" ? 1 : 0;
   }
   const normalizedSystemInfo = normalizeSingBoxVariantFields(nextSystemInfo);
   store.set({
@@ -14173,6 +14367,15 @@ function getComponentCards() {
   const zapret2Installed = Boolean(systemInfo.zapret2_installed);
   const byedpiInstalled = Boolean(systemInfo.byedpi_installed);
   const zapretManagerInstalled = Boolean(systemInfo.zapret_manager_installed);
+  const packetSteeringEnabled = systemInfo.packet_steering_mode === "2";
+  const directProxyEnabled = Boolean(systemInfo.direct_proxy_enabled);
+  const directProxyEndpoint = systemInfo.direct_proxy_address ? `${systemInfo.direct_proxy_address}:${systemInfo.direct_proxy_port || "2080"}` : "";
+  const torrserverRunning = Boolean(systemInfo.torrserver_running);
+  const torrserverDirectAvailable = Boolean(
+    systemInfo.torrserver_direct_available
+  );
+  const torrserverDirectEnabled = Boolean(systemInfo.torrserver_direct_enabled);
+  const torrserverDirectActive = Boolean(systemInfo.torrserver_direct_active);
   const singBoxExtended = Boolean(systemInfo.sing_box_extended) && !systemInfo.sing_box_compressed;
   const singBoxTiny = Boolean(systemInfo.sing_box_tiny);
   const p99Actions = getInstalledUpdateActions("p99", "p99Check", "p99Install");
@@ -14292,6 +14495,71 @@ function getComponentCards() {
       latestVersion: "",
       releaseUrl: "https://github.com/stressozz/Zapret-Manager",
       actions: zapretManagerActions
+    },
+    {
+      component: "packet_steering",
+      column: 2,
+      title: "Packet Steering",
+      version: packetSteeringEnabled ? _("Mode 2 enabled") : _("Normal mode"),
+      actions: [
+        packetSteeringEnabled ? {
+          key: "packetSteeringRestore",
+          text: _("Restore normal mode"),
+          icon: renderRotateCcwIcon24,
+          component: "packet_steering",
+          action: "restore"
+        } : {
+          key: "packetSteeringEnable",
+          text: _("Enable mode 2"),
+          icon: renderRotateCcwIcon24,
+          component: "packet_steering",
+          action: "enable"
+        }
+      ]
+    },
+    {
+      component: "direct_proxy",
+      column: 2,
+      title: _("Direct Proxy"),
+      version: directProxyEnabled ? `HTTP/SOCKS5 \xB7 ${directProxyEndpoint || _("Enabled")}` : _("Disabled"),
+      copyValue: directProxyEnabled ? directProxyEndpoint : void 0,
+      actions: [
+        directProxyEnabled ? {
+          key: "directProxyDisable",
+          text: _("Disable"),
+          icon: renderXIcon24,
+          component: "direct_proxy",
+          action: "disable"
+        } : {
+          key: "directProxyEnable",
+          text: _("Enable"),
+          icon: renderRotateCcwIcon24,
+          component: "direct_proxy",
+          action: "enable"
+        }
+      ]
+    },
+    {
+      component: "torrserver_direct",
+      column: 2,
+      title: _("TorrServer Direct"),
+      version: !torrserverRunning ? _("TorrServer not found") : !torrserverDirectAvailable ? _("Dedicated cgroup unavailable") : torrserverDirectEnabled && torrserverDirectActive ? _("Enabled") : torrserverDirectEnabled ? _("Waiting for TorrServer") : _("Disabled"),
+      actions: [
+        torrserverDirectEnabled ? {
+          key: "torrserverDirectDisable",
+          text: _("Disable"),
+          icon: renderXIcon24,
+          component: "torrserver_direct",
+          action: "disable"
+        } : {
+          key: "torrserverDirectEnable",
+          text: _("Enable"),
+          icon: renderRotateCcwIcon24,
+          component: "torrserver_direct",
+          action: "enable",
+          disabled: !torrserverDirectAvailable
+        }
+      ]
     }
   ];
 }
@@ -14413,7 +14681,7 @@ function renderComponentCard(card) {
       text: action.text,
       icon: action.icon,
       loading: loading2,
-      disabled: systemInfoLoading || serviceRuntimeActionLoading || anyActionLoading && !loading2,
+      disabled: action.disabled || systemInfoLoading || serviceRuntimeActionLoading || anyActionLoading && !loading2,
       onClick: () => void handleComponentAction(action)
     });
   });
@@ -14424,7 +14692,7 @@ function renderComponentCard(card) {
       text: action.text,
       icon: action.icon,
       loading: loading2,
-      disabled: systemInfoLoading || serviceRuntimeActionLoading || anyActionLoading && !loading2,
+      disabled: action.disabled || systemInfoLoading || serviceRuntimeActionLoading || anyActionLoading && !loading2,
       onClick: () => void handleComponentAction(action)
     });
   });
@@ -14433,6 +14701,18 @@ function renderComponentCard(card) {
       E("div", { class: "fkp_updates-page__component__actions-main" }, [
         ...primaryButtons,
         ...dangerButtons
+      ])
+    );
+  }
+  if (card.copyValue) {
+    actionElements.push(
+      E("div", { class: "fkp_updates-page__component__actions-main" }, [
+        renderButton({
+          text: _("Copy address"),
+          icon: renderCopyIcon24,
+          disabled: anyActionLoading || serviceRuntimeActionLoading,
+          onClick: () => copyToClipboard(card.copyValue || "")
+        })
       ])
     );
   }
@@ -14484,14 +14764,20 @@ function renderUpdatesComponents() {
   if (!container) {
     return;
   }
-  const columns = [[], []];
+  const columns = [[], [], []];
   getComponentCards().forEach((card) => {
     columns[card.column].push(renderComponentCard(card));
   });
+  columns[2].push(
+    renderFullUninstall(
+      isAnyActionLoading() || isServiceRuntimeActionLoading()
+    )
+  );
   return preserveScrollForPage(() => {
     container.replaceChildren(
       E("div", { class: "fkp_updates-page__components-column" }, columns[0]),
-      E("div", { class: "fkp_updates-page__components-column" }, columns[1])
+      E("div", { class: "fkp_updates-page__components-column" }, columns[1]),
+      E("div", { class: "fkp_updates-page__components-column" }, columns[2])
     );
   });
 }
@@ -14605,7 +14891,7 @@ var styles6 = `
 
 .fkp_updates-page__components {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: flex-start;
     gap: 10px;
     width: 100%;
@@ -14617,6 +14903,12 @@ var styles6 = `
     gap: 10px;
     min-width: 0;
     width: 100%;
+}
+
+@media (max-width: 1100px) {
+    .fkp_updates-page__components {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 760px) {

@@ -32,6 +32,7 @@ const RELOAD_LOCK_DIR = getenv("P99_RELOAD_LOCK_DIR") || "/var/run/p99.reload.lo
 const SERVICE_INIT = getenv("P99_SERVICE_INIT") || "/etc/init.d/p99";
 const PRIORITY_UC = getenv("P99_PRIORITY_UC") || LIB_DIR + "/singbox/priority.uc";
 const DNS_FAILOVER_UC = getenv("P99_DNS_FAILOVER_UC") || LIB_DIR + "/singbox/dns_failover.uc";
+const DIAGNOSTICS_UC = getenv("P99_DIAGNOSTICS_UC") || LIB_DIR + "/diagnostics/runtime.uc";
 const COMPONENT_JOB_DIR = getenv("UPDATES_JOB_DIR") || getenv("P99_UI_COMPONENT_ACTION_DIR") || "/var/run/p99/component-actions";
 const COMPONENT_UPDATE_CHECK_CACHE_DIR = getenv("P99_COMPONENT_UPDATE_CHECK_CACHE_DIR") || RUNTIME_STATE_DIR + "/component-update-checks";
 const COMPONENT_UPDATE_CHECK_STATE_FILE = getenv("P99_COMPONENT_UPDATE_CHECK_STATE_FILE") || RUNTIME_STATE_DIR + "/component-update-check.timestamp";
@@ -393,6 +394,11 @@ function module_success(args) {
 
 function module_output(args) {
     return command_output(module_command(args));
+}
+
+function module_background(args) {
+    let command = module_command(args) + " >/dev/null 2>&1 1000>&- &";
+    return command_success("sh -c " + shell_quote(command));
 }
 
 function nft_module_success(args) {
@@ -2883,6 +2889,7 @@ function subscription_update_common_locked(force, target_section, target_source_
         log_message("Subscription update applied for changed rules; failed rules kept their previous cache", "info");
     else
         log_message("Subscription update completed", "info");
+    module_background([ DIAGNOSTICS_UC, "automatic-latency-test" ]);
     return true;
 }
 

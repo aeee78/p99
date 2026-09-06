@@ -3,8 +3,10 @@
 let fs = require("fs");
 let constants = require("core.constants");
 let uci_core = require("core.uci");
+let netstat = require("core.netstat");
 
 const LIB_DIR = getenv("P99_LIB") || "/usr/lib/p99";
+const CONFIG_NAME = getenv("P99_CONFIG_NAME") || constants.P99_CONFIG_NAME || "p99";
 const BIN_PATH = getenv("P99_BIN") || constants.P99_BIN || "/usr/bin/p99";
 const SERVICE_INIT = getenv("P99_SERVICE_INIT") || constants.P99_SERVICE_INIT || "/etc/init.d/p99";
 const P99_VERSION = getenv("P99_VERSION") || constants.P99_VERSION || "";
@@ -16,6 +18,8 @@ const COMPONENT_LOCK_DIR = getenv("UPDATES_LOCK_DIR") || RUNTIME_STATE_DIR + "/c
 const TMP_STALE_TTL_MINUTES = getenv("UPDATES_TMP_STALE_TTL_MINUTES") || "30";
 const TMP_FILE_STALE_TTL_MINUTES = getenv("UPDATES_TMP_FILE_STALE_TTL_MINUTES") || "10";
 const SB_MANAGED_SERVICE_MARKER = getenv("SB_MANAGED_SERVICE_MARKER") || constants.SB_MANAGED_SERVICE_MARKER || "P99 managed sing-box service for binary variants";
+const TORRSERVER_DIRECT_INIT = getenv("P99_TORRSERVER_DIRECT_INIT") || "/etc/init.d/p99-torrserver-direct";
+const TORRSERVER_DIRECT_UC = LIB_DIR + "/torrserver/direct.uc";
 
 let tmp_dir = "";
 let lock_held = false;
@@ -1903,6 +1907,106 @@ function dispatch_sing_box(action) {
         install_package_sing_box(action, false);
 }
 
+function set_packet_steering(action) {
+    let target_mode = action == "restore" ? "0" : "1";
+    let current_mode = trim(uci_core.get("network.@globals[0].packet_steering")) == "1" ? "1" : "0";
+
+    if (!uci_core.available() ||
+        !uci_core.set("network.@globals[0].packet_steering", target_mode) ||
+        !uci_core.commit("network"))
+        action_fail("packet_steering", action, "Failed to update packet steering settings", current_mode, target_mode);
+
+    command_status_from_args([ "/etc/init.d/network", "reload" ]);
+    remove_file(SYSTEM_INFO_CACHE_FILE);
+    action_success("packet_steering", action,
+        target_mode == "1" ? "Packet Steering has been enabled" : "Packet Steering has been restored to default",
+        target_mode, target_mode, current_mode == target_mode ? 0 : 1, "", "");
+}
+
+function set_direct_proxy(action) {
+    let enabled_path = CONFIG_NAME + ".settings.direct_proxy_enabled";
+    let port_path = CONFIG_NAME + ".settings.direct_proxy_port";
+    let current_enabled = trim(uci_core.get(enabled_path)) == "1" ? "1" : "0";
+    let target_enabled = action == "enable" ? "1" : "0";
+    let current_port = trim(uci_core.get(port_path));
+    let current_port_number = match(current_port, /^[0-9]+$/) != null ? int(current_port, 10) : 0;
+    let target_port = current_port_number >= 1 && current_port_number <= 65535 ? current_port : "2080";
+
+    if (!file_exists(SERVICE_INIT))
+        action_fail("direct_proxy", action, "P99 service is not available", current_enabled, target_enabled);
+    if (target_enabled == "1" && current_enabled != "1") {
+        let listen = trim(module_output([ LIB_DIR + "/singbox/runtime.uc", "service-listen-address" ]));
+        if (listen == "")
+            action_fail("direct_proxy", action, "Failed to determine the Direct Proxy LAN address", current_enabled, target_enabled);
+        if (!command_exists("netstat"))
+            action_fail("direct_proxy", action, "Failed to verify whether Direct Proxy port " + target_port + " is available", current_enabled, target_enabled);
+        let listeners = command_output_from_args([ "netstat", "-ln" ]);
+        if (listeners == "")
+            action_fail("direct_proxy", action, "Failed to verify whether Direct Proxy port " + target_port + " is available", current_enabled, target_enabled);
+        if (netstat.listen_port_in_use(listeners, listen, target_port))
+            action_fail("direct_proxy", action, "Direct Proxy port " + target_port + " is already in use", current_enabled, target_enabled);
+    }
+    if (!uci_core.available() ||
+        !uci_core.set(enabled_path, target_enabled) ||
+        !uci_core.set(port_path, target_port) ||
+        !uci_core.commit(CONFIG_NAME))
+        action_fail("direct_proxy", action, "Failed to save Direct Proxy settings", current_enabled, target_enabled);
+
+    if (!command_success_from_args([ SERVICE_INIT, "restart" ])) {
+        uci_core.set(enabled_path, current_enabled);
+        if (current_port != "")
+            uci_core.set(port_path, current_port);
+        else
+            uci_core.delete(port_path);
+        uci_core.commit(CONFIG_NAME);
+        command_success_from_args([ SERVICE_INIT, "restart" ]);
+        action_fail("direct_proxy", action, "Failed to apply Direct Proxy settings", current_enabled, target_enabled);
+    }
+
+    remove_file(SYSTEM_INFO_CACHE_FILE);
+    action_success("direct_proxy", action,
+        target_enabled == "1" ? "Direct Proxy has been enabled" : "Direct Proxy has been disabled",
+        target_enabled, target_enabled, current_enabled == target_enabled ? 0 : 1, "", "");
+}
+
+function set_torrserver_direct(action) {
+    let enabled_path = CONFIG_NAME + ".settings.torrserver_direct_enabled";
+    let current_enabled = trim(uci_core.get(enabled_path)) == "1" ? "1" : "0";
+    let target_enabled = action == "enable" ? "1" : "0";
+
+    if (!file_exists(TORRSERVER_DIRECT_INIT) || !file_exists(TORRSERVER_DIRECT_UC))
+        action_fail("torrserver_direct", action, "TorrServer Direct service is not available", current_enabled, target_enabled);
+    if (target_enabled == "1") {
+        if (!command_success_from_args([ "modprobe", "nft_socket" ]) &&
+            (!run_logged("Installing TorrServer Direct kernel support", pkg_install_name_command("kmod-nft-socket")) ||
+             !command_success_from_args([ "modprobe", "nft_socket" ])))
+            action_fail("torrserver_direct", action, "This firmware does not provide kmod-nft-socket required for TorrServer Direct", current_enabled, target_enabled);
+        let status = parse_json_object(module_output([ TORRSERVER_DIRECT_UC, "status" ]));
+        if (type(status) != "object" || int(status.running || 0) != 1)
+            action_fail("torrserver_direct", action, "TorrServer is not running", current_enabled, target_enabled);
+        if (int(status.available || 0) != 1)
+            action_fail("torrserver_direct", action, "TorrServer does not have a dedicated cgroup", current_enabled, target_enabled);
+    }
+    if (!uci_core.available() || !uci_core.set(enabled_path, target_enabled) || !uci_core.commit(CONFIG_NAME))
+        action_fail("torrserver_direct", action, "Failed to save TorrServer Direct settings", current_enabled, target_enabled);
+
+    let applied = target_enabled == "1"
+        ? command_success_from_args([ TORRSERVER_DIRECT_INIT, "enable" ]) &&
+            command_success_from_args([ TORRSERVER_DIRECT_INIT, "restart" ]) &&
+            module_success([ TORRSERVER_DIRECT_UC, "reconcile" ])
+        : command_success_from_args([ TORRSERVER_DIRECT_INIT, "stop" ]) &&
+            command_success_from_args([ TORRSERVER_DIRECT_INIT, "disable" ]);
+    if (!applied) {
+        uci_core.set(enabled_path, current_enabled);
+        uci_core.commit(CONFIG_NAME);
+        action_fail("torrserver_direct", action, "Failed to apply TorrServer Direct settings", current_enabled, target_enabled);
+    }
+    remove_file(SYSTEM_INFO_CACHE_FILE);
+    action_success("torrserver_direct", action,
+        target_enabled == "1" ? "TorrServer Direct has been enabled" : "TorrServer Direct has been disabled",
+        target_enabled, target_enabled, current_enabled == target_enabled ? 0 : 1, "", "");
+}
+
 function normalize_component_name(component) {
     component = as_string(component);
     if (component == "sing-box" || component == "singbox")
@@ -1945,6 +2049,12 @@ function component_action(component, action) {
         install_zapret_manager(action);
     else if (component == "zapret_manager" && action == "remove")
         remove_zapret_manager(action);
+    else if (component == "packet_steering" && (action == "enable" || action == "restore"))
+        set_packet_steering(action);
+    else if (component == "direct_proxy" && (action == "enable" || action == "disable"))
+        set_direct_proxy(action);
+    else if (component == "torrserver_direct" && (action == "enable" || action == "disable"))
+        set_torrserver_direct(action);
     else
         action_fail(component != "" ? component : "unknown", action != "" ? action : "unknown", "Unknown component action");
 }

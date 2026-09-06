@@ -21,6 +21,7 @@ let fixture_uci_data = null;
 let runtime_settings_cache = null;
 let runtime_ruleset_folder = runtime_constants.TMP_RULESET_FOLDER;
 let runtime_supports_xhttp = true;
+let runtime_supports_dns_response_matching = false;
 
 let as_string = common.as_string;
 let read_json_file = common.read_json_file;
@@ -792,6 +793,7 @@ function add_subscription_source_with_state(config, section, source_index, sourc
                 cached.source_links[i],
                 cached.outbound_descriptions[i]
             );
+            state.outboundMetadata.filterNames[outbound.tag] = cached.outbound_filter_names[i];
             if (cached.hidden_flags[i] !== true) {
                 push(selector_tags, outbound.tag);
                 runtime_subscription.remember_urltest_group(state, outbound.tag, cached.display_names[i], outbound);
@@ -821,6 +823,7 @@ function add_subscription_source_with_state(config, section, source_index, sourc
     let group_flags = [];
     let hidden_flags = [];
     let outbound_descriptions = [];
+    let outbound_filter_names = [];
     let tag_map = {};
     for (let i = 0; i < length(outbounds); i++) {
         let outbound = outbounds[i];
@@ -850,6 +853,8 @@ function add_subscription_source_with_state(config, section, source_index, sourc
         push(group_flags, subscription_group_outbound(outbound));
         push(hidden_flags, subscription_hidden_outbound(outbound, visibility_refs, hide_urltest_group_outbounds, hide_detour_outbounds));
         push(outbound_descriptions, as_string(outbound.__p99_description || ""));
+        push(outbound_filter_names, map(array_or_empty(outbound.__p99_filter_names || outbound.__forkop_filter_names),
+            name => node_prefix != "" ? node_prefix + " " + name : name));
     }
 
     if (length(keys(skipped)) > 0)
@@ -880,6 +885,7 @@ function add_subscription_source_with_state(config, section, source_index, sourc
             source_links[i],
             outbound_descriptions[i]
         );
+        state.outboundMetadata.filterNames[outbound.tag] = outbound_filter_names[i];
         if (hidden_flags[i] !== true) {
             push(selector_tags, outbound.tag);
             runtime_subscription.remember_urltest_group(state, outbound.tag, display_names[i], outbound);
@@ -893,7 +899,8 @@ function add_subscription_source_with_state(config, section, source_index, sourc
             source_links,
             group_flags,
             hidden_flags,
-            outbound_descriptions
+            outbound_descriptions,
+            outbound_filter_names
         };
     }
     return added;
@@ -1056,9 +1063,14 @@ function regex_match_set(tags, names, regexes) {
     return object_keys_set(runtime_urltest.regex_matching_tag_array(tags, names, regexes));
 }
 
-function tag_name_filter_matches(tag, names, name_filter, regex_set) {
+function tag_name_filter_matches(tag, names, name_filter, regex_set, metadata) {
     let name = tag_display_name(tag, names);
-    return array_contains(name_filter, name) || regex_set[tag];
+    if (array_contains(name_filter, name) || regex_set[tag])
+        return true;
+    for (let previous_name in array_or_empty(object_or_empty(object_or_empty(metadata).filterNames)[tag]))
+        if (array_contains(name_filter, previous_name))
+            return true;
+    return false;
 }
 
 function tag_country_filter_matches(tag, countries, country_filter) {
@@ -1133,7 +1145,7 @@ function urltest_matching_candidate_outbounds(urltest_candidate_tags, names, cou
     let result = [];
 
     for (let tag in array_or_empty(urltest_candidate_tags)) {
-        let base_matches = tag_name_filter_matches(tag, names, name_filter, regex_set) ||
+        let base_matches = tag_name_filter_matches(tag, names, name_filter, regex_set, metadata) ||
             tag_country_filter_matches(tag, countries, country_filter);
         let matches = additional_set[tag] || base_matches;
         if (proxy_parameters_enabled && proxy_parameters_operator == "or") {
@@ -1720,6 +1732,45 @@ function add_service_mixed_proxy(config, settings, sections) {
         runtime_generate_unsupported("download lists via proxy section is not set");
     if (download_via_proxy_enabled(settings, "components") && download_detour_tag(settings, "components") == "")
         runtime_generate_unsupported("download components via proxy section is not set");
+}
+
+/*
+ * This proxy is intentionally routed only by its inbound tag. Destination
+ * domains, IP ranges and rule sets must never be able to move its traffic to a
+ * VPN outbound. Keep the compact 1.14-compatible route rule shape used by the
+ * other service inbounds.
+ */
+function add_direct_proxy(config, settings, service_address) {
+    if (!bool_option(settings, "direct_proxy_enabled", false))
+        return;
+
+    let listen = as_string(service_address || "");
+    if (listen == "")
+        runtime_generate_unsupported("direct proxy listen address is not set");
+
+    let port_value = option(settings, "direct_proxy_port", as_string(runtime_constants.DIRECT_PROXY_DEFAULT_PORT));
+    if (match(port_value, /^[0-9]+$/) == null)
+        runtime_generate_unsupported("direct proxy port is invalid");
+    let listen_port = int(port_value, 10);
+    if (listen_port < 1 || listen_port > 65535)
+        runtime_generate_unsupported("direct proxy port is invalid");
+
+    push(config.inbounds, {
+        type: "mixed",
+        tag: runtime_constants.DIRECT_PROXY_INBOUND_TAG,
+        listen,
+        listen_port
+    });
+    push(config.outbounds, {
+        type: "direct",
+        tag: runtime_constants.DIRECT_PROXY_OUTBOUND_TAG,
+        routing_mark: runtime_constants.OUTBOUND_MARK
+    });
+    push(config.route.rules, {
+        action: "route",
+        inbound: runtime_constants.DIRECT_PROXY_INBOUND_TAG,
+        outbound: runtime_constants.DIRECT_PROXY_OUTBOUND_TAG
+    });
 }
 
 function parse_port(value) {
@@ -2621,6 +2672,47 @@ function copy_dns_matchers(matchers) {
     return copy;
 }
 
+function excluded_source_ip_cidr(section) {
+    return legacy_condition_values(section, "excluded_source_ip_cidr");
+}
+
+function exclude_sources_from_matchers(matchers, section) {
+    let excluded = excluded_source_ip_cidr(section);
+    if (length(excluded) == 0)
+        return matchers;
+
+    return {
+        type: "logical",
+        mode: "and",
+        rules: [
+            matchers,
+            {
+                source_ip_cidr: single_or_array(excluded),
+                invert: true
+            }
+        ]
+    };
+}
+
+function exclude_sources_from_route_rule(rule, section) {
+    let excluded = excluded_source_ip_cidr(section);
+    if (length(excluded) == 0)
+        return rule;
+
+    let matchers = {};
+    let result = {};
+    for (let key, value in rule) {
+        if (key == "action" || key == "outbound")
+            result[key] = value;
+        else
+            matchers[key] = value;
+    }
+    let wrapped = exclude_sources_from_matchers(matchers, section);
+    for (let key, value in wrapped)
+        result[key] = value;
+    return result;
+}
+
 function add_source_dns_matchers(rule, source_ip_cidr) {
     if (length(source_ip_cidr) == 0)
         return;
@@ -2630,15 +2722,29 @@ function add_source_dns_matchers(rule, source_ip_cidr) {
 }
 
 function add_source_aware_bypass_dns_rules(config, matchers, rewrite_ttl) {
+    if (runtime_supports_dns_response_matching) {
+        // sing-box 1.14 requires response matching to follow a top-level
+        // evaluate action. Evaluate the normal resolver, then preserve the
+        // existing address-filter behavior when choosing dnsmasq.
+        let evaluate = copy_dns_matchers(matchers);
+        evaluate.action = "evaluate";
+        evaluate.server = runtime_constants.DNS_SERVER_TAG;
+        push_dns_matcher_rule(config, evaluate);
+    }
+
+    let fakeip_matcher = {
+        ip_cidr: [ runtime_constants.FAKEIP_INET4_RANGE, runtime_constants.FAKEIP_INET6_RANGE ],
+        invert: true
+    };
+    if (runtime_supports_dns_response_matching)
+        fakeip_matcher.match_response = true;
+
     push_dns_matcher_rule(config, {
         type: "logical",
         mode: "and",
         rules: [
             copy_dns_matchers(matchers),
-            {
-                ip_cidr: [ runtime_constants.FAKEIP_INET4_RANGE, runtime_constants.FAKEIP_INET6_RANGE ],
-                invert: true
-            }
+            fakeip_matcher
         ],
         action: "route",
         server: runtime_constants.DNSMASQ_DNS_SERVER_TAG,
@@ -2656,6 +2762,7 @@ function add_source_aware_bypass_dns_rules(config, matchers, rewrite_ttl) {
 function add_section_dns_matcher_rule(config, section, matchers, rewrite_ttl) {
     let source_ip_cidr = legacy_condition_values(section, "source_ip_cidr");
     add_source_dns_matchers(matchers, source_ip_cidr);
+    matchers = exclude_sources_from_matchers(matchers, section);
 
     if (option(section, "action", "") == "bypass" && length(source_ip_cidr) > 0) {
         add_source_aware_bypass_dns_rules(config, matchers, rewrite_ttl);
@@ -2677,6 +2784,9 @@ function source_aware_dns_sources(sections) {
         let candidates = [];
         if (connections.has_dns_matchers(section))
             for (let value in legacy_condition_values(section, "source_ip_cidr"))
+                push(candidates, value);
+        if (connections.has_dns_matchers(section) || length(list_option(section, "fully_routed_ips")) > 0)
+            for (let value in excluded_source_ip_cidr(section))
                 push(candidates, value);
         if (action == "bypass" || action == "dns")
             for (let value in list_option(section, "fully_routed_ips"))
@@ -2783,6 +2893,7 @@ function add_dns_action_rules_for_section(config, section) {
             rewrite_ttl
         };
         add_source_dns_matchers(dns_rule, fully_routed_ips);
+        dns_rule = exclude_sources_from_matchers(dns_rule, section);
         push_dns_matcher_rule(config, dns_rule);
     }
     if (has_inline_domains) {
@@ -2796,6 +2907,7 @@ function add_dns_action_rules_for_section(config, section) {
         add_domain_array(dns_rule, "domain_keyword", domain_keyword);
         add_domain_array(dns_rule, "domain_regex", domain_regex);
         add_source_dns_matchers(dns_rule, source_ip_cidr);
+        dns_rule = exclude_sources_from_matchers(dns_rule, section);
         push_dns_matcher_rule(config, dns_rule);
     }
     if (length(rule_set_tags) > 0) {
@@ -2806,6 +2918,7 @@ function add_dns_action_rules_for_section(config, section) {
             rule_set: single_or_array(rule_set_tags)
         };
         add_source_dns_matchers(dns_rule, source_ip_cidr);
+        dns_rule = exclude_sources_from_matchers(dns_rule, section);
         push_dns_matcher_rule(config, dns_rule);
     }
     if (!has_inline_domains && length(rule_set_tags) == 0 && length(fully_routed_ips) == 0)
@@ -2878,7 +2991,16 @@ function add_fully_routed_ips_rules(config, section) {
     if (target.outbound)
         route_rule.outbound = target.outbound;
     route_rule.source_ip_cidr = single_or_array(source_ip_cidr);
-    push(config.route.rules, route_rule);
+    push(config.route.rules, exclude_sources_from_route_rule(route_rule, section));
+}
+
+function push_section_route_rule(config, section, route_rule) {
+    let resolve = runtime_route.resolve_rule_for_section(section, route_rule);
+    if (type(resolve) == "object" && resolve.warning)
+        warn(resolve.warning, "\n");
+    else if (type(resolve) == "object" && resolve.rule)
+        push(config.route.rules, exclude_sources_from_route_rule(resolve.rule, section));
+    push(config.route.rules, exclude_sources_from_route_rule(route_rule, section));
 }
 
 function add_combined_route_for_section(config, section) {
@@ -2939,20 +3061,31 @@ function add_combined_route_for_section(config, section) {
     if (length(source_ip_cidr) > 0)
         route_rule.source_ip_cidr = source_ip_cidr;
     add_port_matchers(route_rule, section);
-    if (length(rule_set_tags) > 0)
-        route_rule.rule_set = single_or_array(rule_set_tags);
 
     let has_route_matchers = route_rule.domain != null || route_rule.domain_suffix != null ||
         route_rule.domain_keyword != null || route_rule.domain_regex != null ||
-        route_rule.ip_cidr != null || route_rule.port != null || route_rule.port_range != null ||
-        route_rule.rule_set != null;
-    if (has_route_matchers) {
-        let resolve = runtime_route.resolve_rule_for_section(section, route_rule);
-        if (type(resolve) == "object" && resolve.warning)
-            warn(resolve.warning, "\n");
-        else if (type(resolve) == "object" && resolve.rule)
-            push(config.route.rules, resolve.rule);
-        push(config.route.rules, route_rule);
+        route_rule.ip_cidr != null || (length(rule_set_tags) == 0 &&
+        (route_rule.port != null || route_rule.port_range != null));
+    if (has_route_matchers)
+        push_section_route_rule(config, section, route_rule);
+
+    if (length(rule_set_tags) > 0) {
+        // Since sing-box 1.14 a rule-set containing more than one rule is an
+        // independent matcher.  Combining it with inline domain fields makes
+        // the two matchers an AND expression, while P99 sections define
+        // inline domains and lists as alternatives.  Keep shared device and
+        // port filters, but emit the rule-set alternative as its own rule.
+        let rule_set_rule = {
+            action: target.action,
+            inbound: tproxy_inbound_matcher(),
+            rule_set: single_or_array(rule_set_tags)
+        };
+        if (target.outbound)
+            rule_set_rule.outbound = target.outbound;
+        if (length(source_ip_cidr) > 0)
+            rule_set_rule.source_ip_cidr = source_ip_cidr;
+        add_port_matchers(rule_set_rule, section);
+        push_section_route_rule(config, section, rule_set_rule);
     }
 
     let rewrite_ttl = int_option(runtime_settings(), "dns_rewrite_ttl", "60");
@@ -3175,6 +3308,8 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
         source_aware_dns: length(source_aware_dns) > 0
     });
     let version_parts = match(as_string(sing_box_version), /^v?([0-9]+)\.([0-9]+)\./);
+    runtime_supports_dns_response_matching = version_parts != null &&
+        (int(version_parts[1]) > 1 || (int(version_parts[1]) == 1 && int(version_parts[2]) >= 14));
     if (version_parts != null && (int(version_parts[1]) > 1 ||
         (int(version_parts[1]) == 1 && int(version_parts[2]) >= 14)))
         delete config.dns.independent_cache;
@@ -3185,6 +3320,7 @@ function generate_config(output_path, service_address, mwan3_active, supports_xh
     for (let section in sections)
         add_outbound_for_section(config, section, taken, sections, dedup_cache);
     add_shared_latency_pool_outbound(config, settings, taken);
+    add_direct_proxy(config, settings, service_address);
     add_service_route_rules(config, sections);
     for (let section in sections)
         add_route_for_section(config, section);

@@ -72,6 +72,7 @@ export namespace P99 {
     ENABLE = 'enable',
     DISABLE = 'disable',
     GLOBAL_CHECK = 'global_check',
+    SUPPORT_REPORT = 'support_report',
     SHOW_SING_BOX_CONFIG = 'show_sing_box_config',
     CHECK_LOGS = 'check_logs',
     CHECK_SING_BOX_LOGS = 'check_sing_box_logs',
@@ -493,6 +494,14 @@ export namespace P99 {
     byedpi_version: string;
     byedpi_installed: 0 | 1;
     zapret_manager_installed: 0 | 1;
+    packet_steering_mode?: string;
+    direct_proxy_enabled?: 0 | 1;
+    direct_proxy_address?: string;
+    direct_proxy_port?: string;
+    torrserver_running?: 0 | 1;
+    torrserver_direct_available?: 0 | 1;
+    torrserver_direct_enabled?: 0 | 1;
+    torrserver_direct_active?: 0 | 1;
     openwrt_version: string;
     device_model: string;
     generated_at?: number;
@@ -569,7 +578,10 @@ export namespace P99 {
     | 'zapret'
     | 'zapret2'
     | 'byedpi'
-    | 'zapret_manager';
+    | 'zapret_manager'
+    | 'packet_steering'
+    | 'direct_proxy'
+    | 'torrserver_direct';
 
   export type ComponentAction =
     | 'check_update'
@@ -578,7 +590,10 @@ export namespace P99 {
     | 'install_extended'
     | 'install_extended_compressed'
     | 'install_tiny'
-    | 'install_stable';
+    | 'install_stable'
+    | 'enable'
+    | 'disable'
+    | 'restore';
 
   export interface ComponentActionResult {
     success: boolean;

@@ -39,7 +39,7 @@ grep -Fq 'clear_version_caches();' "$ACTION_UC" ||
 if grep -Fq 'github_probe(proxy_address)' "$ROOT_DIR/p99/files/usr/lib/components/updates.uc"; then
   fail "list updates must not wait for an unrelated GitHub availability probe"
 fi
-grep -Fq 'grid-template-columns: repeat(2, minmax(0, 1fr))' \
+grep -Fq 'grid-template-columns: repeat(3, minmax(0, 1fr))' \
   "$ROOT_DIR/fe-app-p99/src/p99/tabs/updates/styles.ts" ||
   fail "component columns must have equal fixed widths"
 grep -Fq "key: 'P99 X'" "$DIAGNOSTICS_TS" ||

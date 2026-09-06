@@ -1107,6 +1107,15 @@ function build_system_info() {
     let zapret_manager_installed = file_executable("/usr/bin/zms") && file_executable("/usr/bin/zmsA") &&
         index(zms_source, "/zapret-manager/proxy/") >= 0 && index(zmsa_source, "/zapret-manager/proxy/") >= 0 ? 1 : 0;
     let device_model = first_line_value("/tmp/sysinfo/model", "unknown");
+    let packet_steering_mode = trim(uci_core.get("network.@globals[0].packet_steering"));
+    let direct_proxy_enabled = bool_option(settings(), "direct_proxy_enabled", false) ? 1 : 0;
+    let direct_proxy_port = option(settings(), "direct_proxy_port", "2080");
+    let direct_proxy_address = direct_proxy_enabled
+        ? trim(module_output(SINGBOX_RUNTIME_UC, [ "service-listen-address" ]))
+        : "";
+    let torrserver_direct_status = parse_json_or_null(module_output(LIB_DIR + "/torrserver/direct.uc", [ "status" ]));
+    if (type(torrserver_direct_status) != "object")
+        torrserver_direct_status = {};
 
     return {
         p99_version: P99_VERSION,
@@ -1125,6 +1134,14 @@ function build_system_info() {
         byedpi_version,
         byedpi_installed,
         zapret_manager_installed,
+        packet_steering_mode,
+        direct_proxy_enabled,
+        direct_proxy_address,
+        direct_proxy_port,
+        torrserver_running: int(torrserver_direct_status.running || 0),
+        torrserver_direct_available: int(torrserver_direct_status.available || 0),
+        torrserver_direct_enabled: int(torrserver_direct_status.enabled || 0),
+        torrserver_direct_active: int(torrserver_direct_status.active || 0),
         openwrt_version: openwrt_release(),
         device_model,
         generated_at: int(clock()[0])
@@ -1388,7 +1405,8 @@ function check_dns_available() {
     let dns_server_host = url_host(dns_server);
     if (dns_server_host == "")
         dns_server_host = dns_server;
-    if (bootstrap_dns_server != "") {
+    let bootstrap_dns_required = !core_ip.valid_ip(dns_server_host);
+    if (bootstrap_dns_required && bootstrap_dns_server != "") {
         if (length(active.state.bootstrap_servers) > 1) {
             for (let line in split(command_output_from_args([
                 "dig", "-p", as_string(runtime_dns.health_port("bootstrap", active.state.bootstrap_index)),
@@ -1424,6 +1442,7 @@ function check_dns_available() {
         bootstrap_dns_server_index: active.state.bootstrap_index,
         bootstrap_dns_server_count: length(active.state.bootstrap_servers),
         bootstrap_dns_status,
+        bootstrap_dns_required: bootstrap_dns_required ? 1 : 0,
         dhcp_config_status,
         dont_touch_dhcp
     });
@@ -1820,12 +1839,22 @@ function clash_api(action, arg1, arg2, arg3) {
 
 function automatic_latency_test() {
     let owner_pid = trim(command_output_from_args([ "sh", "-c", "echo $$" ]));
-    if (owner_pid == "" || !module_success(SERVICE_STATE_UC, [
-        "acquire-runtime-dir-lock", AUTOMATIC_LATENCY_TEST_LOCK_DIR, owner_pid
-    ])) {
+    let acquired = false;
+    for (let attempt = 0; owner_pid != "" && attempt < 20; attempt++) {
+        if (module_success(SERVICE_STATE_UC, [
+            "acquire-runtime-dir-lock", AUTOMATIC_LATENCY_TEST_LOCK_DIR, owner_pid
+        ])) {
+            acquired = true;
+            break;
+        }
+        command_success_from_args([ "sleep", "1" ]);
+    }
+    if (!acquired) {
         command_success_from_args([ "logger", "-t", "p99", "[info] Automatic latency test is already running; skipping" ]);
         return 0;
     }
+
+    let sing_box_pid_before = trim(module_output(SERVICE_STATE_UC, [ "sing-box-service-runtime-pid" ]));
 
     let proxy_types = clash_proxy_type_map(clash_api_url(), clash_auth_args());
     let proxy_tags = [];
@@ -1841,7 +1870,12 @@ function automatic_latency_test() {
 
     command_success_from_args([ "logger", "-t", "p99", "[info] Starting automatic latency test for " + length(proxy_tags) + " proxy outbounds" ]);
     let status = clash_api("get_proxy_latencies", sprintf("%J", proxy_tags), latency_test_timeout(), "");
+    let sing_box_pid_after = trim(module_output(SERVICE_STATE_UC, [ "sing-box-service-runtime-pid" ]));
     module_success(SERVICE_STATE_UC, [ "release-runtime-dir-lock", AUTOMATIC_LATENCY_TEST_LOCK_DIR ]);
+    if (status != 0 && sing_box_pid_before != sing_box_pid_after) {
+        command_success_from_args([ "logger", "-t", "p99", "[info] Automatic latency test cancelled because sing-box was reloaded" ]);
+        return 0;
+    }
     command_success_from_args([ "logger", "-t", "p99", status == 0 ?
         "[info] Automatic latency test completed" :
         "[warn] Automatic latency test completed with errors" ]);
@@ -1981,6 +2015,75 @@ function global_check(arg1, arg2) {
     return 0;
 }
 
+function support_report_heading(title) {
+    print("\n=== ", as_string(title), " ===\n");
+}
+
+function support_report_command(title, args) {
+    support_report_heading(title);
+    let result = command_capture(command_from_args(args) + " 2>&1");
+    print(result.output != "" ? result.output : "(no output)\n");
+    if (result.status != 0)
+        print("[exit status: ", result.status, "]\n");
+}
+
+function support_report_file(title, path) {
+    support_report_heading(title);
+    let data = fs.readfile(path);
+    if (data == null) {
+        print("(file not found: ", path, ")\n");
+        return;
+    }
+
+    let text = as_string(data);
+    print(text);
+    if (length(text) == 0 || substr(text, length(text) - 1) != "\n")
+        print("\n");
+}
+
+function support_report() {
+    print("⚠️ CONFIDENTIAL SUPPORT REPORT / КОНФИДЕНЦИАЛЬНЫЙ ОТЧЁТ ДЛЯ ПОДДЕРЖКИ\n\n");
+    print("This file contains proxy and subscription URLs, UUIDs, passwords, keys, tokens, client domains and IP addresses, process command lines, and network configuration. Share it only with a trusted support specialist.\n\n");
+    print("Файл содержит ссылки прокси и подписок, UUID, пароли, ключи, токены, домены и IP-адреса клиентов, параметры процессов и сетевую конфигурацию. Передавайте его только доверенному специалисту.\n\n");
+    print("Generated: ", trim(command_output_from_args([ "date", "-Iseconds" ])), "\n");
+    print("P99 version: ", P99_VERSION, "\n");
+
+    support_report_heading("Global check (raw)");
+    global_check("raw", "raw");
+
+    support_report_heading("Generated sing-box configuration (raw)");
+    show_sing_box_config("raw");
+    let sing_box_config_path = option(settings(), "config_path", "");
+    if (sing_box_config_path != "")
+        support_report_command("sing-box check", [ SING_BOX_BIN_PATH, "check", "-c", sing_box_config_path ]);
+
+    support_report_command("System uptime", [ "uptime" ]);
+    support_report_command("Memory", [ "free" ]);
+    support_report_command("Filesystems", [ "df", "-h" ]);
+    support_report_command("Processes and full arguments", [ "ps", "w" ]);
+    support_report_command("Listening sockets", [ "netstat", "-lnp" ]);
+    support_report_command("IPv4 addresses", [ "ip", "-4", "-details", "address", "show" ]);
+    support_report_command("IPv6 addresses", [ "ip", "-6", "-details", "address", "show" ]);
+    support_report_command("IPv4 rules", [ "ip", "-4", "rule", "show" ]);
+    support_report_command("IPv6 rules", [ "ip", "-6", "rule", "show" ]);
+    support_report_command("IPv4 routes (all tables)", [ "ip", "-4", "route", "show", "table", "all" ]);
+    support_report_command("IPv6 routes (all tables)", [ "ip", "-6", "route", "show", "table", "all" ]);
+
+    support_report_heading("P99 nftables summary and set sizes");
+    check_nft();
+    support_report_command("nftables ruleset with handles (set contents omitted)", [ "nft", "-a", "-t", "list", "ruleset" ]);
+
+    support_report_file("/etc/config/p99", P99_CONFIG);
+    support_report_file("/etc/config/dhcp", "/etc/config/dhcp");
+    support_report_file("/etc/config/network", "/etc/config/network");
+    support_report_file("/etc/config/firewall", "/etc/config/firewall");
+    support_report_command("P99 runtime files", [ "ls", "-laR", RUNTIME_STATE_DIR ]);
+    support_report_command("Sing-box runtime files", [ "ls", "-laR", TMP_SING_BOX_FOLDER ]);
+    support_report_command("Recent system log", [ "logread", "-l", "500" ]);
+    support_report_command("Kernel log", [ "dmesg" ]);
+    return 0;
+}
+
 let mode = ARGV[0] || "";
 
 if (mode == "check-proxy")
@@ -2043,6 +2146,8 @@ else if (mode == "validate-nfqws-strategy-json")
     exit(validate_nfqws_strategy_json(ARGV[1] || ""));
 else if (mode == "validate-nfqws2-strategy-json")
     exit(validate_nfqws2_strategy_json(ARGV[1] || ""));
+else if (mode == "support-report")
+    exit(support_report());
 else {
     warn("Usage: diagnostics/runtime.uc <operation> ...\n");
     exit(1);

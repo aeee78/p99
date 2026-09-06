@@ -75,7 +75,10 @@ if (!source.slice(sourceIpOption, fullyRoutedOption).includes("dependsOnRuleCond
 if (!source.slice(fullyRoutedOption, portsOption).includes('fullyRoutedOption.depends("action", "dns")')) {
   fail("DNS action must expose forced device routing");
 }
-if (!source.slice(fullyRoutedOption, portsOption).includes("makeDeviceOptionsExclusive(sourceIpOption, fullyRoutedOption)")) {
+const deviceExclusivity = source.slice(fullyRoutedOption, portsOption);
+if (!deviceExclusivity.includes("makeDeviceOptionsExclusive") ||
+    !deviceExclusivity.includes("sourceIpOption") ||
+    !deviceExclusivity.includes("fullyRoutedOption")) {
   fail("device filter and forced routing must be mutually exclusive");
 }
 

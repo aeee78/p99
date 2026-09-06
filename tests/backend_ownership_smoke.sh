@@ -179,7 +179,7 @@ if (!Object.prototype.hasOwnProperty.call(value, "zapret2_installed") ||
 NODE
 
 # 7. Service lifecycle contracts
-sing_box_start_line="$(grep -nF 'command_success_from_args([ "/etc/init.d/sing-box", "start" ])' "$LIFECYCLE_UC" | head -n1 | cut -d: -f1)"
+sing_box_start_line="$(grep -nE 'command_(success_from_args|start_without_procd_lock)\(\[ "/etc/init.d/sing-box", "start" \]\)' "$LIFECYCLE_UC" | head -n1 | cut -d: -f1)"
 early_stable_line="$(awk -v start="$sing_box_start_line" 'NR > start && /"wait-p99-stable-start"/ { print NR; exit }' "$LIFECYCLE_UC")"
 deferred_bootstrap_line="$(grep -nF '"run-deferred-bootstrap"' "$LIFECYCLE_UC" | head -n1 | cut -d: -f1)"
 [ -n "$sing_box_start_line" ] && [ -n "$early_stable_line" ] && [ "$early_stable_line" -lt "$deferred_bootstrap_line" ] ||

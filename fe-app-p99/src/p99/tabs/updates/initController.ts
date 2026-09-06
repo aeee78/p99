@@ -2,8 +2,10 @@ import { onMount, preserveScrollForPage } from '../../../helpers';
 import { P99_ACTION_PROVIDERS_AVAILABILITY_EVENT } from '../../../constants';
 import { normalizeCompiledVersion } from '../../../helpers/normalizeCompiledVersion';
 import { showToast } from '../../../helpers/showToast';
+import { copyToClipboard } from '../../../helpers/copyToClipboard';
 import {
   renderDownloadIcon24,
+  renderCopyIcon24,
   renderRotateCcwIcon24,
   renderSearchIcon24,
   renderXIcon24,
@@ -45,6 +47,7 @@ import {
   subscribeRuntimeUiState,
 } from '../../services/runtimeUiState.service';
 import { P99 } from '../../types';
+import { renderFullUninstall } from './fullUninstall';
 
 type UpdateStatus = StoreType['updatesChecks'][P99.ComponentName]['status'];
 
@@ -54,16 +57,18 @@ interface ComponentActionButton {
   icon: () => SVGSVGElement;
   component: P99.ComponentName;
   action: P99.ComponentAction;
+  disabled?: boolean;
 }
 
 interface ComponentCard {
   component: P99.ComponentName;
-  column: 0 | 1;
+  column: 0 | 1 | 2;
   title: string;
   version: string;
   latestVersion?: string;
   releaseUrl?: string;
   actions: ComponentActionButton[];
+  copyValue?: string;
 }
 
 let updatesLifecycleRegistered = false;
@@ -399,6 +404,19 @@ function patchSystemInfoAfterMutation(result: P99.ComponentActionResult) {
   if (result.component === 'zapret_manager') {
     nextSystemInfo.zapret_manager_installed =
       result.action === 'remove' ? 0 : 1;
+  }
+
+  if (result.component === 'direct_proxy') {
+    nextSystemInfo.direct_proxy_enabled = result.action === 'enable' ? 1 : 0;
+  }
+  if (result.component === 'packet_steering') {
+    nextSystemInfo.packet_steering_mode = result.action === 'enable' ? '2' : '0';
+  }
+  if (result.component === 'torrserver_direct') {
+    nextSystemInfo.torrserver_direct_enabled =
+      result.action === 'enable' ? 1 : 0;
+    nextSystemInfo.torrserver_direct_active =
+      result.action === 'enable' ? 1 : 0;
   }
 
   const normalizedSystemInfo = normalizeSingBoxVariantFields(nextSystemInfo);
@@ -814,6 +832,17 @@ function getComponentCards(): ComponentCard[] {
   const zapret2Installed = Boolean(systemInfo.zapret2_installed);
   const byedpiInstalled = Boolean(systemInfo.byedpi_installed);
   const zapretManagerInstalled = Boolean(systemInfo.zapret_manager_installed);
+  const packetSteeringEnabled = systemInfo.packet_steering_mode === '2';
+  const directProxyEnabled = Boolean(systemInfo.direct_proxy_enabled);
+  const directProxyEndpoint = systemInfo.direct_proxy_address
+    ? `${systemInfo.direct_proxy_address}:${systemInfo.direct_proxy_port || '2080'}`
+    : '';
+  const torrserverRunning = Boolean(systemInfo.torrserver_running);
+  const torrserverDirectAvailable = Boolean(
+    systemInfo.torrserver_direct_available,
+  );
+  const torrserverDirectEnabled = Boolean(systemInfo.torrserver_direct_enabled);
+  const torrserverDirectActive = Boolean(systemInfo.torrserver_direct_active);
   const singBoxExtended =
     Boolean(systemInfo.sing_box_extended) && !systemInfo.sing_box_compressed;
   const singBoxTiny = Boolean(systemInfo.sing_box_tiny);
@@ -960,6 +989,87 @@ function getComponentCards(): ComponentCard[] {
       releaseUrl: 'https://github.com/stressozz/Zapret-Manager',
       actions: zapretManagerActions,
     },
+    {
+      component: 'packet_steering',
+      column: 2,
+      title: 'Packet Steering',
+      version: packetSteeringEnabled ? _('Mode 2 enabled') : _('Normal mode'),
+      actions: [
+        packetSteeringEnabled
+          ? {
+              key: 'packetSteeringRestore',
+              text: _('Restore normal mode'),
+              icon: renderRotateCcwIcon24,
+              component: 'packet_steering',
+              action: 'restore',
+            }
+          : {
+              key: 'packetSteeringEnable',
+              text: _('Enable mode 2'),
+              icon: renderRotateCcwIcon24,
+              component: 'packet_steering',
+              action: 'enable',
+            },
+      ],
+    },
+    {
+      component: 'direct_proxy',
+      column: 2,
+      title: _('Direct Proxy'),
+      version: directProxyEnabled
+        ? `HTTP/SOCKS5 · ${directProxyEndpoint || _('Enabled')}`
+        : _('Disabled'),
+      copyValue: directProxyEnabled ? directProxyEndpoint : undefined,
+      actions: [
+        directProxyEnabled
+          ? {
+              key: 'directProxyDisable',
+              text: _('Disable'),
+              icon: renderXIcon24,
+              component: 'direct_proxy',
+              action: 'disable',
+            }
+          : {
+              key: 'directProxyEnable',
+              text: _('Enable'),
+              icon: renderRotateCcwIcon24,
+              component: 'direct_proxy',
+              action: 'enable',
+            },
+      ],
+    },
+    {
+      component: 'torrserver_direct',
+      column: 2,
+      title: _('TorrServer Direct'),
+      version: !torrserverRunning
+        ? _('TorrServer not found')
+        : !torrserverDirectAvailable
+          ? _('Dedicated cgroup unavailable')
+          : torrserverDirectEnabled && torrserverDirectActive
+            ? _('Enabled')
+            : torrserverDirectEnabled
+              ? _('Waiting for TorrServer')
+              : _('Disabled'),
+      actions: [
+        torrserverDirectEnabled
+          ? {
+              key: 'torrserverDirectDisable',
+              text: _('Disable'),
+              icon: renderXIcon24,
+              component: 'torrserver_direct',
+              action: 'disable',
+            }
+          : {
+              key: 'torrserverDirectEnable',
+              text: _('Enable'),
+              icon: renderRotateCcwIcon24,
+              component: 'torrserver_direct',
+              action: 'enable',
+              disabled: !torrserverDirectAvailable,
+            },
+      ],
+    },
   ];
 }
 
@@ -1105,6 +1215,7 @@ function renderComponentCard(card: ComponentCard) {
       icon: action.icon,
       loading,
       disabled:
+        action.disabled ||
         systemInfoLoading ||
         serviceRuntimeActionLoading ||
         (anyActionLoading && !loading),
@@ -1121,6 +1232,7 @@ function renderComponentCard(card: ComponentCard) {
       icon: action.icon,
       loading,
       disabled:
+        action.disabled ||
         systemInfoLoading ||
         serviceRuntimeActionLoading ||
         (anyActionLoading && !loading),
@@ -1133,6 +1245,19 @@ function renderComponentCard(card: ComponentCard) {
       E('div', { class: 'fkp_updates-page__component__actions-main' }, [
         ...primaryButtons,
         ...dangerButtons,
+      ]),
+    );
+  }
+
+  if (card.copyValue) {
+    actionElements.push(
+      E('div', { class: 'fkp_updates-page__component__actions-main' }, [
+        renderButton({
+          text: _('Copy address'),
+          icon: renderCopyIcon24,
+          disabled: anyActionLoading || serviceRuntimeActionLoading,
+          onClick: () => copyToClipboard(card.copyValue || ''),
+        }),
       ]),
     );
   }
@@ -1200,15 +1325,21 @@ function renderUpdatesComponents() {
     return;
   }
 
-  const columns = [[], []] as Node[][];
+  const columns = [[], [], []] as Node[][];
   getComponentCards().forEach((card) => {
     columns[card.column].push(renderComponentCard(card));
   });
+  columns[2].push(
+    renderFullUninstall(
+      isAnyActionLoading() || isServiceRuntimeActionLoading(),
+    ),
+  );
 
   return preserveScrollForPage(() => {
     container.replaceChildren(
       E('div', { class: 'fkp_updates-page__components-column' }, columns[0]),
       E('div', { class: 'fkp_updates-page__components-column' }, columns[1]),
+      E('div', { class: 'fkp_updates-page__components-column' }, columns[2]),
     );
   });
 }

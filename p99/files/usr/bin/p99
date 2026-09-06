@@ -60,6 +60,8 @@ function show_help() {
     print("    enable                  Enable P99 autostart\n");
     print("    disable                 Disable P99 autostart\n");
     print("    uninstall               Remove P99 files installed outside opkg/apk\n");
+    print("    full_uninstall          Remove P99 and sing-box and restore original repositories\n");
+    print("    support_report          Create a complete unmasked support report\n");
     print("    main                    Run main P99 process\n");
     print("    list_update             Update remote lists\n");
     print("    list_update_if_due      Update remote lists only when the configured interval has elapsed\n");
@@ -130,6 +132,7 @@ function command_spec(command) {
         enable: [ "service/lifecycle.uc", "enable", 0 ],
         disable: [ "service/lifecycle.uc", "disable", 0 ],
         uninstall: [ "service/lifecycle.uc", "uninstall", 0 ],
+        full_uninstall: [ "components/uninstall.uc", "start", 0 ],
         dnsmasq_restore: [ "service/lifecycle.uc", "dnsmasq-restore", 0 ],
         restore_dnsmasq: [ "service/lifecycle.uc", "dnsmasq-restore", 0 ],
         main: [ "service/lifecycle.uc", "main", 0 ],
@@ -176,6 +179,7 @@ function command_spec(command) {
         component_update_check_cache: [ "components/updates.uc", "component-update-check-cache", 0 ],
         check_dns_available: [ "diagnostics/runtime.uc", "check-dns-available", 0 ],
         global_check: [ "diagnostics/runtime.uc", "global-check", 2 ],
+        support_report: [ "diagnostics/runtime.uc", "support-report", 0 ],
         validate_nfqws_strategy_json: [ "diagnostics/runtime.uc", "validate-nfqws-strategy-json", 1 ],
         validate_nfqws2_strategy_json: [ "diagnostics/runtime.uc", "validate-nfqws2-strategy-json", 1 ],
         validate_byedpi_strategy_json: [ "providers/byedpi/validator.uc", "validate-json", 1 ],

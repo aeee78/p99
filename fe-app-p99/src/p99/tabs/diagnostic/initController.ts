@@ -65,7 +65,6 @@ import {
 import {
   formatMaskedSingBoxConfig,
   maskGlobalCheckText,
-  maskSupportReportText,
   stringifySingBoxConfig,
 } from './helpers/maskDiagnostics';
 
@@ -177,30 +176,12 @@ async function handleDownloadSupportReport() {
   setDiagnosticActionLoading('supportReport', true);
 
   try {
-    const [globalCheck, logs] = await Promise.all([
-      P99ShellMethods.globalCheck(),
-      P99ShellMethods.checkLogs(),
-    ]);
-    const globalText = globalCheck.success
-      ? String(globalCheck.data ?? '')
-      : _('Global check could not be collected.');
-    const logsText = logs.success
-      ? String(logs.data ?? '')
-      : _('P99 logs could not be collected.');
+    const report = await P99ShellMethods.supportReport();
+    if (!report.success) {
+      throw new Error(report.error || 'Support report collection failed');
+    }
 
-    downloadSupportReport(
-      [
-        'P99 support report',
-        `Generated: ${new Date().toISOString()}`,
-        '',
-        '=== Global check (sensitive values masked) ===',
-        maskSupportReportText(globalText).trim(),
-        '',
-        '=== Recent P99 logs ===',
-        maskSupportReportText(logsText).trim(),
-        '',
-      ].join('\n'),
-    );
+    downloadSupportReport(String(report.data ?? ''));
     showToast(_('Support report downloaded'), 'success');
   } catch (error) {
     logger.error('[DIAGNOSTIC]', 'handleDownloadSupportReport - e', error);

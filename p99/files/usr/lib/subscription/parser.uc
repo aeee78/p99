@@ -331,7 +331,18 @@ function runtime_outbounds_signature(path) {
     if (type(subscription) != "object" || type(subscription.outbounds) != "array")
         return null;
 
-    return canonical_runtime_value(subscription.outbounds);
+    // Providers may return the same proxy set in a different order. P99
+    // keeps the previously applied order, so ordering alone must not turn a
+    // periodic refresh into a sing-box reload that drops active connections.
+    // Nested arrays remain order-sensitive because their order may be part of
+    // an individual outbound's runtime configuration.
+    let result = [];
+    for (let outbound in subscription.outbounds)
+        push(result, sprintf("%J", canonical_runtime_value(outbound)));
+    sort(result, function(a, b) {
+        return a < b ? -1 : (a > b ? 1 : 0);
+    });
+    return result;
 }
 
 function runtime_outbounds_equal(left_path, right_path) {

@@ -23,6 +23,12 @@ const componentActionKeyMap: Record<string, UpdatesActionKey> = {
   'byedpi:remove': 'byedpiRemove',
   'zapret_manager:install': 'zapretManagerInstall',
   'zapret_manager:remove': 'zapretManagerRemove',
+  'packet_steering:enable': 'packetSteeringEnable',
+  'packet_steering:restore': 'packetSteeringRestore',
+  'direct_proxy:enable': 'directProxyEnable',
+  'direct_proxy:disable': 'directProxyDisable',
+  'torrserver_direct:enable': 'torrserverDirectEnable',
+  'torrserver_direct:disable': 'torrserverDirectDisable',
 };
 
 export function getComponentActionKey(

@@ -5,6 +5,7 @@ let constants = require("core.constants");
 let uci_core = require("core.uci");
 let connections = require("config.connections");
 let subscription_share_link = require("subscription.share_link");
+let filter_identity = require("subscription.filter_identity");
 
 const CONFIG_NAME = getenv("P99_CONFIG_NAME") || "p99";
 const LIB_DIR = getenv("P99_LIB") || "/usr/lib/p99";
@@ -1679,6 +1680,16 @@ function download_subscription_into_cache(section_name_value, subscription_url, 
             return 4;
         }
 
+        // Keep legacy name selections attached to the same connection across
+        // renames. This metadata is persisted together with the working feed.
+        if (!filter_identity.preserve_file(subscription_json_path, normalized_tmpfile)) {
+            unlink_path(raw_tmpfile);
+            unlink_path(headers_tmpfile);
+            unlink_path(normalized_tmpfile);
+            unlink_path(metadata_tmpfile);
+            return 1;
+        }
+
         if (files_equal(normalized_tmpfile, subscription_json_path)) {
             write_text(subscription_url_cache_path, subscription_url);
             write_text(subscription_user_agent_cache_path, effective_user_agent);
@@ -1696,15 +1707,11 @@ function download_subscription_into_cache(section_name_value, subscription_url, 
         }
 
         if (file_nonempty(subscription_json_path) && parser.runtime_outbounds_equal(normalized_tmpfile, subscription_json_path)) {
-            if (!move_file(normalized_tmpfile, subscription_json_path)) {
-                if (metadata_output_path != "")
-                    unlink_path(metadata_output_path);
-                unlink_path(raw_tmpfile);
-                unlink_path(headers_tmpfile);
-                unlink_path(metadata_tmpfile);
-                return 1;
-            }
-
+            // Keep the already applied representation and outbound order. The
+            // refreshed file differs only in metadata ignored by the runtime
+            // comparison or in provider ordering, neither of which should
+            // perturb a later generated sing-box configuration.
+            unlink_path(normalized_tmpfile);
             write_text(subscription_url_cache_path, subscription_url);
             write_text(subscription_user_agent_cache_path, effective_user_agent);
             write_text(subscription_hwid_cache_path, effective_hwid);

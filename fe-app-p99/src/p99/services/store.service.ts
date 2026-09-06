@@ -207,6 +207,14 @@ export interface StoreType {
     byedpi_version: string;
     byedpi_installed: number;
     zapret_manager_installed: number;
+    packet_steering_mode: string;
+    direct_proxy_enabled: number;
+    direct_proxy_address: string;
+    direct_proxy_port: string;
+    torrserver_running: number;
+    torrserver_direct_available: number;
+    torrserver_direct_enabled: number;
+    torrserver_direct_active: number;
     server_inbounds_enabled_count: number;
     openwrt_version: string;
     device_model: string;
@@ -231,6 +239,12 @@ export interface StoreType {
     byedpiRemove: { loading: boolean };
     zapretManagerInstall: { loading: boolean };
     zapretManagerRemove: { loading: boolean };
+    packetSteeringEnable: { loading: boolean };
+    packetSteeringRestore: { loading: boolean };
+    directProxyEnable: { loading: boolean };
+    directProxyDisable: { loading: boolean };
+    torrserverDirectEnable: { loading: boolean };
+    torrserverDirectDisable: { loading: boolean };
   };
   updatesChecks: Record<
     P99.ComponentName,

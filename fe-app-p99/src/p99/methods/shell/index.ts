@@ -19,6 +19,7 @@ const COMPONENT_ACTION_SELF_UPDATE_SETTLE_MS = 30000;
 const COMPONENT_ACTION_TRANSIENT_RPC_GRACE_MS = 30000;
 const COMPONENT_ACTION_STATE_DIR = '/var/run/p99/component-actions';
 const GET_UI_STATE_RPC_TIMEOUT_MS = 3000;
+const SUPPORT_REPORT_RPC_TIMEOUT_MS = 60000;
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -323,6 +324,13 @@ export const P99ShellMethods = {
     callBaseMethod<unknown>(P99.AvailableMethods.GLOBAL_CHECK, [
       masked ? 'masked' : 'raw',
     ]),
+  supportReport: async () =>
+    callBaseMethod<unknown>(
+      P99.AvailableMethods.SUPPORT_REPORT,
+      [],
+      '/usr/bin/p99',
+      { timeout: SUPPORT_REPORT_RPC_TIMEOUT_MS },
+    ),
   showSingBoxConfig: async (masked = true) =>
     callBaseMethod<unknown>(P99.AvailableMethods.SHOW_SING_BOX_CONFIG, [
       masked ? 'masked' : 'raw',

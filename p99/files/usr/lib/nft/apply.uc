@@ -16,6 +16,8 @@ const DNS_SOURCE6_SET = "p99_dns_sources6";
 let common_read_json_file = common.read_json_file;
 let list_option = common.list_option;
 let bool_option = common.bool_option;
+let shell_quote = common.shell_quote;
+let command_from_args = common.command_from_args;
 
 function as_string(value) {
     return value == null ? "" : "" + value;
@@ -87,19 +89,6 @@ function unlink_file(path) {
     }
     catch (e) {
     }
-}
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
-
-function command_from_args(args) {
-    let parts = [];
-
-    for (let arg in args)
-        push(parts, shell_quote(arg));
-
-    return join(" ", parts);
 }
 
 function run_args(args) {

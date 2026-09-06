@@ -33,6 +33,9 @@ let strip_internal_fields = common.strip_internal_fields;
 let array_or_empty = common.array_or_empty;
 let object_or_empty = common.object_or_empty;
 let option = common.option;
+let parent_dir = common.parent_dir;
+let ensure_dir = common.ensure_dir;
+let ensure_parent_dir = common.ensure_parent_dir;
 let list_option = common.list_option;
 let bool_option = common.bool_option;
 let int_option = common.int_option;
@@ -47,30 +50,6 @@ let url_path = runtime_url.path;
 let url_query_params = runtime_url.query_params;
 
 const CONFIG_NAME = "p99";
-
-function parent_dir(path) {
-    path = as_string(path);
-    let slash = rindex(path, "/");
-    return slash <= 0 ? "" : substr(path, 0, slash);
-}
-
-function ensure_dir(path) {
-    path = as_string(path);
-    if (path == "" || path == "/")
-        return true;
-    if (fs.stat(path) != null)
-        return true;
-
-    let parent = parent_dir(path);
-    if (parent != "" && !ensure_dir(parent))
-        return false;
-
-    return fs.mkdir(path, 0755) || fs.stat(path) != null;
-}
-
-function ensure_parent_dir(path) {
-    return ensure_dir(parent_dir(path));
-}
 
 function atomic_write_json_file(path, value) {
     let stamp = clock();
@@ -435,6 +414,7 @@ function base_config(settings, service_address, runtime_context) {
     for (let rule in [
         { action: "reject", query_type: "HTTPS" },
         { action: "reject", domain_suffix: "use-application-dns.net" },
+        { action: "reject", domain_keyword: "_dns-sd._udp" },
         {
             action: "route",
             server: runtime_constants.FAKEIP_DNS_SERVER_TAG,

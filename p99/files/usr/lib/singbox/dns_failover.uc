@@ -14,21 +14,10 @@ const PID_FILE = getenv("P99_DNS_FAILOVER_PID_FILE") || RUNTIME_STATE_DIR + "/dn
 const DNS_FAILOVER_UC = getenv("P99_DNS_FAILOVER_UC") || LIB_DIR + "/singbox/dns_failover.uc";
 const SERVICE_BIN = getenv("P99_BIN") || "/usr/bin/p99";
 const CHECK_DOMAIN = "example.com";
-
-function as_string(value) {
-    return value == null ? "" : "" + value;
-}
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
-
-function command_from_args(args) {
-    let result = [];
-    for (let arg in args)
-        push(result, shell_quote(arg));
-    return join(" ", result);
-}
+let as_string = common.as_string;
+let shell_quote = common.shell_quote;
+let command_from_args = common.command_from_args;
+let ensure_dir = common.ensure_dir;
 
 function command_status(command) {
     let status = int(system(command));
@@ -50,10 +39,6 @@ function command_output_from_args(args) {
 
 function settings() {
     return common.object_or_empty(uci_core.get_all(CONFIG_NAME, "settings"));
-}
-
-function ensure_dir(path) {
-    return command_success_from_args([ "mkdir", "-p", path ]);
 }
 
 function remove_file(path) {

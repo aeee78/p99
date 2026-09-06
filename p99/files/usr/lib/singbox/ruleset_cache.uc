@@ -9,20 +9,9 @@ const CACHE_DIR = getenv("P99_RULESET_CACHE_DIR") || "/etc/p99/ruleset-cache";
 const MANIFEST_PATH = getenv("P99_RULESET_CACHE_MANIFEST") || CACHE_DIR + "/manifest.json";
 const SERVICE_INIT = getenv("P99_SERVICE_INIT") || "/etc/init.d/p99";
 
-function as_string(value) {
-    return value == null ? "" : "" + value;
-}
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
-
-function command_from_args(args) {
-    let escaped = [];
-    for (let arg in args)
-        push(escaped, shell_quote(arg));
-    return join(" ", escaped);
-}
+let as_string = common.as_string;
+let shell_quote = common.shell_quote;
+let command_from_args = common.command_from_args;
 
 function command_success(args) {
     return system(command_from_args(args) + " >/dev/null 2>&1") == 0;

@@ -4,6 +4,9 @@ let fs = require("fs");
 let common = require("core.common");
 
 let as_string = common.as_string;
+let shell_quote = common.shell_quote;
+let command_from_args = common.command_from_args;
+let ensure_dir = common.ensure_dir;
 let read_json_file = common.read_json_file;
 let write_json = common.write_json;
 let array_or_empty = common.array_or_empty;
@@ -15,17 +18,6 @@ const SECTION_CACHE_DIR = getenv("P99_SECTION_CACHE_DIR") || RUNTIME_STATE_DIR +
 const PRIORITY_PID_FILE = getenv("P99_PRIORITY_PID_FILE") || RUNTIME_STATE_DIR + "/priority.pid";
 const PRIORITY_UC = getenv("P99_PRIORITY_UC") || LIB_DIR + "/singbox/priority.uc";
 const DIAGNOSTICS_UC = getenv("P99_DIAGNOSTICS_UC") || LIB_DIR + "/diagnostics/runtime.uc";
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
-
-function command_from_args(args) {
-    let parts = [];
-    for (let arg in args)
-        push(parts, shell_quote(arg));
-    return join(" ", parts);
-}
 
 function command_output(command) {
     let pipe = fs.popen(command, "r");
@@ -50,10 +42,6 @@ function command_status(command) {
 
 function command_success_from_args(args) {
     return command_status(command_from_args(args) + " >/dev/null 2>&1") == 0;
-}
-
-function ensure_dir(path) {
-    return command_success_from_args([ "mkdir", "-p", path ]);
 }
 
 function remove_file(path) {

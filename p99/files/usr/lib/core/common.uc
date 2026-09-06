@@ -6,6 +6,42 @@ function as_string(value) {
     return value == null ? "" : "" + value;
 }
 
+function shell_quote(value) {
+    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
+}
+
+function command_from_args(args) {
+    let parts = [];
+    for (let arg in args)
+        push(parts, shell_quote(arg));
+    return join(" ", parts);
+}
+
+function parent_dir(path) {
+    path = as_string(path);
+    let slash = rindex(path, "/");
+    return slash <= 0 ? (slash == 0 ? "/" : "") : substr(path, 0, slash);
+}
+
+function ensure_dir(path) {
+    path = as_string(path);
+    if (path == "" || path == "/" || path == ".")
+        return true;
+    if (fs.stat(path) != null)
+        return true;
+
+    let parent = parent_dir(path);
+    if (parent != "" && parent != "/" && !ensure_dir(parent))
+        return false;
+
+    return fs.mkdir(path, 0755) || fs.stat(path) != null;
+}
+
+function ensure_parent_dir(path) {
+    let parent = parent_dir(path);
+    return parent == "" || parent == "." || ensure_dir(parent);
+}
+
 function read_json_file(path) {
     let data = fs.readfile(path);
     if (data == null)
@@ -130,6 +166,11 @@ function int_option(section, key, fallback) {
 
 return {
     as_string,
+    shell_quote,
+    command_from_args,
+    parent_dir,
+    ensure_dir,
+    ensure_parent_dir,
     read_json_file,
     read_stdin,
     read_stdin_json,

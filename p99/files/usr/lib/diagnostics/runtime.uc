@@ -1170,11 +1170,6 @@ function get_server_capabilities() {
     return 0;
 }
 
-function neutralize_zapret_defaults() {
-    log_message("Standalone zapret is not neutralized automatically; P99 uses /opt/zapret/nfq/nfqws as an external provider and manages only its own NFQUEUE range.", "info");
-    return 0;
-}
-
 function sing_box_process_is_running() {
     return command_success_from_args([ "pgrep", "-x", "sing-box" ]) ||
         command_success_from_args([ "pgrep", "-f", "^/usr/bin/sing-box[[:space:]]" ]);
@@ -2012,8 +2007,6 @@ else if (mode == "check-zapret2-runtime")
     exit(module_passthrough(ZAPRET2_RUNTIME_UC, [ "check" ]));
 else if (mode == "check-byedpi-runtime")
     exit(module_passthrough(BYEDPI_RUNTIME_UC, [ "check" ]));
-else if (mode == "neutralize-zapret-defaults")
-    exit(neutralize_zapret_defaults());
 else if (mode == "clash-api")
     exit(clash_api(ARGV[1], ARGV[2], ARGV[3], ARGV[4]));
 else if (mode == "automatic-latency-test")

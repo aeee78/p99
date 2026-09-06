@@ -3091,7 +3091,7 @@ function addDashboardGroupFilterOption(
 function addDashboardServerFilterOptions(section) {
   const optionSection = {
     option: (optionType, ...args) => {
-      const option = section.taboption("settings", optionType, ...args);
+      const option = section.taboption("advanced", optionType, ...args);
       option.modalonly = true;
       return option;
     },
@@ -3992,19 +3992,19 @@ function getRuleResolvedAction(section_id) {
 function getActionOptionLabel(action) {
   switch (`${action}`) {
     case "block":
-      return "Block";
+      return _("Block");
     case "bypass":
-      return "Bypass";
+      return _("Direct / Bypass");
     case "connection":
-      return "Connection";
+      return _("Proxy (sing-box)");
     case "dns":
       return "DNS";
     case "vpn":
       return "VPN";
     case "zapret":
-      return "Zapret";
+      return "Zapret (DPI)";
     case "zapret2":
-      return "Zapret2";
+      return "Zapret2 (DPI)";
     case "byedpi":
       return "ByeDPI";
     case "outbound":
@@ -4042,9 +4042,9 @@ function populateActionOptionValues(option) {
   delete option.vallist;
 
   option.value("connection", getActionOptionLabel("connection"));
-  option.value("bypass", "Bypass");
-  option.value("block", "Block");
-  option.value("dns", "DNS");
+  option.value("bypass", getActionOptionLabel("bypass"));
+  option.value("block", getActionOptionLabel("block"));
+  option.value("dns", getActionOptionLabel("dns"));
   if (isZapretInstalledForUi()) {
     option.value("zapret", getActionOptionLabel("zapret"));
   }
@@ -6665,7 +6665,7 @@ function addDynamicConditionField(section, config) {
 
 function addLocalDeviceSubnetDynamicField(section, config) {
   const o = section.taboption(
-    "conditions",
+    config.tab || "clients",
     form.DynamicList,
     config.key,
     config.label,
@@ -6966,8 +6966,10 @@ function writeDnsRulesetReferences(section_id, values) {
 function createSectionContent(section) {
   let o;
 
-  section.tab("settings", _("Settings"));
-  section.tab("conditions", _("Conditions"));
+  section.tab("settings", _("General"));
+  section.tab("conditions", _("Rules & Traffic"));
+  section.tab("clients", _("Clients & Devices"));
+  section.tab("advanced", _("Advanced"));
 
   o = section.taboption("settings", form.Flag, "enabled", _("Enable"));
   o.default = "1";
@@ -7058,7 +7060,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.Flag,
     "dns_detour_enabled",
     _("DNS through section"),
@@ -7070,7 +7072,7 @@ function createSectionContent(section) {
   o.modalonly = true;
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.ListValue,
     "dns_detour_section",
     _("DNS requests through section"),
@@ -7087,7 +7089,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.TextValue,
     "nfqws_opt",
     _("NFQWS Strategy"),
@@ -7134,7 +7136,7 @@ function createSectionContent(section) {
   configureTextareaOption(o, analyzeNfqwsStrategy, attachNfqwsRemoteValidation);
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.TextValue,
     "nfqws2_opt",
     _("NFQWS2 Strategy"),
@@ -7177,7 +7179,7 @@ function createSectionContent(section) {
   );
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.TextValue,
     "byedpi_cmd_opts",
     _("ByeDPI Strategy"),
@@ -7431,7 +7433,7 @@ function createSectionContent(section) {
   outboundNameSourceOptions.set("interfaces", o);
 
   o = section.taboption(
-    "settings",
+    "advanced",
     ButtonAddSettingsDynamicList,
     "outbound_jsons",
     _("JSON outbound"),
@@ -7556,7 +7558,7 @@ function createSectionContent(section) {
   sectionGroupSourceOptions.set("priority_group", o);
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.Flag,
     "outbound_detour_enabled",
     _("Cascade connection"),
@@ -7594,7 +7596,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.ListValue,
     "outbound_detour_section",
     _("Connect through"),
@@ -7620,7 +7622,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.Flag,
     "sort_by_latency",
     _("Sort by latency"),
@@ -7632,7 +7634,7 @@ function createSectionContent(section) {
   o.modalonly = true;
 
   o = section.taboption(
-    "settings",
+    "clients",
     form.Flag,
     "mixed_proxy_enabled",
     _("Enable Mixed Proxy"),
@@ -7646,7 +7648,7 @@ function createSectionContent(section) {
   o.modalonly = true;
 
   o = section.taboption(
-    "settings",
+    "clients",
     form.Value,
     "mixed_proxy_port",
     _("Mixed Proxy Port"),
@@ -7671,7 +7673,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "clients",
     form.Flag,
     "mixed_proxy_auth_enabled",
     _("Enable Mixed Proxy Authentication"),
@@ -7685,7 +7687,7 @@ function createSectionContent(section) {
   o.modalonly = true;
 
   o = section.taboption(
-    "settings",
+    "clients",
     form.Value,
     "mixed_proxy_username",
     _("Mixed Proxy Username"),
@@ -7716,7 +7718,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "clients",
     form.Value,
     "mixed_proxy_password",
     _("Mixed Proxy Password"),
@@ -7747,7 +7749,7 @@ function createSectionContent(section) {
   };
 
   o = section.taboption(
-    "settings",
+    "advanced",
     form.Flag,
     "resolve_real_ip_for_routing",
     _("Resolve real IP for routing"),

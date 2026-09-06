@@ -81,8 +81,6 @@ function show_help() {
     print("    check_zapret_runtime    Check external zapret provider state\n");
     print("    check_zapret2_runtime   Check external zapret2 provider state\n");
     print("    check_byedpi_runtime    Check external ByeDPI provider state\n");
-    print("    neutralize_zapret_defaults\n");
-    print("                            Compatibility no-op; P99 does not manage standalone zapret\n");
     print("    clash_api               Clash API interface for managing proxies and groups\n");
     print("    show_config             Display current P99 configuration\n");
     print("    show_version            Show P99 version\n");
@@ -151,7 +149,6 @@ function command_spec(command) {
         check_zapret_runtime: [ "diagnostics/runtime.uc", "check-zapret-runtime", 0 ],
         check_zapret2_runtime: [ "diagnostics/runtime.uc", "check-zapret2-runtime", 0 ],
         check_byedpi_runtime: [ "diagnostics/runtime.uc", "check-byedpi-runtime", 0 ],
-        neutralize_zapret_defaults: [ "diagnostics/runtime.uc", "neutralize-zapret-defaults", 0 ],
         clash_api: [ "diagnostics/runtime.uc", "clash-api", 4 ],
         show_config: [ "diagnostics/runtime.uc", "show-config", 1 ],
         show_version: [ "diagnostics/runtime.uc", "show-version", 0 ],
@@ -200,12 +197,21 @@ function run_spec(command, spec, user_args) {
         return 1;
     }
 
-    let args = [ "ucode", "-L", LIB_DIR, module, spec[1] ];
+    ARGV = [ spec[1] ];
     let count = int(spec[2] || 0);
     for (let i = 0; i < count; i++)
-        push(args, user_args[i] || "");
+        push(ARGV, user_args[i] || "");
 
-    return normalize_status(system(command_from_args(args)));
+    try {
+        include(module);
+    }
+    catch (e) {
+        warn("Error executing '", module, "': ", e, "\n");
+        restore_dnsmasq_failsafe_on_loader_failure(command);
+        return 1;
+    }
+
+    return 0;
 }
 
 function main() {

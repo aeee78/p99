@@ -40,20 +40,12 @@ const SB_VARIANT_STATE_FILE = getenv("SB_VARIANT_STATE_FILE") || "/etc/p99/sing-
 const SB_VERSION_STATE_FILE = getenv("SB_VERSION_STATE_FILE") || "/etc/p99/sing-box-version";
 const SB_MANAGED_SERVICE_MARKER = getenv("SB_MANAGED_SERVICE_MARKER") || "P99 managed sing-box service for binary variants";
 
-function as_string(value) {
-    return value == null ? "" : "" + value;
-}
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
-
-function command_from_args(args) {
-    let parts = [];
-    for (let arg in args)
-        push(parts, shell_quote(arg));
-    return join(" ", parts);
-}
+let as_string = common.as_string;
+let shell_quote = common.shell_quote;
+let command_from_args = common.command_from_args;
+let parent_dir = common.parent_dir;
+let ensure_dir = common.ensure_dir;
+let ensure_parent_dir = common.ensure_parent_dir;
 
 function command_env(assignments) {
     let parts = [];
@@ -166,21 +158,6 @@ function whitespace_items(value) {
 
 function file_exists(path) {
     return fs.stat(as_string(path)) != null;
-}
-
-function parent_dir(path) {
-    path = as_string(path);
-    let slash = rindex(path, "/");
-    return slash >= 0 ? substr(path, 0, slash) : "";
-}
-
-function ensure_dir(path) {
-    return command_success_from_args([ "mkdir", "-p", path ]);
-}
-
-function ensure_parent_dir(path) {
-    let dir = parent_dir(path);
-    return dir == "" || dir == "." || ensure_dir(dir);
 }
 
 function temp_path() {

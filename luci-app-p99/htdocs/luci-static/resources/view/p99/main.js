@@ -5365,7 +5365,7 @@ function applyUiStateToStore(uiState) {
 
 // src/p99/services/runtimeUiState.service.ts
 var RUNTIME_UI_STATE_REFRESH_MIN_INTERVAL_MS = 500;
-var RUNTIME_UI_STATE_IDLE_POLL_INTERVAL_MS = 2e3;
+var RUNTIME_UI_STATE_IDLE_POLL_INTERVAL_MS = 5e3;
 var RUNTIME_UI_STATE_ACTIVE_POLL_INTERVAL_MS = 500;
 var runtimeUiStateRefreshPromise = null;
 var lastRuntimeUiStateRefreshAt = 0;

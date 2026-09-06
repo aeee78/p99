@@ -2227,3 +2227,27 @@ msgstr "sing-box outbound для Zapret2 настроен"
 
 msgid "Zapret2 sing-box outbound is not configured"
 msgstr "sing-box outbound для Zapret2 не настроен"
+
+msgid "General"
+msgstr "Основные"
+
+msgid "Rules & Traffic"
+msgstr "Правила и трафик"
+
+msgid "Clients & Devices"
+msgstr "Устройства и клиенты"
+
+msgid "Advanced"
+msgstr "Дополнительно"
+
+msgid "Proxy (sing-box)"
+msgstr "Прокси (sing-box)"
+
+msgid "Direct / Bypass"
+msgstr "Напрямую / Bypass"
+
+msgid "Zapret (DPI)"
+msgstr "Zapret (DPI)"
+
+msgid "Zapret2 (DPI)"
+msgstr "Zapret2 (DPI)"

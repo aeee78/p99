@@ -328,6 +328,18 @@ const EntryPoint = {
         });
     };
 
+    const dashboardSection = p99Map.section(
+      form.TypedSection,
+      "dashboard",
+      _("Dashboard"),
+    );
+    dashboardSection.anonymous = true;
+    dashboardSection.addremove = false;
+    dashboardSection.cfgsections = function () {
+      return ["dashboard"];
+    };
+    dashboard.createDashboardContent(dashboardSection);
+
     const rulesSection = p99Map.section(
       form.GridSection,
       "section",
@@ -385,18 +397,6 @@ const EntryPoint = {
       return ["diagnostic"];
     };
     diagnostic.createDiagnosticContent(diagnosticSection);
-
-    const dashboardSection = p99Map.section(
-      form.TypedSection,
-      "dashboard",
-      _("Dashboard"),
-    );
-    dashboardSection.anonymous = true;
-    dashboardSection.addremove = false;
-    dashboardSection.cfgsections = function () {
-      return ["dashboard"];
-    };
-    dashboard.createDashboardContent(dashboardSection);
 
     const monitoringSection = p99Map.section(
       form.TypedSection,

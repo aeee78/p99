@@ -19,6 +19,8 @@ let option = common.option;
 let list_option = common.list_option;
 let bool_option = common.bool_option;
 let object_or_empty = common.object_or_empty;
+let shell_quote = common.shell_quote;
+let ensure_dir = common.ensure_dir;
 
 const CONFIG_NAME = getenv("P99_CONFIG_NAME") || "p99";
 const TMP_SUBSCRIPTION_FOLDER = getenv("TMP_SUBSCRIPTION_FOLDER") || "/tmp/sing-box/subscriptions";
@@ -42,10 +44,6 @@ const CHILD_ITEM_TYPES = [
     "section_interface",
     "urltest"
 ];
-
-function shell_quote(value) {
-    return "'" + replace(as_string(value), /'/g, "'\\''") + "'";
-}
 
 function command_output(command) {
     let pipe = fs.popen(command, "r");
@@ -1378,10 +1376,6 @@ function first_line(path) {
         return "";
     let newline = index(data, "\n");
     return newline >= 0 ? substr(data, 0, newline) : data;
-}
-
-function ensure_dir(path) {
-    run("mkdir -p " + shell_quote(path) + " >/dev/null 2>&1");
 }
 
 function clear_subscription_runtime_cache() {

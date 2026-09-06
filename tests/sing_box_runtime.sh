@@ -1210,6 +1210,7 @@ let defaults = cfg("default");
 assert(first_remote_ruleset(defaults).update_interval == "1d", "default list update interval");
 assert(defaults.dns.strategy == "prefer_ipv4", "missing DNS strategy keeps the prefer_ipv4 default");
 assert(dns_server(defaults, r => r.tag == "dnsmasq-server") == null, "source-aware DNS server is omitted without device filters");
+assert(dns_rule(defaults, r => r.action == "reject" && r.domain_keyword == "_dns-sd._udp") != null, "DNS-SD queries are rejected in base DNS rules");
 
 let matchers = cfg("matchers");
 assert(matchers.dns.strategy == "prefer_ipv6", "configured DNS strategy is generated");

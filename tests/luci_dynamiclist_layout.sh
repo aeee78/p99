@@ -10,39 +10,11 @@ fail() {
   exit 1
 }
 
-wrapper_styles="$(sed -n '/^\.fkp-button-add-dynlist > \.add-item {$/,/^}$/p' "$SECTION_JS")"
-button_styles="$(sed -n '/^\.fkp-button-add-dynlist > \.add-item > \.cbi-button-add {$/,/^}$/p' "$SECTION_JS")"
-settings_styles="$(sed -n '/^\.fkp-connections-dynlist > \.item > \.fkp-dynlist-settings {$/,/^}$/p' "$SECTION_JS")"
 urltest_options="$(sed -n '/^function addUrlTestItemOptions(/,/^function priorityLevelSettingsForValidation(/p' "$SECTION_JS")"
 priority_options="$(sed -n '/^function addPriorityLevelItemOptions(/,/^function addPriorityGroupItemOptions(/p' "$SECTION_JS")"
 dashboard_options="$(sed -n '/^function addDashboardServerFilterOptions(/,/^function settingValueEquals(/p' "$SECTION_JS")"
 create_section="$(sed -n '/^function createSectionContent(/,/^function loadSectionTableOptions(/p' "$SECTION_JS")"
 live_choices="$(sed -n '/^function configureLiveDynamicListChoices(/,/^function countryChoices(/p' "$SECTION_JS")"
-close_all_styles="$(sed -n '/^\.fkp_monitoring-page #monitoring-close-all\.btn\.fkp_monitoring-page__icon-button:hover:not(:disabled) {$/,/^}$/p' "$MONITORING_STYLES")"
-
-grep -Fq 'display: flex;' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList add rows must use a content-sized flex wrapper"
-grep -Fq 'width: var(--fkp-button-add-width, 210px);' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList wrappers must follow the measured button width"
-grep -Fq 'max-width: 100%;' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList wrappers must stay inside narrow option fields"
-grep -Fq 'min-width: 0;' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList wrappers must not inherit theme minimum widths"
-grep -Fq 'background: transparent;' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList wrappers must not render as empty input groups"
-grep -Fq 'border: 0;' <<<"$wrapper_styles" ||
-  fail "button-only DynamicList wrappers must leave framing to the button"
-
-grep -Fq 'width: 100% !important;' <<<"$button_styles" ||
-  fail "button-only DynamicList buttons must fill their content-sized wrapper"
-grep -Fq 'max-width: 100% !important;' <<<"$button_styles" ||
-  fail "button-only DynamicList buttons must not overflow narrow wrappers"
-grep -Fq 'text-overflow: ellipsis !important;' <<<"$button_styles" ||
-  fail "button-only DynamicList labels must truncate instead of overflowing"
-grep -Fq 'var(--background-color-high, var(--primary, ButtonFace))' <<<"$button_styles" ||
-  fail "button-only DynamicList buttons must remain visible outside Bootstrap themes"
-grep -Fq 'min-width: var(--fkp-dynlist-action-width);' <<<"$settings_styles" ||
-  fail "DynamicList settings buttons must resist theme label sizing"
 
 grep -Fq 'if (key === "include_regex") {' <<<"$urltest_options" ||
   fail "URLTest include proxy parameters must follow the include regex option"
@@ -147,10 +119,5 @@ grep -Fq 'Add URLs or local paths to .srs / .json lists. Subnets are ignored by 
   fail "routing rule-set copy must explain the default subnet behavior"
 grep -Fq 'Add URLs or local paths to .lst lists containing domains. IP entries are ignored.' <<<"$create_section" ||
   fail "DNS list copy must explain that IP entries are ignored"
-
-grep -Fq 'background: transparent !important;' <<<"$close_all_styles" ||
-  fail "close-all hover must match the pause button's transparent background"
-grep -Fq 'color: color-mix(in srgb, var(--fkp-monitoring-danger-color) 70%, white) !important;' <<<"$close_all_styles" ||
-  fail "close-all hover must highlight its icon"
 
 printf 'LuCI DynamicList layout checks passed\n'

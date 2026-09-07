@@ -5,7 +5,18 @@ const inputFile = 'locales/calls.json';
 const outputFile = 'locales/p99.pot';
 const projectId = 'P99';
 
-function getGitUser() {
+interface GitUser {
+  name: string;
+  email: string;
+}
+
+interface CallEntry {
+  call: string;
+  key: string;
+  places: string[];
+}
+
+function getGitUser(): GitUser {
   try {
     const name = execSync('git config user.name', {
       stdio: ['ignore', 'pipe', 'ignore'],
@@ -21,7 +32,7 @@ function getGitUser() {
     if (name && email) {
       return { name, email };
     }
-  } catch (error) {
+  } catch (_error) {
     // Fall through to deterministic defaults when git identity is not configured.
   }
 
@@ -31,7 +42,7 @@ function getGitUser() {
   };
 }
 
-function getPotHeader({ name, email }) {
+function getPotHeader({ name, email }: GitUser): string {
   const now = new Date();
   const date = now.toISOString().replace('T', ' ').slice(0, 16);
   const offset = -now.getTimezoneOffset();
@@ -62,20 +73,20 @@ function getPotHeader({ name, email }) {
   ].join('\n');
 }
 
-function escapePoString(str) {
+function escapePoString(str: string): string {
   return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-function generateEntry(item) {
+function generateEntry(item: CallEntry): string {
   const locations = item.places.map((loc) => `#: ${loc}`).join('\n');
   const msgid = escapePoString(item.key);
   return [locations, `msgid "${msgid}"`, `msgstr ""`, ''].join('\n');
 }
 
-async function generatePot() {
+async function generatePot(): Promise<void> {
   const gitUser = getGitUser();
   const raw = await fs.readFile(inputFile, 'utf8');
-  const entries = JSON.parse(raw);
+  const entries: CallEntry[] = JSON.parse(raw);
 
   const header = getPotHeader(gitUser);
   const body = entries.map(generateEntry).join('\n');

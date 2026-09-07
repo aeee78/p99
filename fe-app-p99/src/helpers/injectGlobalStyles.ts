@@ -3,6 +3,10 @@ import { GlobalStyles } from '../styles';
 const P99_GLOBAL_STYLES_ID = 'p99-global-styles';
 
 export function injectGlobalStyles() {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   if (document.getElementById(P99_GLOBAL_STYLES_ID)) {
     return;
   }

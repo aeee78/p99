@@ -24,6 +24,13 @@ class TabService {
   }
 
   private init() {
+    if (
+      typeof MutationObserver === 'undefined' ||
+      typeof document === 'undefined' ||
+      !document.body
+    ) {
+      return;
+    }
     this.observer = new MutationObserver(() => this.handleMutations());
     this.observer.observe(document.body, {
       subtree: true,
@@ -41,6 +48,9 @@ class TabService {
   }
 
   private getTabsInfo(): TabInfo[] {
+    if (typeof document === 'undefined') {
+      return [];
+    }
     const tabs = Array.from(
       document.querySelectorAll<HTMLElement>('.cbi-tab, .cbi-tab-disabled'),
     );
@@ -54,6 +64,9 @@ class TabService {
   }
 
   private getActiveTabId(): string | null {
+    if (typeof document === 'undefined') {
+      return null;
+    }
     const active = document.querySelector<HTMLElement>(
       '.cbi-tab:not(.cbi-tab-disabled)',
     );

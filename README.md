@@ -103,21 +103,32 @@ wget -qO- https://raw.githubusercontent.com/aeee78/p99/main/install.sh | sh
 │   │   ├── constants.ts               # Константы фронтенда, опции DNS, списки сервисов
 │   │   ├── validators/                # Валидаторы IP, CIDR, доменов, ссылок, JSON
 │   │   ├── helpers/                   # Хелперы парсинга, тостов, стилей, Clash UI URL
-│   │   └── p99/                       # Вкладки и сервисы интерфейса
-│   │       ├── section/               # Модули логики секций (duration, dpiStrategies, rulesets, childItems, textListAnalysis)
-│   │       ├── services/              # Реактивный стор, WebSocket/RPC, uiState, логи
-│   │       └── tabs/                  # Dashboard, Diagnostic, Monitoring, Updates
+│   │   └── p99/                       # Вкладки, сервисы и представления интерфейса
+│   │       ├── helpers/               # Хелперы устройств LAN (localDevices) и RPC
+│   │       ├── section/               # Модули логики секций (duration, dpiStrategies, rulesets, childItems, textListAnalysis, geo, detours, dashboardFilters, clientIsolation, modalTabs)
+│   │       ├── services/              # Реактивный стор, WebSocket/RPC, uiState, логи, uiCapabilities
+│   │       ├── tabs/                  # Dashboard, Diagnostic, Monitoring, Updates, Subscriptions, Settings, Section
+│   │       │   └── section/           # Модули сборки вкладки правил (childItemsManager, settingsModals, itemOptions, annotatedTextarea, dpiValidation, conditionFields, sectionContent)
+│   │       └── views/                 # Главный оркестратор Form.Map (p99View)
+│   ├── extract-calls.ts               # Извлечение вызовов gettext _() через Babel AST (TypeScript)
+│   ├── generate-pot.ts                # Генерация шаблона локализации p99.pot (TypeScript)
+│   ├── generate-po.ts                 # Синхронизация и генерация языковых каталогов p99.*.po (TypeScript)
+│   ├── distribute-locales.ts          # Распространение каталогов в luci-app-p99/po (TypeScript)
+│   ├── watch-upload.ts                # Отслеживание и SFTP-загрузка изменений на роутер (TypeScript)
 │   ├── tsup.config.ts                 # Сборщик: собирает в main.js и патчит в LuCI baseclass
-│   └── package.json                   # Скрипты ci, test (vitest), lint (eslint), build
+│   ├── vitest.config.ts               # Конфигурация тестов Vitest (TypeScript)
+│   ├── eslint.config.ts               # Конфигурация линтера ESLint 9 через jiti (TypeScript)
+│   └── package.json                   # Скрипты ci, test (vitest), lint (eslint), build, locales:*
 ├── luci-app-p99/                      # LuCI Web UI пакет для OpenWrt
 │   ├── Makefile                       # Сборка пакета luci-app-p99 и luci-i18n-p99-ru
 │   ├── htdocs/luci-static/resources/view/p99/
 │   │   ├── main.js                    # СГЕНЕРИРОВАННЫЙ БАНДЛ (не редактировать вручную!)
-│   │   ├── p99.js                     # Главная страница LuCI и регистрация вкладок
+│   │   ├── p99.js                     # Главная страница LuCI и регистрация вкладок (адаптер к TypeScript renderP99View)
 │   │   ├── dashboard.js               # Вкладка дашборда (активный узел, пинг — по умолчанию)
-│   │   ├── section.js                 # Вкладка правил/секций (4 логические вкладки, интеграция с TypeScript-модулями main.js)
-│   │   ├── subscriptions.js           # Вкладка подписок
-│   │   ├── settings.js                # Вкладка глобальных настроек
+│   │   ├── section.js                 # Вкладка правил/секций (тонкий 27-строчный LuCI-адаптер к TypeScript-модулям main.js)
+│   │   ├── subscriptions.js           # Вкладка подписок (адаптер к TypeScript-модулю SubscriptionsTab)
+│   │   ├── settings.js                # Вкладка глобальных настроек (адаптер к TypeScript-модулю SettingsTab)
+│   │   ├── local_devices.js           # Выбор устройств LAN (адаптер к TypeScript-модулю localDevices)
 │   │   ├── diagnostic.js              # Вкладка проверки здоровья системы
 │   │   ├── monitoring.js              # Вкладка мониторинга sing-box
 │   │   └── updates.js                 # Вкладка обновлений компонентов (адаптивная 3-колоночная сетка)
@@ -349,13 +360,38 @@ P99 поддерживает совместное сосуществование
   - Хук `onSuccess` производит регулярное выражение над выходным файлом, трансформируя ESM-экспорт `export { ... }` в стандартную конструкцию LuCI:
     `return baseclass.extend({ ... })`.
   - **КРИТИЧЕСКОЕ ПРАВИЛО**: никогда не вносите изменения в `luci-app-p99/.../main.js` напрямую. Всегда модифицируйте файлы в `fe-app-p99/src/` и запускайте `yarn build` в `fe-app-p99/`!
-- **Модуляризация и типизация логики секций (`fe-app-p99/src/p99/section/`)**:
-  - Логика работы с секциями и правилами вынесена из монолитного `section.js` в строго типизированные TypeScript-модули с полным покрытием модульными тестами (Vitest):
-    - `duration.ts`: валидация и парсинг временных интервалов sing-box (`10s`, `1h`, `2d`).
-    - `dpiStrategies.ts`: стратегии и флаги NFQWS, NFQWS2, ByeDPI, нормализация аргументов командной строки и защита от запрещенных токенов.
-    - `rulesets.ts`: сборка URL вторичных правил (`.srs`), валидация допустимых расширений (`.srs`, `.json`, `.lst`), обратный маппинг ID правил.
-    - `childItems.ts`: нормализация, дедупликация списков DynamicList, очистка и сжатие структуры настроек элементов секции.
-    - `textListAnalysis.ts`: синтаксический анализ списков доменов и подсетей с учетом комментариев и префиксов.
+- **Полная декомпозиция и типизация вкладки правил (`section.js` -> `fe-app-p99/src/p99/tabs/section/`)**:
+  - Бывший 8000-строчный монолит `section.js` полностью ликвидирован и переведен в чистую модульную архитектуру TypeScript:
+    - `fe-app-p99/src/p99/section/`: чистые расчетные модули без связывания с DOM (`duration.ts`, `dpiStrategies.ts`, `rulesets.ts`, `childItems.ts`, `textListAnalysis.ts`, `geo.ts`, `detours.ts`, `dashboardFilters.ts`, `clientIsolation.ts`, `modalTabs.ts`).
+    - `fe-app-p99/src/p99/tabs/section/childItemsManager.ts`: управление CRUD дочерних секций UCI (URLTest, Priority Group, интерфейсы, JSON аутбаунды, правила), синхронизация порядка, каскадное удаление.
+    - `fe-app-p99/src/p99/tabs/section/settingsModals.ts`: модальные окна настроек для элементов DynamicList (стековые JSON-настройки, валидация, индикаторы ошибок).
+    - `fe-app-p99/src/p99/tabs/section/itemOptions.ts`: опции списков серверов, групп, параметров протоколов, фильтров стран и регулярных выражений.
+    - `fe-app-p99/src/p99/tabs/section/annotatedTextarea.ts`: интерактивная визуальная валидация и подсветка синтаксических ошибок стратегий и списков правил в textarea в реальном времени.
+    - `fe-app-p99/src/p99/tabs/section/dpiValidation.ts`: парсеры runtime-токенов NFQWS, NFQWS2, ByeDPI, кэширование и асинхронная удаленная валидация через `fs.exec`.
+    - `fe-app-p99/src/p99/tabs/section/conditionFields.ts`: связывание условий маршрутизации (`dependsOnRoutingAction`, `dependsOnRuleConditions`), анализ доменов и IP/CIDR.
+    - `fe-app-p99/src/p99/tabs/section/sectionContent.ts`: фабрика сборщика содержимого 4 вкладок CBI-модального окна («Основные», «Правила и трафик», «Устройства и клиенты», «Дополнительно»).
+  - В каталоге `luci-app-p99/.../section.js` оставлен ультралегкий 27-строчный LuCI-адаптер (аналогично `settings.js` и `subscriptions.js`), делегирующий вызовы в скомпилированный бандл `main.*`.
+- **100% отказ от JavaScript во фронтенд-пакете (`fe-app-p99`)**:
+  - В каталоге `fe-app-p99/` больше нет ни одного файла `.js`:
+    - 100% исходного кода интерфейса на TypeScript (`.ts`).
+    - 100% модульных тестов переведены на TypeScript (`.test.ts`).
+    - Все конфигурации инструментов переведены на TypeScript (`tsup.config.ts`, `vitest.config.ts`, `eslint.config.ts` с загрузчиком `jiti`).
+    - Все скрипты сборки, локализации и SFTP переведены на TypeScript (`extract-calls.ts`, `generate-pot.ts`, `generate-po.ts`, `distribute-locales.ts`, `watch-upload.ts`).
+- **Перевод скриптов сборки, локализации и SFTP на TypeScript (`fe-app-p99/*.ts`)**:
+  - Все утилиты автоматизации переведены на TypeScript с исполнением в Node.js 22+:
+    - `extract-calls.ts`: парсинг вызовов gettext `_()` через Babel AST с корректной поддержкой TypeScript-синтаксиса.
+    - `generate-pot.ts`: сборка заголовков и генерация шаблона gettext `.pot` с метаданными git-автора.
+    - `generate-po.ts`: синхронизация и сохранение существующих переводов при обновлении `.po` каталогов.
+    - `distribute-locales.ts`: автоматическое копирование актуализированных каталогов в пакет `luci-app-p99/po`.
+    - `watch-upload.ts`: отслеживание изменений файлов (chokidar) и безопасная SFTP-синхронизация с тестовым роутером.
+- **Модуляризация и типизация вкладки подписок (`subscriptions.js` -> `fe-app-p99/src/p99/tabs/subscriptions/`)**:
+  - Логика управления подписками (валидация URL, извлечение хоста, запуск синхронизации `P99ShellMethods.subscriptionUpdateStart`, интервалы обновления) полностью переведена в типизированный TypeScript-модуль `SubscriptionsTab`, покрыта модульными тестами (Vitest), а в `luci-app-p99` заменена на компактный адаптер.
+- **Модуляризация и типизация глобальных настроек (`settings.js` -> `fe-app-p99/src/p99/tabs/settings/`)**:
+  - Вся конфигурация глобальных параметров (DNS DoH/DoT/UDP, апстримы и bootstrap DNS, таймауты failover, стратегия адресации, селекторы сетевых интерфейсов, Bad WAN мониторинг, параметры YACD и QUIC, таймеры обновления списков и компонентов, задержки пинга, пути конфига sing-box и NTP) переведена в строгий TypeScript-модуль `SettingsTab` с декомпозицией на `dnsSettings`, `downloadSection`, `latencySettings` и полным набором модульных тестов в Vitest. В `luci-app-p99/.../settings.js` оставлен тонкий адаптер с сохранением контракта `isSingBoxDuration`.
+- **Модуляризация выбора устройств LAN (`local_devices.js` -> `fe-app-p99/src/p99/helpers/localDevices.ts`)**:
+  - RPC-клиент к `luci-rpc` (`getHostHints`, `getDHCPLeases`, `network.interface dump`), нормализация IP/MAC, кэширование и построение виджета `ui.DynamicList` для секций вынесены в TypeScript с чистыми unit-тестами. В `local_devices.js` сохранены контракты событий для `dns_action_ui.sh`.
+- **Главный LuCI оркестратор и Form.Map (`p99.js` -> `fe-app-p99/src/p99/views/p99View.ts`)**:
+  - Построение корневой карты настроек `form.Map`, регистрация 7 вкладок, управление возможностями ядра (`uiCapabilities.service.ts`) с синхронизацией со стором и хуки сохранения `handleSaveApply` с индикацией статуса перезагрузки переведены в TypeScript. В `p99.js` оставлен компактный загрузчик представления.
 - **Трехпозиционная изоляция устройств клиентов (`section.js`)**:
   - В окне редактирования правила во вкладке «Устройства и клиенты» доступен 3-позиционный селектор области действия:
     1. **Все устройства (по умолчанию)**: правило действует на всю локальную сеть LAN.
@@ -388,7 +424,7 @@ P99 поддерживает совместное сосуществование
 - **Консолидация тестового набора**:
   - **Консолидация shell/ucode тестов**: 6 устаревших тестов проверки миграции с shell на ucode (`*_owner.sh`) и инвентаризации шелла (`shell_inventory.sh`) объединены в единый быстрый смоук-тест `tests/backend_ownership_smoke.sh`.
   - **Консолидация контрактов LuCI**: 5 разрозненных тестов интерфейса (`luci_duration_validation.sh`, `luci_section_cascade.sh`, `luci_interface_settings.sh`, `luci_stacked_settings_validation.sh`, `luci_builtin_rulesets.sh`) консолидированы в единый комплексный тест `tests/luci_contracts_smoke.sh`.
-  - За счет консолидации и устранения избыточных файлов бэкенд-набор сокращен до 62 целевых тестов, а набор модульных тестов фронтенда в Vitest расширен до 554 тестов в 50 тест-сьютах.
+  - За счет консолидации и устранения избыточных файлов бэкенд-набор сокращен до 62 целевых тестов (100% успешных проверок), а набор модульных тестов фронтенда в Vitest расширен до 626 тестов в 63 тест-сьютах (100% покрытие тестов на TypeScript).
 
 ### 2.11. Прямой обход TorrServer через cgroup (`p99/files/usr/lib/torrserver/direct.uc`)
 
@@ -455,7 +491,7 @@ P99 поддерживает совместное сосуществование
 | **Логика работы zapret / zapret2 / byedpi** | `p99/files/usr/lib/providers/` | Аргументы командной строки `nfqws`, `nfqws2`, `ciadpi`, номера очередей и desync-марки. |
 | **Новые поля в конфиге UCI или валидация** | `p99/files/etc/config/p99`<br>`p99/files/usr/lib/config/validator.uc`<br>`p99/files/usr/lib/config/connections.uc` | Схема UCI, валидация типов, связей секций, 3-позиционной изоляции устройств. |
 | **Миграция старых конфигов (Podkop / Forkop)** | `p99/files/usr/lib/config/migration.uc` | Автоматическая трансформация устаревших ключей UCI в новые. |
-| **Изменения в веб-интерфейсе LuCI** | `fe-app-p99/src/`<br>`luci-app-p99/htdocs/luci-static/resources/view/p99/` | TypeScript компоненты (Dashboard, Diagnostic, Updates) и LuCI views (`p99.js`, `settings.js`, `section.js`). |
+| **Изменения в веб-интерфейсе LuCI** | `fe-app-p99/src/`<br>`luci-app-p99/htdocs/luci-static/resources/view/p99/` | TypeScript компоненты (Dashboard, Diagnostic, Updates, Subscriptions, Settings, localDevices, p99View) и адаптеры LuCI (`p99.js`, `settings.js`, `local_devices.js`, `section.js`). |
 | **Сбор отчета поддержки (Support Report)** | `p99/files/usr/lib/diagnostics/runtime.uc` | Полный сбор логов, конфигураций, состояния nftables, сетевых таблиц и метрик. |
 | **Полное и чистое удаление P99** | `p99/files/usr/lib/full-uninstall.sh`<br>`p99/files/usr/lib/components/uninstall.uc` | Автономный скрипт удаления пакетов, сброса nftables, возврата dnsmasq и репозиториев. |
 | **Скрипт установки на роутер** | `install.sh` | Определение opkg/apk, универсальная поддержка архитектур, авто-хилинг, fallback источников. |

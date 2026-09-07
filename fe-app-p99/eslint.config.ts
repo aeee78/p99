@@ -1,4 +1,4 @@
-// eslint.config.js
+// eslint.config.ts
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
@@ -7,10 +7,10 @@ export default [
     js.configs.recommended,
     ...tseslint.configs.recommended,
     {
-        ignores: ['node_modules', 'watch-upload.js'],
+        ignores: ['node_modules', 'watch-upload.ts'],
     },
     {
-        files: ['src/**/*.test.js'],
+        files: ['src/**/*.test.ts'],
         languageOptions: {
             globals: {
                 Buffer: 'readonly',
@@ -19,6 +19,9 @@ export default [
         },
     },
     {
+        linterOptions: {
+            reportUnusedDisableDirectives: 'off',
+        },
         rules: {
             'no-console': 'off',
             'no-unused-vars': 'off',
@@ -30,6 +33,8 @@ export default [
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
+            '@typescript-eslint/no-explicit-any': 'off',
+            'prefer-rest-params': 'off',
         },
     },
     prettier,

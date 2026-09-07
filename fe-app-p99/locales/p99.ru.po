@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: P99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:37+0300\n"
-"PO-Revision-Date: 2026-09-05 01:37+0300\n"
+"POT-Creation-Date: 2026-09-06 02:57+0300\n"
+"PO-Revision-Date: 2026-09-06 02:57+0300\n"
 "Last-Translator: Михаил\n"
 "Language-Team: none\n"
 "Language: ru\n"
@@ -19,6 +19,9 @@ msgstr ""
 
 msgid "-- Select --"
 msgstr "-- Выберите --"
+
+msgid "+ Add"
+msgstr ""
 
 msgid "+ Add JSON outbound"
 msgstr "+ Добавить JSON outbound"
@@ -95,6 +98,9 @@ msgstr "Дополнительно скрывать серверы по прот
 msgid "Additionally show servers by protocol, transport, and security. Add only servers matching the specified parameters."
 msgstr "Дополнительно показывать серверы по протоколу, транспорту и защите. Добавлять только серверы, совпавшие по указанным параметрам."
 
+msgid "Advanced"
+msgstr "Дополнительно"
+
 msgid "All"
 msgstr "Все"
 
@@ -167,6 +173,9 @@ msgstr "Доступные действия"
 msgid "Backend validation failed: %s"
 msgstr "Backend-проверка завершилась ошибкой: %s"
 
+msgid "Block"
+msgstr ""
+
 msgid "Bootstrap DNS"
 msgstr "Bootstrap DNS"
 
@@ -187,9 +196,6 @@ msgstr "Встроенные наборы правил"
 
 msgid "By flag emoji from name"
 msgstr "По эмодзи флага из названия"
-
-msgid "ByeDPI listen address and port are assigned by P99 and must not be set in the strategy."
-msgstr "Адрес и порт прослушивания ByeDPI назначаются P99 и не должны задаваться в стратегии."
 
 msgid "ByeDPI option does not accept a compact value: %s"
 msgstr "Опция ByeDPI не принимает компактное значение: %s"
@@ -278,6 +284,9 @@ msgstr "Проверки пройдены с ручным DHCP"
 msgid "CIDR must be between 0 and 32 for IPv4 or 0 and 128 for IPv6"
 msgstr "CIDR должен быть от 0 до 32 для IPv4 или от 0 до 128 для IPv6"
 
+msgid "Clients & Devices"
+msgstr "Устройства и клиенты"
+
 msgid "Close"
 msgstr "Закрыть"
 
@@ -302,14 +311,8 @@ msgstr "Компоненты"
 msgid "compressed"
 msgstr "compressed"
 
-msgid "Conditions"
-msgstr "Условия"
-
 msgid "Config File Path"
 msgstr "Путь к файлу конфигурации"
-
-msgid "Configure User-Agent in the item settings"
-msgstr "Настройте User-Agent в настройках элемента"
 
 msgid "Connect through"
 msgstr "Подключаться через"
@@ -329,8 +332,17 @@ msgstr "Скопировано"
 msgid "Copy"
 msgstr "Копировать"
 
+msgid "Copy address"
+msgstr ""
+
 msgid "Could not compare FakeIP and control public IPs"
 msgstr "Не удалось сравнить публичные IP FakeIP и контрольной проверки"
+
+msgid "Could not confirm completion. Check the removal log before retrying."
+msgstr ""
+
+msgid "Could not start removal. Another component action may be running."
+msgstr ""
 
 msgid "Current section cannot be used as its own transit section"
 msgstr "Текущую секцию нельзя использовать как транзит для самой себя"
@@ -352,6 +364,9 @@ msgstr "Дашборд"
 
 msgid "Dashboard currently unavailable"
 msgstr "Дашборд сейчас недоступен"
+
+msgid "Dedicated cgroup unavailable"
+msgstr ""
 
 msgid "Default address for checking server availability and latency. URLTest uses its own address."
 msgstr "Адрес по умолчанию для проверки доступности и задержки серверов. Для URLTest используется собственный адрес."
@@ -383,8 +398,17 @@ msgstr "DHCP управляется вручную"
 msgid "Diagnostics"
 msgstr "Диагностика"
 
+msgid "Direct / Bypass"
+msgstr "Напрямую / Bypass"
+
 msgid "Direct connection"
 msgstr "Прямое подключение"
+
+msgid "Direct Proxy"
+msgstr ""
+
+msgid "Disable"
+msgstr ""
 
 msgid "Disable autostart"
 msgstr "Отключить автостарт"
@@ -395,8 +419,8 @@ msgstr "Отключить QUIC"
 msgid "Disable the QUIC protocol to improve compatibility or fix issues with video streaming"
 msgstr "Отключить QUIC протокол для улучшения совместимости или исправления видео стриминга"
 
-msgid "Disabling interception is incompatible with action=zapret2 because P99 sends matched traffic through NFQUEUE."
-msgstr "Отключение перехвата несовместимо с action=zapret2, потому что P99 отправляет совпавший трафик через NFQUEUE."
+msgid "Disabled"
+msgstr ""
 
 msgid "Display name"
 msgstr "Отображаемое имя"
@@ -457,6 +481,9 @@ msgstr "DNS через секцию"
 
 msgid "DNS Unavailability Timeout"
 msgstr "Таймаут недоступности DNS"
+
+msgid "Do not apply this section to the specified local IP addresses; matching continues with the next section."
+msgstr ""
 
 msgid "Do not panic, everything can be fixed, just..."
 msgstr "Не паникуйте, всё можно исправить, просто..."
@@ -581,6 +608,9 @@ msgstr "Включить смешанный прокси"
 msgid "Enable Mixed Proxy Authentication"
 msgstr "Включить авторизацию смешанного прокси"
 
+msgid "Enable mode 2"
+msgstr ""
+
 msgid "Enable Output Network Interface"
 msgstr "Включить выходной сетевой интерфейс"
 
@@ -623,6 +653,9 @@ msgstr "Исключить по регулярному выражению"
 msgid "Exclude countries"
 msgstr "Исключить страны"
 
+msgid "Exclude devices"
+msgstr ""
+
 msgid "Exclude NTP"
 msgstr "Исключить NTP"
 
@@ -655,12 +688,6 @@ msgstr "Истекает"
 
 msgid "Expose this section as a local HTTP+SOCKS proxy"
 msgstr "Открыть эту секцию как локальный HTTP+SOCKS прокси"
-
-msgid "External nfqws config files bypass P99 queue management and explicit validation."
-msgstr "Внешние конфиги nfqws обходят управление очередями и явную валидацию P99."
-
-msgid "External nfqws2 config files bypass P99 queue management and explicit validation."
-msgstr "Внешние конфиги nfqws2 обходят управление очередями и явную валидацию P99."
 
 msgid "Failed to close connection"
 msgstr "Не удалось закрыть подключение"
@@ -710,8 +737,11 @@ msgstr "Исправьте подсвеченные поля и сохранит
 msgid "Forced device routing"
 msgstr "Принудительная маршрутизация устройств"
 
-msgid "Fuzzing is not supported here because P99 needs deterministic runtime validation."
-msgstr "Fuzzing здесь не поддерживается, потому что P99 нужна предсказуемая runtime-валидация."
+msgid "Full removal"
+msgstr ""
+
+msgid "General"
+msgstr "Основные"
 
 msgid "Generated inbound"
 msgstr "Созданный inbound"
@@ -721,9 +751,6 @@ msgstr "Получить глобальную проверку"
 
 msgid "Global check"
 msgstr "Глобальная проверка"
-
-msgid "Global check could not be collected."
-msgstr "Не удалось собрать общую проверку."
 
 msgid "Hide selected servers."
 msgstr "Скрывать выбранные серверы."
@@ -1136,9 +1163,6 @@ msgstr "Уровень"
 msgid "Level name"
 msgstr "Название уровня"
 
-msgid "List must be an HTTP(S) URL or a local .lst path"
-msgstr "Список должен быть HTTP(S) URL или локальным путём .lst"
-
 msgid "List Update Frequency"
 msgstr "Частота обновления списков"
 
@@ -1189,6 +1213,9 @@ msgstr "Порт смешанного прокси"
 
 msgid "Mixed Proxy Username"
 msgstr "Логин смешанного прокси"
+
+msgid "Mode 2 enabled"
+msgstr ""
 
 msgid "Monitored Interfaces"
 msgstr "Наблюдаемые интерфейсы"
@@ -1274,6 +1301,9 @@ msgstr "Список узлов пуст"
 msgid "Nodes"
 msgstr "Узлы"
 
+msgid "Normal mode"
+msgstr ""
+
 msgid "Not configured"
 msgstr "Не настроено"
 
@@ -1325,6 +1355,9 @@ msgstr "Только указанные серверы."
 msgid "Open"
 msgstr "Открыть"
 
+msgid "Open LuCI"
+msgstr ""
+
 msgid "Open priority settings and enter a display name"
 msgstr "Откройте настройки приоритета и укажите отображаемое имя"
 
@@ -1343,29 +1376,20 @@ msgstr "Необязательное значение здесь нужно пе
 msgid "Optional values must be attached with '=' here; a separate token would be ignored by nfqws2."
 msgstr "Необязательные значения здесь должны задаваться через '='; отдельный токен будет проигнорирован nfqws2."
 
+msgid "Original repositories could not be restored. Removal was cancelled before deleting packages."
+msgstr ""
+
 msgid "outbounds must be a non-empty array of strings"
 msgstr "outbounds должен быть непустым массивом строк"
 
 msgid "Output Network Interface"
 msgstr "Выходной сетевой интерфейс"
 
+msgid "P99 and sing-box have been removed. Original repositories have been restored."
+msgstr ""
+
 msgid "P99 Error"
 msgstr "Ошибка P99"
-
-msgid "P99 logs could not be collected."
-msgstr "Не удалось собрать журналы P99."
-
-msgid "P99 manages ciadpi pid files itself, so pidfile options are not allowed here."
-msgstr "P99 сам управляет pid-файлами ciadpi, поэтому параметры pidfile здесь запрещены."
-
-msgid "P99 manages the ciadpi process lifecycle itself, so daemon mode is not allowed here."
-msgstr "P99 сам управляет жизненным циклом ciadpi, поэтому режим daemon здесь запрещён."
-
-msgid "P99 manages the nfqws process lifecycle itself, so daemon mode is not allowed here."
-msgstr "P99 сам управляет жизненным циклом nfqws, поэтому режим daemon здесь запрещён."
-
-msgid "P99 manages the nfqws2 process lifecycle itself, so daemon mode is not allowed here."
-msgstr "P99 сам управляет жизненным циклом nfqws2, поэтому режим daemon здесь запрещён."
 
 msgid "P99 service is stopped. Start the service to display connections."
 msgstr "Служба P99 остановлена. Запустите сервис для отображения подключений."
@@ -1496,6 +1520,9 @@ msgstr "Профиль"
 msgid "Protocol"
 msgstr "Протокол"
 
+msgid "Proxy (sing-box)"
+msgstr "Прокси (sing-box)"
+
 msgid "Public host"
 msgstr "Публичный хост"
 
@@ -1508,8 +1535,23 @@ msgstr "Обновление дашборда…"
 msgid "Regular expression must not contain spaces or commas"
 msgstr "Регулярное выражение не должно содержать пробелы или запятые"
 
+msgid "Removal did not finish. See the removal log in /tmp/p99-uninstall.*/output.log."
+msgstr ""
+
 msgid "Remove"
 msgstr "Удалить"
+
+msgid "Remove P99 and sing-box with their settings and restore the original device repositories."
+msgstr ""
+
+msgid "Remove P99 completely"
+msgstr ""
+
+msgid "Remove P99, sing-box, their settings and cache, and restore the original device repositories?"
+msgstr ""
+
+msgid "Remove permanently"
+msgstr ""
 
 msgid "Remove servers from the specified countries from this level."
 msgstr "Исключить из уровня серверы из указанных стран."
@@ -1519,6 +1561,9 @@ msgstr "Исключить из уровня серверы, имена кото
 
 msgid "Remove the specified servers from this level."
 msgstr "Исключить из уровня указанные серверы."
+
+msgid "Removing P99…"
+msgstr ""
 
 msgid "Removing user settings…"
 msgstr "Удаление пользовательских настроек…"
@@ -1532,20 +1577,11 @@ msgstr "Разрешать доменные имена перед маршрут
 msgid "Resolve real IP for routing"
 msgstr "Разрешать реальный IP для маршрутизации"
 
-msgid "Resource selection by hostname inside nfqws is not supported here; sing-box selects resources before NFQUEUE."
-msgstr "Выбор ресурсов по hostname внутри nfqws здесь не поддерживается; ресурсы выбирает sing-box до NFQUEUE."
-
-msgid "Resource selection by hostname inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE."
-msgstr "Выбор ресурсов по hostname внутри nfqws2 здесь не поддерживается; sing-box выбирает ресурсы до NFQUEUE."
-
-msgid "Resource selection by IP or CIDR inside nfqws is not supported here; sing-box selects resources before NFQUEUE."
-msgstr "Выбор ресурсов по IP или CIDR внутри nfqws здесь не поддерживается; ресурсы выбирает sing-box до NFQUEUE."
-
-msgid "Resource selection by IP or CIDR inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE."
-msgstr "Выбор ресурсов по IP или CIDR внутри nfqws2 здесь не поддерживается; sing-box выбирает ресурсы до NFQUEUE."
-
 msgid "Restart P99"
 msgstr "Перезапустить P99"
+
+msgid "Restore normal mode"
+msgstr ""
 
 msgid "Resume updates"
 msgstr "Продолжить обновление"
@@ -1562,14 +1598,14 @@ msgstr "Направлять запросы к этому DNS-серверу ч�
 msgid "Routing rules"
 msgstr "Правила маршрутизации"
 
-msgid "Rule set must be an HTTP(S) URL or a local .srs / .json path"
-msgstr "Набор правил должен быть HTTP(S) URL или локальным путём .srs / .json"
-
 msgid "Rule set settings"
 msgstr "Настройки набора правил"
 
 msgid "Rule sets"
 msgstr "Наборы правил"
+
+msgid "Rules & Traffic"
+msgstr "Правила и трафик"
 
 msgid "Rules mangle counters"
 msgstr "Счётчики правил mangle"
@@ -1853,9 +1889,6 @@ msgstr "URL подписки"
 msgid "Subscription URL cannot be empty"
 msgstr "URL подписки не может быть пустым"
 
-msgid "Subscription URL must use HTTP or HTTPS"
-msgstr "URL подписки должен использовать HTTP или HTTPS"
-
 msgid "Subscription URL settings"
 msgstr "Настройки URL подписки"
 
@@ -1910,12 +1943,6 @@ msgstr "Тестировать серверы, имена которых соо�
 msgid "Testing URL"
 msgstr "URL проверки"
 
-msgid "The desync fwmark is managed by P99 for loop prevention and must not be overridden here."
-msgstr "Desync fwmark управляется P99 для защиты от циклов и не должен переопределяться здесь."
-
-msgid "The NFQUEUE number is assigned by P99 for each rule and must not be overridden here."
-msgstr "Номер NFQUEUE назначается P99 для каждого правила и не должен переопределяться здесь."
-
 msgid "The rule applies to the domain and all its subdomains. Use full:, keyword:, or regex: prefixes for exact match, keyword match, or regular expression."
 msgstr "Правило применяется к домену и всем его поддоменам. Для полного совпадения, совпадению по слову или регулярному выражению используйте префиксы full:, keyword: или regex:."
 
@@ -1928,26 +1955,14 @@ msgstr "Есть правила использующие Zapret"
 msgid "There are rules using Zapret2"
 msgstr "Есть правила, использующие Zapret2"
 
-msgid "This field must start a working ciadpi strategy; help/version options exit immediately and are not allowed here."
-msgstr "Это поле должно запускать рабочую стратегию ciadpi; параметры help/version сразу завершают процесс и здесь запрещены."
-
-msgid "This field must start a working nfqws strategy; --dry-run exits immediately and is not allowed here."
-msgstr "Это поле должно запускать рабочую стратегию nfqws; --dry-run сразу завершает процесс и здесь запрещён."
-
-msgid "This field must start a working nfqws strategy; --version exits immediately and is not allowed here."
-msgstr "Это поле должно запускать рабочую стратегию nfqws; --version сразу завершает процесс и здесь запрещён."
-
-msgid "This field must start a working nfqws2 strategy; --dry-run exits immediately and is not allowed here."
-msgstr "Это поле должно запускать рабочую стратегию nfqws2; --dry-run сразу завершает работу и здесь запрещён."
-
-msgid "This field must start a working nfqws2 strategy; --version exits immediately and is not allowed here."
-msgstr "Это поле должно запускать рабочую стратегию nfqws2; --version сразу завершает работу и здесь запрещён."
-
 msgid "This flag does not accept a value."
 msgstr "Этот флаг не принимает значение."
 
 msgid "This option requires a value."
 msgstr "Этой опции требуется значение."
+
+msgid "This permanently deletes saved sections and subscriptions. Other components remain installed."
+msgstr ""
 
 msgid "Time"
 msgstr "Время"
@@ -1964,6 +1979,12 @@ msgstr "Допуск"
 msgid "Top level has the highest priority; lower levels are used as fallback"
 msgstr "Верхний уровень имеет самый высокий приоритет; нижние уровни используются как резерв"
 
+msgid "TorrServer Direct"
+msgstr ""
+
+msgid "TorrServer not found"
+msgstr ""
+
 msgid "Traffic"
 msgstr "Трафик"
 
@@ -1972,9 +1993,6 @@ msgstr "Трафик этого уровня пойдёт напрямую."
 
 msgid "Traffic Total"
 msgstr "Всего трафика"
-
-msgid "Transparent proxy mode is incompatible with action=byedpi because P99 connects to ciadpi through SOCKS."
-msgstr "Режим прозрачного прокси несовместим с action=byedpi, потому что P99 подключается к ciadpi через SOCKS."
 
 msgid "Transport"
 msgstr "Транспорт"
@@ -2032,9 +2050,6 @@ msgstr "неизвестно"
 
 msgid "Unknown ByeDPI option: %s"
 msgstr "Неизвестная опция ByeDPI: %s"
-
-msgid "Unknown country"
-msgstr "Неизвестная страна"
 
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
@@ -2165,6 +2180,9 @@ msgstr "Видимое имя этой секции"
 msgid "vless://, vmess://, ss://, trojan://, socks4/5://, hy2/hysteria2:// links"
 msgstr "ссылки vless://, vmess://, ss://, trojan://, socks4/5://, hy2/hysteria2://"
 
+msgid "Waiting for TorrServer"
+msgstr ""
+
 msgid "WAN"
 msgstr "WAN"
 
@@ -2186,9 +2204,6 @@ msgstr "Да"
 msgid "You can select Output Network Interface, by default autodetect"
 msgstr "Вы можете выбрать выходной сетевой интерфейс, по умолчанию он определяется автоматически."
 
-msgid "Zapret hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS strategies."
-msgstr "Шаблоны hostlist zapret здесь не поддерживаются, потому что P99 не разворачивает их для per-rule стратегий NFQWS."
-
 msgid "Zapret package is installed"
 msgstr "Пакет Zapret установлен"
 
@@ -2207,9 +2222,6 @@ msgstr "sing-box outbound для Zapret настроен"
 msgid "Zapret sing-box outbound is not configured"
 msgstr "sing-box outbound для Zapret не настроен"
 
-msgid "Zapret2 hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS2 strategies."
-msgstr "Шаблоны hostlist Zapret2 здесь не поддерживаются, потому что P99 не разворачивает их для per-rule стратегий NFQWS2."
-
 msgid "Zapret2 package is installed"
 msgstr "Пакет Zapret2 установлен"
 
@@ -2227,27 +2239,3 @@ msgstr "sing-box outbound для Zapret2 настроен"
 
 msgid "Zapret2 sing-box outbound is not configured"
 msgstr "sing-box outbound для Zapret2 не настроен"
-
-msgid "General"
-msgstr "Основные"
-
-msgid "Rules & Traffic"
-msgstr "Правила и трафик"
-
-msgid "Clients & Devices"
-msgstr "Устройства и клиенты"
-
-msgid "Advanced"
-msgstr "Дополнительно"
-
-msgid "Proxy (sing-box)"
-msgstr "Прокси (sing-box)"
-
-msgid "Direct / Bypass"
-msgstr "Напрямую / Bypass"
-
-msgid "Zapret (DPI)"
-msgstr "Zapret (DPI)"
-
-msgid "Zapret2 (DPI)"
-msgstr "Zapret2 (DPI)"

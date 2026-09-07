@@ -2,7 +2,7 @@
 set -eo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SECTION_JS="$ROOT_DIR/luci-app-p99/htdocs/luci-static/resources/view/p99/section.js"
+SECTION_JS="$ROOT_DIR/luci-app-p99/htdocs/luci-static/resources/view/p99/main.js"
 LOCAL_DEVICES_JS="$ROOT_DIR/luci-app-p99/htdocs/luci-static/resources/view/p99/local_devices.js"
 
 node - "$SECTION_JS" "$LOCAL_DEVICES_JS" <<'NODE'
@@ -84,7 +84,7 @@ if (!deviceExclusivity.includes("makeDeviceOptionsExclusive") ||
 
 const conditionDependencies = source.slice(
   requiredIndex("function dependsOnRuleConditions(option)"),
-  requiredIndex("const ZAPRET_LEGACY_DEFAULT_NFQWS_OPT"),
+  requiredIndex("function valuesToText(values)"),
 );
 for (const condition of [
   '"domain"',
@@ -122,10 +122,10 @@ function extractFunction(name, nextName) {
   return source.slice(start, end);
 }
 
-eval(extractFunction("normalizeOptionValues", "getUciSectionName"));
+eval(extractFunction("normalizeOptionValues", "normalizeLocalDeviceName"));
 eval(extractFunction("normalizeDynamicListItems", "uniqueDynamicListItems"));
-eval(extractFunction("stringArraysEqual", "writeListOption"));
-eval(extractFunction("makeDeviceOptionsExclusive", "childOwnerOption"));
+eval(extractFunction("stringArraysEqual", "removeMatchingValues"));
+eval(extractFunction("makeDeviceOptionsExclusive", "readItemSettingsMap"));
 
 function deviceOption(values) {
   const widget = {

@@ -15,7 +15,7 @@ fail() {
 [ -f "$INIT_SCRIPT" ] || fail "init script missing"
 
 # Check syntax
-ucode -c "$DIRECT_UC" || fail "direct.uc syntax error"
+ucode -c "$DIRECT_UC" -o /dev/null || fail "direct.uc syntax error"
 
 # Check status command runs and produces valid json
 status_json="$(ucode -L "$ROOT_DIR/p99/files/usr/lib" "$DIRECT_UC" status)"

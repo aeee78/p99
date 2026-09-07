@@ -2,7 +2,7 @@
 set -eo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SECTION_JS="$ROOT_DIR/luci-app-p99/htdocs/luci-static/resources/view/p99/section.js"
+SECTION_JS="$ROOT_DIR/luci-app-p99/htdocs/luci-static/resources/view/p99/main.js"
 SOURCE_PO="$ROOT_DIR/fe-app-p99/locales/p99.ru.po"
 PACKAGE_PO="$ROOT_DIR/luci-app-p99/po/ru/p99.po"
 SOURCE_POT="$ROOT_DIR/fe-app-p99/locales/p99.pot"

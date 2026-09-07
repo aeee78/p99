@@ -29,15 +29,15 @@ for (const fn of ['isSingBoxDuration', 'validateOptionalSingBoxDuration', 'valid
 NODE
 
 # 2. Verify section cascade contracts
-node - "$SECTION_JS" <<'NODE'
+node - "$MAIN_JS" <<'NODE'
 const fs = require('fs');
 const assert = require('assert');
 const source = fs.readFileSync(process.argv[2], 'utf8');
 
 const match = source.match(
-  /function configureSectionSection\(sectionRef, options = \{\}\) \{[\s\S]*?\n\}\n\nconst EntryPoint/,
+  /function configureSectionSection\(sectionRef, options = \{\}\) \{[\s\S]*?\n\}/,
 );
-assert(match, 'configureSectionSection not found in section.js');
+assert(match, 'configureSectionSection not found in main.js');
 
 const cleanupCalls = [];
 function setActionProvidersAvailabilityLoader() {}
@@ -45,7 +45,7 @@ function loadSectionTableOptions() {}
 function cleanupRemovedChildItems(...args) {
   cleanupCalls.push(args);
 }
-eval(match[0].slice(0, -'\n\nconst EntryPoint'.length));
+eval(match[0]);
 
 const event = {};
 const result = {};
@@ -77,23 +77,22 @@ assert.match(
 NODE
 
 # 3. Verify network interface and stacked modal contracts
-grep -Fq 'function dnsTypeChoices() {' "$SECTION_JS" ||
+grep -Fq 'function dnsTypeChoices() {' "$MAIN_JS" ||
   fail "network interface settings must define DNS protocol choices"
-grep -Fq 'dnsTypeChoices().forEach((choice) => o.value(choice.value, choice.label));' "$SECTION_JS" ||
+grep -Fq 'dnsTypeChoices().forEach((choice) => o.value(choice.value, choice.label));' "$MAIN_JS" ||
   fail "network interface settings must populate the DNS protocol field"
-grep -Fq 'o.renderItemSettingsModal = showInterfaceSettingsModal;' "$SECTION_JS" ||
+grep -Fq 'o.renderItemSettingsModal = showInterfaceSettingsModal;' "$MAIN_JS" ||
   fail "network interfaces must keep their settings modal handler"
 
-grep -Fq 'renderStackedJsonSettingsModal' "$SECTION_JS" ||
-  fail "stacked settings modal must exist in section.js"
-grep -Fq 'fkp-stacked-settings-validation-summary' "$SECTION_JS" ||
+grep -Fq 'renderStackedJsonSettingsModal' "$MAIN_JS" ||
+  fail "stacked settings modal must exist in main.js"
+grep -Fq 'fkp-stacked-settings-validation-summary' "$MAIN_JS" ||
   fail "stacked settings modal must retain validation summary class"
 
 # 4. Verify built-in and secondary ruleset integration
-node - "$SECTION_JS" "$MAIN_JS" <<'NODE'
+node - "$MAIN_JS" <<'NODE'
 const fs = require('fs');
-const section = fs.readFileSync(process.argv[2], 'utf8');
-const main = fs.readFileSync(process.argv[3], 'utf8');
+const main = fs.readFileSync(process.argv[2], 'utf8');
 
 function fail(message) {
   console.error(`FAIL: ${message}`);
@@ -117,7 +116,7 @@ for (const required of [
   'Greeg0ry/b4geoip-p99/main/srs/',
   'SECONDARY_RULESET_OPTIONS',
 ]) {
-  if (!section.includes(required)) {
+  if (!main.includes(required)) {
     fail(`secondary built-in rule set integration is missing: ${required}`);
   }
 }

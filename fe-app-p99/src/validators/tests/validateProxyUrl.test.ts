@@ -9,7 +9,7 @@ const validUrls = [
   ],
   [
     'vmess',
-    `vmess://${Buffer.from(
+    `vmess://${btoa(
       JSON.stringify({
         v: '2',
         ps: 'Example VMess',
@@ -25,7 +25,7 @@ const validUrls = [
         tls: 'tls',
         sni: 'example.com',
       }),
-    ).toString('base64')}`,
+    )}`,
   ],
   ['trojan', 'trojan://password@example.com:443'],
   ['socks4', 'socks4://127.0.0.1:1080'],
@@ -66,9 +66,9 @@ describe('validateProxyUrl', () => {
   });
 
   it('rejects VMess configs with an invalid server host', () => {
-    const config = Buffer.from(
+    const config = btoa(
       JSON.stringify({ add: 'bad_host', port: '443', id: 'uuid' }),
-    ).toString('base64');
+    );
 
     expect(validateProxyUrl(`vmess://${config}`).valid).toBe(false);
   });

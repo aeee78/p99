@@ -3,14 +3,19 @@ import { execSync } from 'child_process';
 
 const lang = process.argv[2];
 if (!lang) {
-  console.error('❌ Укажи язык, например: node generate-po.js ru');
+  console.error('❌ Укажи язык, например: node generate-po.ts ru');
   process.exit(1);
 }
 
 const callsPath = 'locales/calls.json';
 const poPath = `locales/p99.${lang}.po`;
 
-function getGitUser() {
+interface CallEntry {
+  key: string;
+  places: string[];
+}
+
+function getGitUser(): string {
   try {
     return execSync('git config user.name').toString().trim();
   } catch {
@@ -18,7 +23,7 @@ function getGitUser() {
   }
 }
 
-function getHeader(lang) {
+function getHeader(targetLang: string): string[] {
   const now = new Date();
   const date = now.toISOString().split('T')[0];
   const time = now.toTimeString().split(' ')[0].slice(0, 5);
@@ -32,12 +37,12 @@ function getHeader(lang) {
 
   const translator = getGitUser();
   const pluralForms =
-    lang === 'ru'
+    targetLang === 'ru'
       ? 'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);'
       : 'nplurals=2; plural=(n != 1);';
 
   return [
-    `# ${lang.toUpperCase()} translations for P99 package.`,
+    `# ${targetLang.toUpperCase()} translations for P99 package.`,
     `# Copyright (C) ${now.getFullYear()} THE P99 COPYRIGHT HOLDER`,
     `# This file is distributed under the same license as the P99 package.`,
     `# ${translator}, ${now.getFullYear()}.`,
@@ -50,7 +55,7 @@ function getHeader(lang) {
     `"PO-Revision-Date: ${date} ${time}${tzOffset}\\n"`,
     `"Last-Translator: ${translator}\\n"`,
     `"Language-Team: none\\n"`,
-    `"Language: ${lang}\\n"`,
+    `"Language: ${targetLang}\\n"`,
     `"MIME-Version: 1.0\\n"`,
     `"Content-Type: text/plain; charset=UTF-8\\n"`,
     `"Content-Transfer-Encoding: 8bit\\n"`,
@@ -59,17 +64,17 @@ function getHeader(lang) {
   ];
 }
 
-function parsePo(content) {
+function parsePo(content: string): Map<string, string> {
   const lines = content.split('\n');
-  const translations = new Map();
-  let msgid = null;
-  let msgstr = null;
+  const translations = new Map<string, string>();
+  let msgid: string | null = null;
+  let msgstr: string | null = null;
   for (const line of lines) {
     if (line.startsWith('msgid ')) {
       msgid = JSON.parse(line.slice(6));
     } else if (line.startsWith('msgstr ') && msgid !== null) {
       msgstr = JSON.parse(line.slice(7));
-      translations.set(msgid, msgstr);
+      translations.set(msgid, msgstr as string);
       msgid = null;
       msgstr = null;
     }
@@ -77,17 +82,17 @@ function parsePo(content) {
   return translations;
 }
 
-function escapePoString(str) {
+function escapePoString(str: string): string {
   return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-async function generatePo() {
+async function generatePo(): Promise<void> {
   const [callsRaw, oldPoRaw] = await Promise.all([
     fs.readFile(callsPath, 'utf8'),
     fs.readFile(poPath, 'utf8').catch(() => ''),
   ]);
 
-  const calls = JSON.parse(callsRaw);
+  const calls: CallEntry[] = JSON.parse(callsRaw);
   const oldTranslations = parsePo(oldPoRaw);
   const header = getHeader(lang);
 

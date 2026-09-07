@@ -3,42 +3,49 @@
     "call": "-- Select --",
     "key": "-- Select --",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1995",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2607",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2622",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2820",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2835",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3073",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3225",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3235"
+      "src/p99/tabs/section/itemOptions.ts:1427",
+      "src/p99/tabs/section/itemOptions.ts:2086",
+      "src/p99/tabs/section/itemOptions.ts:2103",
+      "src/p99/tabs/section/itemOptions.ts:2316",
+      "src/p99/tabs/section/itemOptions.ts:2333",
+      "src/p99/tabs/section/itemOptions.ts:2592",
+      "src/p99/tabs/section/itemOptions.ts:2746",
+      "src/p99/tabs/section/itemOptions.ts:2756"
+    ]
+  },
+  {
+    "call": "+ Add",
+    "key": "+ Add",
+    "places": [
+      "src/p99/tabs/section/itemOptions.ts:392"
     ]
   },
   {
     "call": "+ Add JSON outbound",
     "key": "+ Add JSON outbound",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7443"
+      "src/p99/tabs/section/sectionContent.ts:673"
     ]
   },
   {
     "call": "+ Add level",
     "key": "+ Add level",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2989"
+      "src/p99/tabs/section/itemOptions.ts:2493"
     ]
   },
   {
     "call": "+ Add priority",
     "key": "+ Add priority",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7529"
+      "src/p99/tabs/section/sectionContent.ts:780"
     ]
   },
   {
     "call": "+ Add URLTest",
     "key": "+ Add URLTest",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7470"
+      "src/p99/tabs/section/sectionContent.ts:700"
     ]
   },
   {
@@ -61,8 +68,8 @@
     "call": "Action",
     "key": "Action",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6982",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7011"
+      "src/p99/tabs/section/sectionContent.ts:198",
+      "src/p99/tabs/section/sectionContent.ts:227"
     ]
   },
   {
@@ -98,65 +105,65 @@
     "call": "Add a section",
     "key": "Add a section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:341"
+      "src/p99/views/p99View.ts:281"
     ]
   },
   {
     "call": "Add a subscription",
     "key": "Add a subscription",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:360",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:110"
+      "src/p99/views/p99View.ts:305",
+      "src/p99/tabs/subscriptions/subscriptions.ts:140"
     ]
   },
   {
     "call": "Add at least one DNS server",
     "key": "Add at least one DNS server",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:119"
+      "src/p99/tabs/settings/dnsSettings.ts:41"
     ]
   },
   {
     "call": "Add prefix to nodes",
     "key": "Add prefix to nodes",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2331",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:257"
+      "src/p99/tabs/section/itemOptions.ts:1805",
+      "src/p99/tabs/subscriptions/subscriptions.ts:292"
     ]
   },
   {
     "call": "Add URLs or local paths to .lst lists containing domains and subnets.",
     "key": "Add URLs or local paths to .lst lists containing domains and subnets.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7924"
+      "src/p99/tabs/section/sectionContent.ts:1188"
     ]
   },
   {
     "call": "Add URLs or local paths to .lst lists containing domains. IP entries are ignored.",
     "key": "Add URLs or local paths to .lst lists containing domains. IP entries are ignored.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7945"
+      "src/p99/tabs/section/sectionContent.ts:1212"
     ]
   },
   {
     "call": "Add URLs or local paths to .srs / .json lists. Only domain rules are supported.",
     "key": "Add URLs or local paths to .srs / .json lists. Only domain rules are supported.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7899"
+      "src/p99/tabs/section/sectionContent.ts:1163"
     ]
   },
   {
     "call": "Add URLs or local paths to .srs / .json lists. Subnets are ignored by default.",
     "key": "Add URLs or local paths to .srs / .json lists. Subnets are ignored by default.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7864"
+      "src/p99/tabs/section/sectionContent.ts:1128"
     ]
   },
   {
     "call": "Add URLTest / Priority group",
     "key": "Add URLTest / Priority group",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3247"
+      "src/p99/tabs/section/itemOptions.ts:2768"
     ]
   },
   {
@@ -170,30 +177,37 @@
     "call": "Additionally exclude servers by protocol, transport, and security. Exclude only servers matching the specified parameters.",
     "key": "Additionally exclude servers by protocol, transport, and security. Exclude only servers matching the specified parameters.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2531",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2747"
+      "src/p99/tabs/section/itemOptions.ts:2008",
+      "src/p99/tabs/section/itemOptions.ts:2239"
     ]
   },
   {
     "call": "Additionally filter servers by protocol, transport, and security. Add only servers matching the specified parameters.",
     "key": "Additionally filter servers by protocol, transport, and security. Add only servers matching the specified parameters.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2514",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2729"
+      "src/p99/tabs/section/itemOptions.ts:1991",
+      "src/p99/tabs/section/itemOptions.ts:2221"
     ]
   },
   {
     "call": "Additionally hide servers by protocol, transport, and security. Hide servers matching the specified parameters.",
     "key": "Additionally hide servers by protocol, transport, and security. Hide servers matching the specified parameters.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3147"
+      "src/p99/tabs/section/itemOptions.ts:2666"
     ]
   },
   {
     "call": "Additionally show servers by protocol, transport, and security. Add only servers matching the specified parameters.",
     "key": "Additionally show servers by protocol, transport, and security. Add only servers matching the specified parameters.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3127"
+      "src/p99/tabs/section/itemOptions.ts:2646"
+    ]
+  },
+  {
+    "call": "Advanced",
+    "key": "Advanced",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:186"
     ]
   },
   {
@@ -208,77 +222,77 @@
     "call": "All except selected",
     "key": "All except selected",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1892"
+      "src/p99/tabs/section/itemOptions.ts:1303"
     ]
   },
   {
     "call": "All remaining except selected",
     "key": "All remaining except selected",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1902"
+      "src/p99/tabs/section/itemOptions.ts:1316"
     ]
   },
   {
     "call": "All remaining servers",
     "key": "All remaining servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1900"
+      "src/p99/tabs/section/itemOptions.ts:1314"
     ]
   },
   {
     "call": "All remaining servers means every server not already assigned to a higher-priority level.",
     "key": "All remaining servers means every server not already assigned to a higher-priority level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2703"
+      "src/p99/tabs/section/itemOptions.ts:2195"
     ]
   },
   {
     "call": "All servers",
     "key": "All servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1891"
+      "src/p99/tabs/section/itemOptions.ts:1302"
     ]
   },
   {
     "call": "All subscriptions updated successfully",
     "key": "All subscriptions updated successfully",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:84"
+      "src/p99/tabs/subscriptions/subscriptions.ts:112"
     ]
   },
   {
     "call": "All traffic from these IP addresses will be routed through the section unconditionally, ignoring all other conditions.",
     "key": "All traffic from these IP addresses will be routed through the section unconditionally, ignoring all other conditions.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7977"
+      "src/p99/tabs/section/sectionContent.ts:1247"
     ]
   },
   {
     "call": "Allowed domain prefixes are full:, keyword:, and regex:",
     "key": "Allowed domain prefixes are full:, keyword:, and regex:",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5035"
+      "src/p99/tabs/section/conditionFields.ts:196"
     ]
   },
   {
     "call": "Allows access to YACD from the WAN. Make sure to open the appropriate port in your firewall.",
     "key": "Allows access to YACD from the WAN. Make sure to open the appropriate port in your firewall.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:423"
+      "src/p99/tabs/settings/settings.ts:294"
     ]
   },
   {
     "call": "Allows limiting the list of servers for URLTest",
     "key": "Allows limiting the list of servers for URLTest",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2491"
+      "src/p99/tabs/section/itemOptions.ts:1968"
     ]
   },
   {
     "call": "Apply section rules only to the specified local IP addresses",
     "key": "Apply section rules only to the specified local IP addresses",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7968"
+      "src/p99/tabs/section/sectionContent.ts:1238"
     ]
   },
   {
@@ -299,14 +313,14 @@
     "call": "At least one valid domain must be specified.",
     "key": "At least one valid domain must be specified.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5066"
+      "src/p99/tabs/section/conditionFields.ts:227"
     ]
   },
   {
     "call": "At least one valid IP or subnet must be specified.",
     "key": "At least one valid IP or subnet must be specified.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5148"
+      "src/p99/tabs/section/conditionFields.ts:238"
     ]
   },
   {
@@ -320,37 +334,37 @@
     "call": "Auto update",
     "key": "Auto update",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:212"
+      "src/p99/tabs/subscriptions/subscriptions.ts:243"
     ]
   },
   {
     "call": "Automatic component update checks",
     "key": "Automatic component update checks",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:501"
+      "src/p99/tabs/settings/settings.ts:369"
     ]
   },
   {
     "call": "Automatically add text to the name of each server from this subscription for convenient filtering.",
     "key": "Automatically add text to the name of each server from this subscription for convenient filtering.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2332",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:258"
+      "src/p99/tabs/section/itemOptions.ts:1806",
+      "src/p99/tabs/subscriptions/subscriptions.ts:293"
     ]
   },
   {
     "call": "Automatically check installed components for new versions",
     "key": "Automatically check installed components for new versions",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:502"
+      "src/p99/tabs/settings/settings.ts:370"
     ]
   },
   {
     "call": "Automatically select the fastest node in the current level",
     "key": "Automatically select the fastest node in the current level",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2937",
-      "src/p99/tabs/dashboard/initController.ts:1261"
+      "src/p99/tabs/dashboard/initController.ts:1261",
+      "src/p99/tabs/section/itemOptions.ts:2441"
     ]
   },
   {
@@ -364,9 +378,16 @@
     "call": "Backend validation failed: %s",
     "key": "Backend validation failed: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5281",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5726",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6138"
+      "src/p99/tabs/section/dpiValidation.ts:163",
+      "src/p99/tabs/section/dpiValidation.ts:500",
+      "src/p99/tabs/section/dpiValidation.ts:761"
+    ]
+  },
+  {
+    "call": "Block",
+    "key": "Block",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:116"
     ]
   },
   {
@@ -380,7 +401,7 @@
     "call": "Bootstrap DNS Servers",
     "key": "Bootstrap DNS Servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:182"
+      "src/p99/tabs/settings/settings.ts:61"
     ]
   },
   {
@@ -409,46 +430,39 @@
     "call": "Built-in rule sets",
     "key": "Built-in rule sets",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7818",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7838"
+      "src/p99/tabs/section/sectionContent.ts:1078",
+      "src/p99/tabs/section/sectionContent.ts:1098"
     ]
   },
   {
     "call": "By flag emoji from name",
     "key": "By flag emoji from name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1909"
-    ]
-  },
-  {
-    "call": "ByeDPI listen address and port are assigned by P99 and must not be set in the strategy.",
-    "key": "ByeDPI listen address and port are assigned by P99 and must not be set in the strategy.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6207"
+      "src/p99/tabs/section/itemOptions.ts:1326"
     ]
   },
   {
     "call": "ByeDPI option does not accept a compact value: %s",
     "key": "ByeDPI option does not accept a compact value: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6384"
+      "src/p99/tabs/section/dpiValidation.ts:932"
     ]
   },
   {
     "call": "ByeDPI option does not accept a value: %s",
     "key": "ByeDPI option does not accept a value: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6313"
+      "src/p99/tabs/section/dpiValidation.ts:861"
     ]
   },
   {
     "call": "ByeDPI option requires a value: %s",
     "key": "ByeDPI option requires a value: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6305",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6331",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6365",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6374"
+      "src/p99/tabs/section/dpiValidation.ts:853",
+      "src/p99/tabs/section/dpiValidation.ts:879",
+      "src/p99/tabs/section/dpiValidation.ts:913",
+      "src/p99/tabs/section/dpiValidation.ts:922"
     ]
   },
   {
@@ -497,35 +511,36 @@
     "call": "ByeDPI Strategy",
     "key": "ByeDPI Strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7183"
+      "src/p99/tabs/section/sectionContent.ts:399"
     ]
   },
   {
     "call": "ByeDPI strategy cannot be empty",
     "key": "ByeDPI strategy cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6410"
+      "src/p99/tabs/section/dpiValidation.ts:960"
     ]
   },
   {
     "call": "Cache File Path",
     "key": "Cache File Path",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:678"
+      "src/p99/tabs/settings/settings.ts:559"
     ]
   },
   {
     "call": "Cache file path cannot be empty",
     "key": "Cache file path cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:692"
+      "src/p99/tabs/settings/settings.ts:577"
     ]
   },
   {
     "call": "Cancel",
     "key": "Cancel",
     "places": [
-      "src/p99/tabs/dashboard/initController.ts:1121"
+      "src/p99/tabs/dashboard/initController.ts:1121",
+      "src/p99/tabs/updates/fullUninstall.ts:11"
     ]
   },
   {
@@ -546,67 +561,67 @@
     "call": "Cannot save settings",
     "key": "Cannot save settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3375"
+      "src/p99/tabs/section/settingsModals.ts:89"
     ]
   },
   {
     "call": "Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first.",
     "key": "Cannot select subscriptions when direct Subscription URLs are configured. Clear the Subscription URL field first.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7383"
+      "src/p99/tabs/section/sectionContent.ts:609"
     ]
   },
   {
     "call": "Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first.",
     "key": "Cannot use direct Subscription URLs when subscriptions are selected. Clear the Subscriptions field first.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7342"
+      "src/p99/tabs/section/sectionContent.ts:568"
     ]
   },
   {
     "call": "Cascade connection",
     "key": "Cascade connection",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7562"
+      "src/p99/tabs/section/sectionContent.ts:822"
     ]
   },
   {
     "call": "Check interval",
     "key": "Check interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2417",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2888",
-      "src/p99/tabs/dashboard/initController.ts:1248"
+      "src/p99/tabs/dashboard/initController.ts:1248",
+      "src/p99/tabs/section/itemOptions.ts:1894",
+      "src/p99/tabs/section/itemOptions.ts:2392"
     ]
   },
   {
     "call": "Check timeout after which the server is considered dead",
     "key": "Check timeout after which the server is considered dead",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2901"
+      "src/p99/tabs/section/itemOptions.ts:2405"
     ]
   },
   {
     "call": "Check update",
     "key": "Check update",
     "places": [
-      "src/p99/tabs/updates/initController.ts:741"
+      "src/p99/tabs/updates/initController.ts:760"
     ]
   },
   {
     "call": "Check URL",
     "key": "Check URL",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2443",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2875",
-      "src/p99/tabs/dashboard/initController.ts:1246"
+      "src/p99/tabs/dashboard/initController.ts:1246",
+      "src/p99/tabs/section/itemOptions.ts:1920",
+      "src/p99/tabs/section/itemOptions.ts:2379"
     ]
   },
   {
     "call": "Checking, please wait",
     "key": "Checking, please wait",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:1079",
+      "src/p99/tabs/diagnostic/initController.ts:1057",
       "src/p99/tabs/diagnostic/checks/runByedpiCheck.ts:14",
       "src/p99/tabs/diagnostic/checks/runDnsCheck.ts:15",
       "src/p99/tabs/diagnostic/checks/runFakeIPCheck.ts:15",
@@ -629,17 +644,17 @@
     "call": "Checks failed",
     "key": "Checks failed",
     "places": [
-      "src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:10",
-      "src/p99/tabs/diagnostic/helpers/getMeta.ts:26"
+      "src/p99/tabs/diagnostic/helpers/getMeta.ts:26",
+      "src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:10"
     ]
   },
   {
     "call": "Checks passed",
     "key": "Checks passed",
     "places": [
+      "src/p99/tabs/diagnostic/helpers/getMeta.ts:13",
       "src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:23",
-      "src/p99/tabs/diagnostic/checks/runFakeIPCheck.ts:43",
-      "src/p99/tabs/diagnostic/helpers/getMeta.ts:13"
+      "src/p99/tabs/diagnostic/checks/runFakeIPCheck.ts:43"
     ]
   },
   {
@@ -657,15 +672,22 @@
     ]
   },
   {
+    "call": "Clients & Devices",
+    "key": "Clients & Devices",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:185"
+    ]
+  },
+  {
     "call": "Close",
     "key": "Close",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3442",
       "src/partials/modal/renderModal.ts:263",
+      "src/p99/tabs/monitoring/initController.ts:832",
+      "src/p99/tabs/monitoring/initController.ts:882",
       "src/p99/tabs/dashboard/initController.ts:1002",
       "src/p99/tabs/dashboard/initController.ts:1380",
-      "src/p99/tabs/monitoring/initController.ts:832",
-      "src/p99/tabs/monitoring/initController.ts:882"
+      "src/p99/tabs/section/settingsModals.ts:162"
     ]
   },
   {
@@ -703,14 +725,14 @@
     "call": "Component update check interval",
     "key": "Component update check interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:510"
+      "src/p99/tabs/settings/settings.ts:378"
     ]
   },
   {
     "call": "Components",
     "key": "Components",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:416"
+      "src/p99/views/p99View.ts:377"
     ]
   },
   {
@@ -721,38 +743,24 @@
     ]
   },
   {
-    "call": "Conditions",
-    "key": "Conditions",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6970"
-    ]
-  },
-  {
     "call": "Config File Path",
     "key": "Config File Path",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:665"
-    ]
-  },
-  {
-    "call": "Configure User-Agent in the item settings",
-    "key": "Configure User-Agent in the item settings",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4450"
+      "src/p99/tabs/settings/settings.ts:546"
     ]
   },
   {
     "call": "Connect through",
     "key": "Connect through",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7600"
+      "src/p99/tabs/section/sectionContent.ts:860"
     ]
   },
   {
     "call": "Connection URL",
     "key": "Connection URL",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7221"
+      "src/p99/tabs/section/sectionContent.ts:437"
     ]
   },
   {
@@ -784,6 +792,13 @@
     ]
   },
   {
+    "call": "Copy address",
+    "key": "Copy address",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1257"
+    ]
+  },
+  {
     "call": "Could not compare FakeIP and control public IPs",
     "key": "Could not compare FakeIP and control public IPs",
     "places": [
@@ -791,17 +806,31 @@
     ]
   },
   {
+    "call": "Could not confirm completion. Check the removal log before retrying.",
+    "key": "Could not confirm completion. Check the removal log before retrying.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:78"
+    ]
+  },
+  {
+    "call": "Could not start removal. Another component action may be running.",
+    "key": "Could not start removal. Another component action may be running.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:38"
+    ]
+  },
+  {
     "call": "Current section cannot be used as its own transit section",
     "key": "Current section cannot be used as its own transit section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7617"
+      "src/p99/tabs/section/sectionContent.ts:877"
     ]
   },
   {
     "call": "Current section cannot download its own subscription",
     "key": "Current section cannot download its own subscription",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2323"
+      "src/p99/tabs/section/itemOptions.ts:1797"
     ]
   },
   {
@@ -815,21 +844,21 @@
     "call": "Custom name for this subscription. If empty, the URL hostname will be used.",
     "key": "Custom name for this subscription. If empty, the URL hostname will be used.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:130"
+      "src/p99/tabs/subscriptions/subscriptions.ts:160"
     ]
   },
   {
     "call": "Custom outbound configurations in JSON format",
     "key": "Custom outbound configurations in JSON format",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7438"
+      "src/p99/tabs/section/sectionContent.ts:668"
     ]
   },
   {
     "call": "Dashboard",
     "key": "Dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:392"
+      "src/p99/views/p99View.ts:253"
     ]
   },
   {
@@ -840,33 +869,40 @@
     ]
   },
   {
+    "call": "Dedicated cgroup unavailable",
+    "key": "Dedicated cgroup unavailable",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1049"
+    ]
+  },
+  {
     "call": "Default address for checking server availability and latency. URLTest uses its own address.",
     "key": "Default address for checking server availability and latency. URLTest uses its own address.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:546"
+      "src/p99/tabs/settings/settings.ts:418"
     ]
   },
   {
     "call": "Delay in milliseconds before reloading P99 after interface UP",
     "key": "Delay in milliseconds before reloading P99 after interface UP",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:398"
+      "src/p99/tabs/settings/settings.ts:265"
     ]
   },
   {
     "call": "Delay value cannot be empty",
     "key": "Delay value cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:405"
+      "src/p99/tabs/settings/settings.ts:276"
     ]
   },
   {
     "call": "Detect server country",
     "key": "Detect server country",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2501",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2716",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3114"
+      "src/p99/tabs/section/itemOptions.ts:1978",
+      "src/p99/tabs/section/itemOptions.ts:2208",
+      "src/p99/tabs/section/itemOptions.ts:2633"
     ]
   },
   {
@@ -880,14 +916,14 @@
     "call": "Device filter",
     "key": "Device filter",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7967"
+      "src/p99/tabs/section/sectionContent.ts:1237"
     ]
   },
   {
     "call": "Device or IP",
     "key": "Device or IP",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6676"
+      "src/p99/tabs/section/conditionFields.ts:379"
     ]
   },
   {
@@ -908,14 +944,36 @@
     "call": "Diagnostics",
     "key": "Diagnostics",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:380"
+      "src/p99/views/p99View.ts:338"
+    ]
+  },
+  {
+    "call": "Direct / Bypass",
+    "key": "Direct / Bypass",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:118"
     ]
   },
   {
     "call": "Direct connection",
     "key": "Direct connection",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2693"
+      "src/p99/tabs/section/itemOptions.ts:2185"
+    ]
+  },
+  {
+    "call": "Direct Proxy",
+    "key": "Direct Proxy",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1019"
+    ]
+  },
+  {
+    "call": "Disable",
+    "key": "Disable",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1028",
+      "src/p99/tabs/updates/initController.ts:1059"
     ]
   },
   {
@@ -929,43 +987,44 @@
     "call": "Disable QUIC",
     "key": "Disable QUIC",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:445"
+      "src/p99/tabs/settings/settings.ts:316"
     ]
   },
   {
     "call": "Disable the QUIC protocol to improve compatibility or fix issues with video streaming",
     "key": "Disable the QUIC protocol to improve compatibility or fix issues with video streaming",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:446"
+      "src/p99/tabs/settings/settings.ts:317"
     ]
   },
   {
-    "call": "Disabling interception is incompatible with action=zapret2 because P99 sends matched traffic through NFQUEUE.",
-    "key": "Disabling interception is incompatible with action=zapret2 because P99 sends matched traffic through NFQUEUE.",
+    "call": "Disabled",
+    "key": "Disabled",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5808"
+      "src/p99/tabs/updates/initController.ts:1022",
+      "src/p99/tabs/updates/initController.ts:1054"
     ]
   },
   {
     "call": "Display name",
     "key": "Display name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2399",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2864"
+      "src/p99/tabs/section/itemOptions.ts:1876",
+      "src/p99/tabs/section/itemOptions.ts:2368"
     ]
   },
   {
     "call": "Display subscription traffic and expiry information in the dashboard",
     "key": "Display subscription traffic and expiry information in the dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:247"
+      "src/p99/tabs/subscriptions/subscriptions.ts:282"
     ]
   },
   {
     "call": "DNS Check Interval",
     "key": "DNS Check Interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:196"
+      "src/p99/tabs/settings/settings.ts:71"
     ]
   },
   {
@@ -979,120 +1038,127 @@
     "call": "DNS over HTTPS (DoH)",
     "key": "DNS over HTTPS (DoH)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1777",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:163"
+      "src/p99/tabs/section/itemOptions.ts:1181",
+      "src/p99/tabs/settings/settings.ts:42"
     ]
   },
   {
     "call": "DNS over TLS (DoT)",
     "key": "DNS over TLS (DoT)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1778",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:164"
+      "src/p99/tabs/section/itemOptions.ts:1182",
+      "src/p99/tabs/settings/settings.ts:43"
     ]
   },
   {
     "call": "DNS protocol",
     "key": "DNS protocol",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2366",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7032"
+      "src/p99/tabs/section/itemOptions.ts:1840",
+      "src/p99/tabs/section/sectionContent.ts:248"
     ]
   },
   {
     "call": "DNS Protocol Type",
     "key": "DNS Protocol Type",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:160"
+      "src/p99/tabs/settings/settings.ts:39"
     ]
   },
   {
     "call": "DNS protocol used by the resolver",
     "key": "DNS protocol used by the resolver",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2367",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7033"
+      "src/p99/tabs/section/itemOptions.ts:1841",
+      "src/p99/tabs/section/sectionContent.ts:249"
     ]
   },
   {
     "call": "DNS requests through section",
     "key": "DNS requests through section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7076",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:259"
+      "src/p99/tabs/section/sectionContent.ts:292",
+      "src/p99/tabs/settings/settings.ts:138"
     ]
   },
   {
     "call": "DNS Rewrite TTL",
     "key": "DNS Rewrite TTL",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:222"
+      "src/p99/tabs/settings/settings.ts:97"
     ]
   },
   {
     "call": "DNS server",
     "key": "DNS server",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2376",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7045"
+      "src/p99/tabs/section/itemOptions.ts:1850",
+      "src/p99/tabs/section/sectionContent.ts:261"
     ]
   },
   {
     "call": "DNS server address cannot be empty",
     "key": "DNS server address cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7054",
-      "src/validators/validateDns.ts:8"
+      "src/validators/validateDns.ts:8",
+      "src/p99/tabs/section/sectionContent.ts:270"
     ]
   },
   {
     "call": "DNS server used by the resolver",
     "key": "DNS server used by the resolver",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2377",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7046"
+      "src/p99/tabs/section/itemOptions.ts:1851",
+      "src/p99/tabs/section/sectionContent.ts:262"
     ]
   },
   {
     "call": "DNS server used to obtain IP addresses for upstream DNS and proxies. If multiple servers are selected, a timeout switches to a backup.",
     "key": "DNS server used to obtain IP addresses for upstream DNS and proxies. If multiple servers are selected, a timeout switches to a backup.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:183"
+      "src/p99/tabs/settings/settings.ts:62"
     ]
   },
   {
     "call": "DNS Servers",
     "key": "DNS Servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:172"
+      "src/p99/tabs/settings/settings.ts:51"
     ]
   },
   {
     "call": "DNS Strategy",
     "key": "DNS Strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:240"
+      "src/p99/tabs/settings/settings.ts:119"
     ]
   },
   {
     "call": "DNS through proxy",
     "key": "DNS through proxy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:251"
+      "src/p99/tabs/settings/settings.ts:130"
     ]
   },
   {
     "call": "DNS through section",
     "key": "DNS through section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7064"
+      "src/p99/tabs/section/sectionContent.ts:280"
     ]
   },
   {
     "call": "DNS Unavailability Timeout",
     "key": "DNS Unavailability Timeout",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:212"
+      "src/p99/tabs/settings/settings.ts:87"
+    ]
+  },
+  {
+    "call": "Do not apply this section to the specified local IP addresses; matching continues with the next section.",
+    "key": "Do not apply this section to the specified local IP addresses; matching continues with the next section.",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:1257"
     ]
   },
   {
@@ -1106,42 +1172,42 @@
     "call": "Do not test servers from these countries. E.g. RU, CN (2-letter ISO codes).",
     "key": "Do not test servers from these countries. E.g. RU, CN (2-letter ISO codes).",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2578"
+      "src/p99/tabs/section/itemOptions.ts:2055"
     ]
   },
   {
     "call": "Do not test servers whose names match the expression.",
     "key": "Do not test servers whose names match the expression.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2596"
+      "src/p99/tabs/section/itemOptions.ts:2073"
     ]
   },
   {
     "call": "Do not test servers with one of the selected protocols.",
     "key": "Do not test servers with one of the selected protocols.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2535"
+      "src/p99/tabs/section/itemOptions.ts:2012"
     ]
   },
   {
     "call": "Do not test servers with one of the selected security types.",
     "key": "Do not test servers with one of the selected security types.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2541"
+      "src/p99/tabs/section/itemOptions.ts:2018"
     ]
   },
   {
     "call": "Do not test servers with one of the selected transports.",
     "key": "Do not test servers with one of the selected transports.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2538"
+      "src/p99/tabs/section/itemOptions.ts:2015"
     ]
   },
   {
     "call": "Do not test specified servers.",
     "key": "Do not test specified servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2588"
+      "src/p99/tabs/section/itemOptions.ts:2065"
     ]
   },
   {
@@ -1155,35 +1221,35 @@
     "call": "Domain and IP lists",
     "key": "Domain and IP lists",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7923"
+      "src/p99/tabs/section/sectionContent.ts:1187"
     ]
   },
   {
     "call": "Domain lists",
     "key": "Domain lists",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7944"
+      "src/p99/tabs/section/sectionContent.ts:1211"
     ]
   },
   {
     "call": "Domain Resolver",
     "key": "Domain Resolver",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2357"
+      "src/p99/tabs/section/itemOptions.ts:1831"
     ]
   },
   {
     "call": "Domains",
     "key": "Domains",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7779"
+      "src/p99/tabs/section/sectionContent.ts:1039"
     ]
   },
   {
     "call": "Dont Touch My DHCP!",
     "key": "Dont Touch My DHCP!",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:656"
+      "src/p99/tabs/settings/settings.ts:537"
     ]
   },
   {
@@ -1205,56 +1271,56 @@
     "call": "Download component packages via the selected section",
     "key": "Download component packages via the selected section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:637"
+      "src/p99/tabs/settings/settings.ts:518"
     ]
   },
   {
     "call": "Download components through",
     "key": "Download components through",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:644"
+      "src/p99/tabs/settings/settings.ts:525"
     ]
   },
   {
     "call": "Download components through a section",
     "key": "Download components through a section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:636"
+      "src/p99/tabs/settings/settings.ts:517"
     ]
   },
   {
     "call": "Download lists through",
     "key": "Download lists through",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:624"
+      "src/p99/tabs/settings/settings.ts:505"
     ]
   },
   {
     "call": "Download lists through a section",
     "key": "Download lists through a section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:616"
+      "src/p99/tabs/settings/settings.ts:497"
     ]
   },
   {
     "call": "Download remote lists and rule sets via the selected section",
     "key": "Download remote lists and rule sets via the selected section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:617"
+      "src/p99/tabs/settings/settings.ts:498"
     ]
   },
   {
     "call": "Download subscription through a section",
     "key": "Download subscription through a section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2297"
+      "src/p99/tabs/section/itemOptions.ts:1771"
     ]
   },
   {
     "call": "Download subscriptions via the selected section",
     "key": "Download subscriptions via the selected section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2298"
+      "src/p99/tabs/section/itemOptions.ts:1772"
     ]
   },
   {
@@ -1268,7 +1334,7 @@
     "call": "Download through",
     "key": "Download through",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2306"
+      "src/p99/tabs/section/itemOptions.ts:1780"
     ]
   },
   {
@@ -1283,7 +1349,7 @@
     "call": "Drag rows to change priority. The rule at the top is checked first.",
     "key": "Drag rows to change priority. The rule at the top is checked first.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:335"
+      "src/p99/views/p99View.ts:275"
     ]
   },
   {
@@ -1297,21 +1363,21 @@
     "call": "Duplicate value",
     "key": "Duplicate value",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4509"
+      "src/p99/tabs/section/dpiValidation.ts:119"
     ]
   },
   {
     "call": "e.g. European Fast",
     "key": "e.g. European Fast",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:134"
+      "src/p99/tabs/subscriptions/subscriptions.ts:164"
     ]
   },
   {
     "call": "e.g. MyVPN",
     "key": "e.g. MyVPN",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:263"
+      "src/p99/tabs/subscriptions/subscriptions.ts:298"
     ]
   },
   {
@@ -1325,7 +1391,7 @@
     "call": "Edit rule action",
     "key": "Edit rule action",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:67"
+      "src/p99/views/p99View.ts:96"
     ]
   },
   {
@@ -1339,14 +1405,16 @@
     "call": "Enable",
     "key": "Enable",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6972"
+      "src/p99/tabs/section/sectionContent.ts:188",
+      "src/p99/tabs/updates/initController.ts:1035",
+      "src/p99/tabs/updates/initController.ts:1066"
     ]
   },
   {
     "call": "Enable automatic updates for remote lists and rule sets",
     "key": "Enable automatic updates for remote lists and rule sets",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:457"
+      "src/p99/tabs/settings/settings.ts:328"
     ]
   },
   {
@@ -1360,202 +1428,218 @@
     "call": "Enable built-in DNS resolver for domains handled by this section",
     "key": "Enable built-in DNS resolver for domains handled by this section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2358"
+      "src/p99/tabs/section/itemOptions.ts:1832"
     ]
   },
   {
     "call": "Enable list updates",
     "key": "Enable list updates",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:456"
+      "src/p99/tabs/settings/settings.ts:327"
     ]
   },
   {
     "call": "Enable Mixed Proxy",
     "key": "Enable Mixed Proxy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7638"
+      "src/p99/tabs/section/sectionContent.ts:898"
     ]
   },
   {
     "call": "Enable Mixed Proxy Authentication",
     "key": "Enable Mixed Proxy Authentication",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7677"
+      "src/p99/tabs/section/sectionContent.ts:937"
+    ]
+  },
+  {
+    "call": "Enable mode 2",
+    "key": "Enable mode 2",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1009"
     ]
   },
   {
     "call": "Enable Output Network Interface",
     "key": "Enable Output Network Interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:304"
+      "src/p99/tabs/settings/settings.ts:179"
     ]
   },
   {
     "call": "Enable YACD",
     "key": "Enable YACD",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:413"
+      "src/p99/tabs/settings/settings.ts:284"
     ]
   },
   {
     "call": "Enable YACD WAN Access",
     "key": "Enable YACD WAN Access",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:422"
+      "src/p99/tabs/settings/settings.ts:293"
     ]
   },
   {
     "call": "Enabled",
     "key": "Enabled",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:156"
+      "src/p99/tabs/subscriptions/subscriptions.ts:187",
+      "src/p99/tabs/updates/initController.ts:1021",
+      "src/p99/tabs/updates/initController.ts:1051"
     ]
   },
   {
     "call": "Enter a complete sing-box outbound object",
     "key": "Enter a complete sing-box outbound object",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3776"
+      "src/p99/tabs/section/settingsModals.ts:485"
     ]
   },
   {
     "call": "Enter a display name",
     "key": "Enter a display name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2411",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2869",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3731",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3747"
+      "src/p99/tabs/section/itemOptions.ts:1888",
+      "src/p99/tabs/section/itemOptions.ts:2373",
+      "src/p99/tabs/section/itemOptions.ts:2819",
+      "src/p99/tabs/section/itemOptions.ts:2838"
     ]
   },
   {
     "call": "Enter a level name",
     "key": "Enter a level name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2666",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2687"
+      "src/p99/tabs/section/itemOptions.ts:2155",
+      "src/p99/tabs/section/itemOptions.ts:2179"
     ]
   },
   {
     "call": "Enter a number between 100 and 60000 ms",
     "key": "Enter a number between 100 and 60000 ms",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:573",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:577"
+      "src/p99/tabs/settings/settings.ts:451",
+      "src/p99/tabs/settings/settings.ts:455"
     ]
   },
   {
     "call": "Enter a valid DNS server address",
     "key": "Enter a valid DNS server address",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7057"
+      "src/p99/tabs/section/sectionContent.ts:273"
     ]
   },
   {
     "call": "Enter a valid duration (e.g. 20m, 1h, 30s)",
     "key": "Enter a valid duration (e.g. 20m, 1h, 30s)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:608"
+      "src/p99/tabs/settings/settings.ts:489"
     ]
   },
   {
     "call": "Enter direct subscription URLs (mutually exclusive with pre-configured Subscriptions below)",
     "key": "Enter direct subscription URLs (mutually exclusive with pre-configured Subscriptions below)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7247"
+      "src/p99/tabs/section/sectionContent.ts:463"
     ]
   },
   {
     "call": "Exclude by proxy parameters",
     "key": "Exclude by proxy parameters",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2530",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2746",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3146"
+      "src/p99/tabs/section/itemOptions.ts:2007",
+      "src/p99/tabs/section/itemOptions.ts:2238",
+      "src/p99/tabs/section/itemOptions.ts:2665"
     ]
   },
   {
     "call": "Exclude by regular expression",
     "key": "Exclude by regular expression",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2595",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2808",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3206"
+      "src/p99/tabs/section/itemOptions.ts:2072",
+      "src/p99/tabs/section/itemOptions.ts:2300",
+      "src/p99/tabs/section/itemOptions.ts:2725"
     ]
   },
   {
     "call": "Exclude countries",
     "key": "Exclude countries",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2577",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2792",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3190"
+      "src/p99/tabs/section/itemOptions.ts:2054",
+      "src/p99/tabs/section/itemOptions.ts:2284",
+      "src/p99/tabs/section/itemOptions.ts:2709"
+    ]
+  },
+  {
+    "call": "Exclude devices",
+    "key": "Exclude devices",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:1256"
     ]
   },
   {
     "call": "Exclude NTP",
     "key": "Exclude NTP",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:730"
+      "src/p99/tabs/settings/settings.ts:615"
     ]
   },
   {
     "call": "Exclude NTP protocol traffic from the tunnel to prevent it from being routed through the proxy or VPN",
     "key": "Exclude NTP protocol traffic from the tunnel to prevent it from being routed through the proxy or VPN",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:731"
+      "src/p99/tabs/settings/settings.ts:616"
     ]
   },
   {
     "call": "Exclude servers",
     "key": "Exclude servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2587",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2800",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3198"
+      "src/p99/tabs/section/itemOptions.ts:2064",
+      "src/p99/tabs/section/itemOptions.ts:2292",
+      "src/p99/tabs/section/itemOptions.ts:2717"
     ]
   },
   {
     "call": "Exclude servers with one of the selected protocols from this level.",
     "key": "Exclude servers with one of the selected protocols from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2754"
+      "src/p99/tabs/section/itemOptions.ts:2246"
     ]
   },
   {
     "call": "Exclude servers with one of the selected security types from this level.",
     "key": "Exclude servers with one of the selected security types from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2760"
+      "src/p99/tabs/section/itemOptions.ts:2252"
     ]
   },
   {
     "call": "Exclude servers with one of the selected transports from this level.",
     "key": "Exclude servers with one of the selected transports from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2757"
+      "src/p99/tabs/section/itemOptions.ts:2249"
     ]
   },
   {
     "call": "Exclude URLTest / Priority group",
     "key": "Exclude URLTest / Priority group",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3261"
+      "src/p99/tabs/section/itemOptions.ts:2782"
     ]
   },
   {
     "call": "Expecting a valid duration string, e.g. 4h, 1d, 30m",
     "key": "Expecting a valid duration string, e.g. 4h, 1d, 30m",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:237"
+      "src/p99/tabs/subscriptions/subscriptions.ts:272"
     ]
   },
   {
     "call": "Expecting: %s",
     "key": "Expecting: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:53"
+      "src/p99/views/p99View.ts:81"
     ]
   },
   {
@@ -1569,21 +1653,7 @@
     "call": "Expose this section as a local HTTP+SOCKS proxy",
     "key": "Expose this section as a local HTTP+SOCKS proxy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7639"
-    ]
-  },
-  {
-    "call": "External nfqws config files bypass P99 queue management and explicit validation.",
-    "key": "External nfqws config files bypass P99 queue management and explicit validation.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5342"
-    ]
-  },
-  {
-    "call": "External nfqws2 config files bypass P99 queue management and explicit validation.",
-    "key": "External nfqws2 config files bypass P99 queue management and explicit validation.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5787"
+      "src/p99/tabs/section/sectionContent.ts:899"
     ]
   },
   {
@@ -1613,19 +1683,19 @@
     "call": "Failed to create support report",
     "key": "Failed to create support report",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:210"
+      "src/p99/tabs/diagnostic/initController.ts:188"
     ]
   },
   {
     "call": "Failed to execute",
     "key": "Failed to execute",
     "places": [
-      "src/p99/methods/shell/index.ts:169",
-      "src/p99/methods/shell/index.ts:176",
-      "src/p99/tabs/updates/initController.ts:509",
-      "src/p99/tabs/updates/initController.ts:510",
-      "src/p99/tabs/updates/initController.ts:570",
-      "src/p99/tabs/updates/initController.ts:720"
+      "src/p99/methods/shell/index.ts:170",
+      "src/p99/methods/shell/index.ts:177",
+      "src/p99/tabs/updates/initController.ts:528",
+      "src/p99/tabs/updates/initController.ts:529",
+      "src/p99/tabs/updates/initController.ts:589",
+      "src/p99/tabs/updates/initController.ts:739"
     ]
   },
   {
@@ -1672,8 +1742,8 @@
     "call": "Faster server search interval",
     "key": "Faster server search interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2948",
-      "src/p99/tabs/dashboard/initController.ts:1267"
+      "src/p99/tabs/dashboard/initController.ts:1267",
+      "src/p99/tabs/section/itemOptions.ts:2452"
     ]
   },
   {
@@ -1687,7 +1757,7 @@
     "call": "Filter the servers that will be displayed on the dashboard.",
     "key": "Filter the servers that will be displayed on the dashboard.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3103"
+      "src/p99/tabs/section/itemOptions.ts:2622"
     ]
   },
   {
@@ -1701,21 +1771,29 @@
     "call": "Fix the highlighted fields and save again.",
     "key": "Fix the highlighted fields and save again.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3376"
+      "src/p99/tabs/section/settingsModals.ts:90"
     ]
   },
   {
     "call": "Forced device routing",
     "key": "Forced device routing",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7976"
+      "src/p99/tabs/section/sectionContent.ts:1246"
     ]
   },
   {
-    "call": "Fuzzing is not supported here because P99 needs deterministic runtime validation.",
-    "key": "Fuzzing is not supported here because P99 needs deterministic runtime validation.",
+    "call": "Full removal",
+    "key": "Full removal",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5805"
+      "src/p99/tabs/updates/fullUninstall.ts:94",
+      "src/p99/tabs/updates/fullUninstall.ts:122"
+    ]
+  },
+  {
+    "call": "General",
+    "key": "General",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:183"
     ]
   },
   {
@@ -1736,63 +1814,56 @@
     "call": "Global check",
     "key": "Global check",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:733"
-    ]
-  },
-  {
-    "call": "Global check could not be collected.",
-    "key": "Global check could not be collected.",
-    "places": [
-      "src/p99/tabs/diagnostic/initController.ts:189"
+      "src/p99/tabs/diagnostic/initController.ts:711"
     ]
   },
   {
     "call": "Hide selected servers.",
     "key": "Hide selected servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3199"
+      "src/p99/tabs/section/itemOptions.ts:2718"
     ]
   },
   {
     "call": "Hide servers from selected groups without repeating their filtering criteria.",
     "key": "Hide servers from selected groups without repeating their filtering criteria.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3262"
+      "src/p99/tabs/section/itemOptions.ts:2783"
     ]
   },
   {
     "call": "Hide servers from the specified countries.",
     "key": "Hide servers from the specified countries.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3191"
+      "src/p99/tabs/section/itemOptions.ts:2710"
     ]
   },
   {
     "call": "Hide servers whose names match the expression.",
     "key": "Hide servers whose names match the expression.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3207"
+      "src/p99/tabs/section/itemOptions.ts:2726"
     ]
   },
   {
     "call": "Hide servers with one of the selected protocols.",
     "key": "Hide servers with one of the selected protocols.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3154"
+      "src/p99/tabs/section/itemOptions.ts:2673"
     ]
   },
   {
     "call": "Hide servers with one of the selected security types.",
     "key": "Hide servers with one of the selected security types.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3158"
+      "src/p99/tabs/section/itemOptions.ts:2677"
     ]
   },
   {
     "call": "Hide servers with one of the selected transports.",
     "key": "Hide servers with one of the selected transports.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3155"
+      "src/p99/tabs/section/itemOptions.ts:2674"
     ]
   },
   {
@@ -1806,15 +1877,15 @@
     "call": "Higher-level check interval",
     "key": "Higher-level check interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2912",
-      "src/p99/tabs/dashboard/initController.ts:1253"
+      "src/p99/tabs/dashboard/initController.ts:1253",
+      "src/p99/tabs/section/itemOptions.ts:2416"
     ]
   },
   {
     "call": "Higher-priority DNS Check",
     "key": "Higher-priority DNS Check",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:204"
+      "src/p99/tabs/settings/settings.ts:79"
     ]
   },
   {
@@ -1829,28 +1900,28 @@
     "call": "How often higher priority levels are checked while a lower level is active",
     "key": "How often higher priority levels are checked while a lower level is active",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2913"
+      "src/p99/tabs/section/itemOptions.ts:2417"
     ]
   },
   {
     "call": "How often the currently selected server is checked",
     "key": "How often the currently selected server is checked",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2889"
+      "src/p99/tabs/section/itemOptions.ts:2393"
     ]
   },
   {
     "call": "How often to check the active DNS servers.",
     "key": "How often to check the active DNS servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:197"
+      "src/p99/tabs/settings/settings.ts:72"
     ]
   },
   {
     "call": "How often to check whether a higher-priority DNS server has recovered.",
     "key": "How often to check whether a higher-priority DNS server has recovered.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:205"
+      "src/p99/tabs/settings/settings.ts:80"
     ]
   },
   {
@@ -1864,157 +1935,157 @@
     "call": "HTTP or HTTPS subscription link",
     "key": "HTTP or HTTPS subscription link",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:148"
+      "src/p99/tabs/subscriptions/subscriptions.ts:179"
     ]
   },
   {
     "call": "Idle timeout",
     "key": "Idle timeout",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2456",
       "src/p99/tabs/dashboard/initController.ts:891",
-      "src/p99/tabs/dashboard/initController.ts:1132"
+      "src/p99/tabs/dashboard/initController.ts:1132",
+      "src/p99/tabs/section/itemOptions.ts:1933"
     ]
   },
   {
     "call": "Import subscription URLTest groups",
     "key": "Import subscription URLTest groups",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2346"
+      "src/p99/tabs/section/itemOptions.ts:1820"
     ]
   },
   {
     "call": "Import URLTest groups",
     "key": "Import URLTest groups",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:270"
+      "src/p99/tabs/subscriptions/subscriptions.ts:305"
     ]
   },
   {
     "call": "Import URLTest groups returned by this subscription provider",
     "key": "Import URLTest groups returned by this subscription provider",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2347",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:271"
+      "src/p99/tabs/section/itemOptions.ts:1821",
+      "src/p99/tabs/subscriptions/subscriptions.ts:306"
     ]
   },
   {
     "call": "Include by proxy parameters",
     "key": "Include by proxy parameters",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2513",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2728",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3126"
+      "src/p99/tabs/section/itemOptions.ts:1990",
+      "src/p99/tabs/section/itemOptions.ts:2220",
+      "src/p99/tabs/section/itemOptions.ts:2645"
     ]
   },
   {
     "call": "Include by regular expression",
     "key": "Include by regular expression",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2567",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2784",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3182"
+      "src/p99/tabs/section/itemOptions.ts:2044",
+      "src/p99/tabs/section/itemOptions.ts:2276",
+      "src/p99/tabs/section/itemOptions.ts:2701"
     ]
   },
   {
     "call": "Include countries",
     "key": "Include countries",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2549",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2768",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3166"
+      "src/p99/tabs/section/itemOptions.ts:2026",
+      "src/p99/tabs/section/itemOptions.ts:2260",
+      "src/p99/tabs/section/itemOptions.ts:2685"
     ]
   },
   {
     "call": "Include IP addresses and subnets",
     "key": "Include IP addresses and subnets",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3851"
+      "src/p99/tabs/section/settingsModals.ts:573"
     ]
   },
   {
     "call": "Include servers",
     "key": "Include servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2559",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2776",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3174"
+      "src/p99/tabs/section/itemOptions.ts:2036",
+      "src/p99/tabs/section/itemOptions.ts:2268",
+      "src/p99/tabs/section/itemOptions.ts:2693"
     ]
   },
   {
     "call": "Install",
     "key": "Install",
     "places": [
-      "src/p99/tabs/updates/initController.ts:755",
-      "src/p99/tabs/updates/initController.ts:883"
+      "src/p99/tabs/updates/initController.ts:774",
+      "src/p99/tabs/updates/initController.ts:913"
     ]
   },
   {
     "call": "Install another build:",
     "key": "Install another build:",
     "places": [
-      "src/p99/tabs/updates/initController.ts:1161"
+      "src/p99/tabs/updates/initController.ts:1287"
     ]
   },
   {
     "call": "Installed (Mirror edition)",
     "key": "Installed (Mirror edition)",
     "places": [
-      "src/p99/tabs/updates/initController.ts:957"
+      "src/p99/tabs/updates/initController.ts:987"
     ]
   },
   {
     "call": "Installed version is newer than release",
     "key": "Installed version is newer than release",
     "places": [
-      "src/p99/tabs/updates/initController.ts:287",
-      "src/p99/tabs/updates/initController.ts:1019"
+      "src/p99/tabs/updates/initController.ts:292",
+      "src/p99/tabs/updates/initController.ts:1130"
     ]
   },
   {
     "call": "Interface Monitoring",
     "key": "Interface Monitoring",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:365"
+      "src/p99/tabs/settings/settings.ts:233"
     ]
   },
   {
     "call": "Interface Monitoring Delay",
     "key": "Interface Monitoring Delay",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:397"
+      "src/p99/tabs/settings/settings.ts:264"
     ]
   },
   {
     "call": "Interface monitoring for Bad WAN",
     "key": "Interface monitoring for Bad WAN",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:366"
+      "src/p99/tabs/settings/settings.ts:234"
     ]
   },
   {
     "call": "Interrupt connections",
     "key": "Interrupt connections",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2470",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2964",
       "src/p99/tabs/dashboard/initController.ts:893",
       "src/p99/tabs/dashboard/initController.ts:1133",
-      "src/p99/tabs/dashboard/initController.ts:1273"
+      "src/p99/tabs/dashboard/initController.ts:1273",
+      "src/p99/tabs/section/itemOptions.ts:1947",
+      "src/p99/tabs/section/itemOptions.ts:2468"
     ]
   },
   {
     "call": "Interrupt connections when priority failover switches server",
     "key": "Interrupt connections when priority failover switches server",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2965"
+      "src/p99/tabs/section/itemOptions.ts:2469"
     ]
   },
   {
     "call": "Interrupt connections when URLTest switches the selected server",
     "key": "Interrupt connections when URLTest switches the selected server",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2471"
+      "src/p99/tabs/section/itemOptions.ts:1948"
     ]
   },
   {
@@ -2029,14 +2100,14 @@
     "call": "Interval between automatic latency checks in the shared pool (e.g., 20m, 1h). Default is 20m.",
     "key": "Interval between automatic latency checks in the shared pool (e.g., 20m, 1h). Default is 20m.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:597"
+      "src/p99/tabs/settings/settings.ts:475"
     ]
   },
   {
     "call": "Invalid ByeDPI strategy",
     "key": "Invalid ByeDPI strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7204"
+      "src/p99/tabs/section/sectionContent.ts:420"
     ]
   },
   {
@@ -2064,9 +2135,9 @@
     "call": "Invalid domain address",
     "key": "Invalid domain address",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5015",
       "src/validators/validateDomain.ts:67",
-      "src/validators/validateDomain.ts:73"
+      "src/validators/validateDomain.ts:73",
+      "src/p99/tabs/section/conditionFields.ts:176"
     ]
   },
   {
@@ -2193,7 +2264,7 @@
     "call": "Invalid NFQWS2 strategy",
     "key": "Invalid NFQWS2 strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7161"
+      "src/p99/tabs/section/sectionContent.ts:377"
     ]
   },
   {
@@ -2207,22 +2278,22 @@
     "call": "Invalid port number. Must be between 1 and 65535",
     "key": "Invalid port number. Must be between 1 and 65535",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7670",
-      "src/validators/validateShadowsocksUrl.ts:127"
+      "src/validators/validateShadowsocksUrl.ts:127",
+      "src/p99/tabs/section/sectionContent.ts:930"
     ]
   },
   {
     "call": "Invalid port or range. Use 80 or 1000-2000",
     "key": "Invalid port or range. Use 80 or 1000-2000",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5164"
+      "src/p99/tabs/section/conditionFields.ts:89"
     ]
   },
   {
     "call": "Invalid regular expression",
     "key": "Invalid regular expression",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4379"
+      "src/p99/tabs/section/itemOptions.ts:1717"
     ]
   },
   {
@@ -2427,7 +2498,6 @@
     "call": "Invalid URL format",
     "key": "Invalid URL format",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4478",
       "src/validators/validateUrl.ts:9",
       "src/validators/validateUrl.ts:35",
       "src/validators/validateUrl.ts:38"
@@ -2437,7 +2507,7 @@
     "call": "Invalid VLESS URL: flow xtls-rprx-vision-udp443 is not supported",
     "key": "Invalid VLESS URL: flow xtls-rprx-vision-udp443 is not supported",
     "places": [
-      "src/validators/validateVlessUrl.ts:111"
+      "src/validators/validateVlessUrl.ts:113"
     ]
   },
   {
@@ -2451,14 +2521,14 @@
     "call": "Invalid VLESS URL: invalid port number",
     "key": "Invalid VLESS URL: invalid port number",
     "places": [
-      "src/validators/validateVlessUrl.ts:57"
+      "src/validators/validateVlessUrl.ts:60"
     ]
   },
   {
     "call": "Invalid VLESS URL: missing fp for reality",
     "key": "Invalid VLESS URL: missing fp for reality",
     "places": [
-      "src/validators/validateVlessUrl.ts:103"
+      "src/validators/validateVlessUrl.ts:106"
     ]
   },
   {
@@ -2472,28 +2542,28 @@
     "call": "Invalid VLESS URL: missing hostname",
     "key": "Invalid VLESS URL: missing hostname",
     "places": [
-      "src/validators/validateVlessUrl.ts:48"
+      "src/validators/validateVlessUrl.ts:50"
     ]
   },
   {
     "call": "Invalid VLESS URL: missing pbk for reality",
     "key": "Invalid VLESS URL: missing pbk for reality",
     "places": [
-      "src/validators/validateVlessUrl.ts:98"
+      "src/validators/validateVlessUrl.ts:101"
     ]
   },
   {
     "call": "Invalid VLESS URL: missing port",
     "key": "Invalid VLESS URL: missing port",
     "places": [
-      "src/validators/validateVlessUrl.ts:51"
+      "src/validators/validateVlessUrl.ts:54"
     ]
   },
   {
     "call": "Invalid VLESS URL: missing query parameters",
     "key": "Invalid VLESS URL: missing query parameters",
     "places": [
-      "src/validators/validateVlessUrl.ts:63"
+      "src/validators/validateVlessUrl.ts:66"
     ]
   },
   {
@@ -2528,21 +2598,21 @@
     "call": "Invalid VLESS URL: parsing failed",
     "key": "Invalid VLESS URL: parsing failed",
     "places": [
-      "src/validators/validateVlessUrl.ts:117"
+      "src/validators/validateVlessUrl.ts:121"
     ]
   },
   {
     "call": "Invalid VLESS URL: unsupported or missing security",
     "key": "Invalid VLESS URL: unsupported or missing security",
     "places": [
-      "src/validators/validateVlessUrl.ts:91"
+      "src/validators/validateVlessUrl.ts:94"
     ]
   },
   {
     "call": "Invalid VLESS URL: unsupported or missing type",
     "key": "Invalid VLESS URL: unsupported or missing type",
     "places": [
-      "src/validators/validateVlessUrl.ts:85"
+      "src/validators/validateVlessUrl.ts:88"
     ]
   },
   {
@@ -2605,39 +2675,38 @@
     "call": "IPs",
     "key": "IPs",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7808"
+      "src/p99/tabs/section/sectionContent.ts:1068"
     ]
   },
   {
     "call": "IPv4 only",
     "key": "IPv4 only",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:242"
+      "src/p99/tabs/settings/settings.ts:121"
     ]
   },
   {
     "call": "IPv6 only",
     "key": "IPv6 only",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:244"
+      "src/p99/tabs/settings/settings.ts:123"
     ]
   },
   {
     "call": "Issues detected",
     "key": "Issues detected",
     "places": [
-      "src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:17",
-      "src/p99/tabs/diagnostic/helpers/getMeta.ts:20"
+      "src/p99/tabs/diagnostic/helpers/getMeta.ts:20",
+      "src/p99/tabs/diagnostic/checks/getCheckItemsMeta.ts:17"
     ]
   },
   {
     "call": "JSON outbound",
     "key": "JSON outbound",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1063",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3775",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4011",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7437"
+      "src/p99/tabs/section/sectionContent.ts:132",
+      "src/p99/tabs/section/sectionContent.ts:667",
+      "src/p99/tabs/section/settingsModals.ts:484"
     ]
   },
   {
@@ -2672,58 +2741,58 @@
     "call": "JSON outbound settings",
     "key": "JSON outbound settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3799"
+      "src/p99/tabs/section/settingsModals.ts:508"
     ]
   },
   {
     "call": "Keyword must not contain spaces or commas",
     "key": "Keyword must not contain spaces or commas",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4389"
+      "src/p99/tabs/section/itemOptions.ts:1730"
     ]
   },
   {
     "call": "Latency test failed",
     "key": "Latency test failed",
     "places": [
-      "src/p99/methods/shell/index.ts:475",
-      "src/p99/methods/shell/index.ts:496"
+      "src/p99/methods/shell/index.ts:483",
+      "src/p99/methods/shell/index.ts:504"
     ]
   },
   {
     "call": "Latency test timeout (ms)",
     "key": "Latency test timeout (ms)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:561"
+      "src/p99/tabs/settings/settings.ts:436"
     ]
   },
   {
     "call": "Latency test URL",
     "key": "Latency test URL",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:545"
+      "src/p99/tabs/settings/settings.ts:417"
     ]
   },
   {
     "call": "Latest version is installed",
     "key": "Latest version is installed",
     "places": [
-      "src/p99/tabs/updates/initController.ts:290",
-      "src/p99/tabs/updates/initController.ts:1017"
+      "src/p99/tabs/updates/initController.ts:295",
+      "src/p99/tabs/updates/initController.ts:1128"
     ]
   },
   {
     "call": "Latest version:",
     "key": "Latest version:",
     "places": [
-      "src/p99/tabs/updates/initController.ts:1019"
+      "src/p99/tabs/updates/initController.ts:1130"
     ]
   },
   {
     "call": "Leave empty for default (Happ/3.26.1) or specify e.g. sing-box, clash.meta, v2ray",
     "key": "Leave empty for default (Happ/3.26.1) or specify e.g. sing-box, clash.meta, v2ray",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:282"
+      "src/p99/tabs/subscriptions/subscriptions.ts:317"
     ]
   },
   {
@@ -2737,21 +2806,14 @@
     "call": "Level name",
     "key": "Level name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2682"
-    ]
-  },
-  {
-    "call": "List must be an HTTP(S) URL or a local .lst path",
-    "key": "List must be an HTTP(S) URL or a local .lst path",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6875"
+      "src/p99/tabs/section/itemOptions.ts:2174"
     ]
   },
   {
     "call": "List Update Frequency",
     "key": "List Update Frequency",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:465"
+      "src/p99/tabs/settings/settings.ts:336"
     ]
   },
   {
@@ -2773,18 +2835,18 @@
     "call": "Loading...",
     "key": "Loading...",
     "places": [
-      "src/p99/tabs/updates/initController.ts:896",
-      "src/p99/tabs/updates/initController.ts:907",
-      "src/p99/tabs/updates/initController.ts:918",
-      "src/p99/tabs/updates/initController.ts:931",
-      "src/p99/tabs/updates/initController.ts:944"
+      "src/p99/tabs/updates/initController.ts:926",
+      "src/p99/tabs/updates/initController.ts:937",
+      "src/p99/tabs/updates/initController.ts:948",
+      "src/p99/tabs/updates/initController.ts:961",
+      "src/p99/tabs/updates/initController.ts:974"
     ]
   },
   {
     "call": "Log Level",
     "key": "Log Level",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:714"
+      "src/p99/tabs/settings/settings.ts:599"
     ]
   },
   {
@@ -2798,43 +2860,43 @@
     "call": "Main DNS server. If multiple servers are selected, a timeout switches to a backup.",
     "key": "Main DNS server. If multiple servers are selected, a timeout switches to a backup.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:173"
+      "src/p99/tabs/settings/settings.ts:52"
     ]
   },
   {
     "call": "Manage remote subscriptions. Configure subscriptions once and select them in any section.",
     "key": "Manage remote subscriptions. Configure subscriptions once and select them in any section.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:352",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:48"
+      "src/p99/views/p99View.ts:297",
+      "src/p99/tabs/subscriptions/subscriptions.ts:76"
     ]
   },
   {
     "call": "Match destination IPs or subnets",
     "key": "Match destination IPs or subnets",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7809"
+      "src/p99/tabs/section/sectionContent.ts:1069"
     ]
   },
   {
     "call": "Match destination ports. Use a single port or a range",
     "key": "Match destination ports. Use a single port or a range",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7988"
+      "src/p99/tabs/section/sectionContent.ts:1272"
     ]
   },
   {
     "call": "Maximum time to wait for example.com to resolve during a DNS health check.",
     "key": "Maximum time to wait for example.com to resolve during a DNS health check.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:213"
+      "src/p99/tabs/settings/settings.ts:88"
     ]
   },
   {
     "call": "Maximum wait time in milliseconds for server ping and latency tests. Default is 2000 ms.",
     "key": "Maximum wait time in milliseconds for server ping and latency tests. Default is 2000 ms.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:562"
+      "src/p99/tabs/settings/settings.ts:437"
     ]
   },
   {
@@ -2848,42 +2910,49 @@
     "call": "Minimum latency difference in milliseconds that triggers switching to a faster server.",
     "key": "Minimum latency difference in milliseconds that triggers switching to a faster server.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2430"
+      "src/p99/tabs/section/itemOptions.ts:1907"
     ]
   },
   {
     "call": "Mixed Proxy Password",
     "key": "Mixed Proxy Password",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7722"
+      "src/p99/tabs/section/sectionContent.ts:982"
     ]
   },
   {
     "call": "Mixed Proxy Port",
     "key": "Mixed Proxy Port",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7652"
+      "src/p99/tabs/section/sectionContent.ts:912"
     ]
   },
   {
     "call": "Mixed Proxy Username",
     "key": "Mixed Proxy Username",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7691"
+      "src/p99/tabs/section/sectionContent.ts:951"
+    ]
+  },
+  {
+    "call": "Mode 2 enabled",
+    "key": "Mode 2 enabled",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:997"
     ]
   },
   {
     "call": "Monitored Interfaces",
     "key": "Monitored Interfaces",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:374"
+      "src/p99/tabs/settings/settings.ts:242"
     ]
   },
   {
     "call": "Monitoring",
     "key": "Monitoring",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:404"
+      "src/p99/views/p99View.ts:359"
     ]
   },
   {
@@ -2897,45 +2966,45 @@
     "call": "Must be a number in the range of 0 - 10000",
     "key": "Must be a number in the range of 0 - 10000",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2007",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2022"
+      "src/p99/tabs/section/itemOptions.ts:1439",
+      "src/p99/tabs/section/itemOptions.ts:1454"
     ]
   },
   {
     "call": "Name",
     "key": "Name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:129"
+      "src/p99/tabs/subscriptions/subscriptions.ts:159"
     ]
   },
   {
     "call": "Name displayed on the dashboard",
     "key": "Name displayed on the dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2400",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2865"
+      "src/p99/tabs/section/itemOptions.ts:1877",
+      "src/p99/tabs/section/itemOptions.ts:2369"
     ]
   },
   {
     "call": "Name shown in the priority level list",
     "key": "Name shown in the priority level list",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2683"
+      "src/p99/tabs/section/itemOptions.ts:2175"
     ]
   },
   {
     "call": "Network Interface",
     "key": "Network Interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1822",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7396"
+      "src/p99/tabs/section/itemOptions.ts:1232",
+      "src/p99/tabs/section/sectionContent.ts:622"
     ]
   },
   {
     "call": "Network interface settings",
     "key": "Network interface settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3566"
+      "src/p99/tabs/section/settingsModals.ts:300"
     ]
   },
   {
@@ -2965,28 +3034,28 @@
     "call": "NFQWS Strategy",
     "key": "NFQWS Strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7093"
+      "src/p99/tabs/section/sectionContent.ts:309"
     ]
   },
   {
     "call": "NFQWS strategy cannot be empty",
     "key": "NFQWS strategy cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5472"
+      "src/p99/tabs/section/dpiValidation.ts:235"
     ]
   },
   {
     "call": "NFQWS2 Strategy",
     "key": "NFQWS2 Strategy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7140"
+      "src/p99/tabs/section/sectionContent.ts:356"
     ]
   },
   {
     "call": "NFQWS2 strategy cannot be empty",
     "key": "NFQWS2 strategy cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5946"
+      "src/p99/tabs/section/dpiValidation.ts:572"
     ]
   },
   {
@@ -3079,6 +3148,13 @@
     ]
   },
   {
+    "call": "Normal mode",
+    "key": "Normal mode",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:997"
+    ]
+  },
+  {
     "call": "Not configured",
     "key": "Not configured",
     "places": [
@@ -3106,10 +3182,10 @@
     "places": [
       "src/p99/helpers/singBoxVariant.ts:29",
       "src/p99/helpers/singBoxVariant.ts:37",
-      "src/p99/tabs/updates/initController.ts:921",
-      "src/p99/tabs/updates/initController.ts:934",
-      "src/p99/tabs/updates/initController.ts:947",
-      "src/p99/tabs/updates/initController.ts:958"
+      "src/p99/tabs/updates/initController.ts:951",
+      "src/p99/tabs/updates/initController.ts:964",
+      "src/p99/tabs/updates/initController.ts:977",
+      "src/p99/tabs/updates/initController.ts:988"
     ]
   },
   {
@@ -3140,84 +3216,92 @@
     "call": "Not running",
     "key": "Not running",
     "places": [
-      "src/p99/tabs/diagnostic/diagnostic.store.ts:129",
-      "src/p99/tabs/diagnostic/initController.ts:118",
-      "src/p99/tabs/diagnostic/initController.ts:397",
-      "src/p99/tabs/diagnostic/initController.ts:454",
-      "src/p99/tabs/diagnostic/initController.ts:540"
+      "src/p99/tabs/diagnostic/diagnostic.store.ts:134",
+      "src/p99/tabs/diagnostic/initController.ts:114",
+      "src/p99/tabs/diagnostic/initController.ts:375",
+      "src/p99/tabs/diagnostic/initController.ts:432",
+      "src/p99/tabs/diagnostic/initController.ts:518"
     ]
   },
   {
     "call": "Only from the specified countries.",
     "key": "Only from the specified countries.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2769"
+      "src/p99/tabs/section/itemOptions.ts:2261"
     ]
   },
   {
     "call": "Only selected",
     "key": "Only selected",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1893",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1901"
+      "src/p99/tabs/section/itemOptions.ts:1304",
+      "src/p99/tabs/section/itemOptions.ts:1315"
     ]
   },
   {
     "call": "Only selected except exclusions",
     "key": "Only selected except exclusions",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1894",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1903"
+      "src/p99/tabs/section/itemOptions.ts:1305",
+      "src/p99/tabs/section/itemOptions.ts:1317"
     ]
   },
   {
     "call": "Only servers whose names match the expression.",
     "key": "Only servers whose names match the expression.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2785"
+      "src/p99/tabs/section/itemOptions.ts:2277"
     ]
   },
   {
     "call": "Only servers with one of the selected protocols.",
     "key": "Only servers with one of the selected protocols.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2736"
+      "src/p99/tabs/section/itemOptions.ts:2228"
     ]
   },
   {
     "call": "Only servers with one of the selected security types.",
     "key": "Only servers with one of the selected security types.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2740"
+      "src/p99/tabs/section/itemOptions.ts:2232"
     ]
   },
   {
     "call": "Only servers with one of the selected transports.",
     "key": "Only servers with one of the selected transports.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2737"
+      "src/p99/tabs/section/itemOptions.ts:2229"
     ]
   },
   {
     "call": "Only the specified servers.",
     "key": "Only the specified servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2777"
+      "src/p99/tabs/section/itemOptions.ts:2269"
     ]
   },
   {
     "call": "Open",
     "key": "Open",
     "places": [
-      "src/p99/tabs/updates/initController.ts:1010",
-      "src/p99/tabs/updates/initController.ts:1032"
+      "src/p99/tabs/updates/initController.ts:1121",
+      "src/p99/tabs/updates/initController.ts:1143"
+    ]
+  },
+  {
+    "call": "Open LuCI",
+    "key": "Open LuCI",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:60",
+      "src/p99/tabs/updates/fullUninstall.ts:88"
     ]
   },
   {
     "call": "Open priority settings and enter a display name",
     "key": "Open priority settings and enter a display name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3743"
+      "src/p99/tabs/section/itemOptions.ts:2834"
     ]
   },
   {
@@ -3232,30 +3316,37 @@
     "key": "Operation timed out",
     "places": [
       "src/helpers/withTimeout.ts:7",
-      "src/p99/methods/shell/index.ts:445",
-      "src/p99/methods/shell/index.ts:533"
+      "src/p99/methods/shell/index.ts:453",
+      "src/p99/methods/shell/index.ts:541"
     ]
   },
   {
     "call": "Option \"%s\" contains an invalid input value.",
     "key": "Option \"%s\" contains an invalid input value.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1380",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6551"
+      "src/p99/tabs/section/dpiValidation.ts:1065",
+      "src/p99/tabs/section/itemOptions.ts:714"
     ]
   },
   {
     "call": "Optional values must be attached with '=' here; a separate token would be ignored by nfqws.",
     "key": "Optional values must be attached with '=' here; a separate token would be ignored by nfqws.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5550"
+      "src/p99/tabs/section/dpiValidation.ts:316"
     ]
   },
   {
     "call": "Optional values must be attached with '=' here; a separate token would be ignored by nfqws2.",
     "key": "Optional values must be attached with '=' here; a separate token would be ignored by nfqws2.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6024"
+      "src/p99/tabs/section/dpiValidation.ts:649"
+    ]
+  },
+  {
+    "call": "Original repositories could not be restored. Removal was cancelled before deleting packages.",
+    "key": "Original repositories could not be restored. Removal was cancelled before deleting packages.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:68"
     ]
   },
   {
@@ -3269,7 +3360,14 @@
     "call": "Output Network Interface",
     "key": "Output Network Interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:313"
+      "src/p99/tabs/settings/settings.ts:188"
+    ]
+  },
+  {
+    "call": "P99 and sing-box have been removed. Original repositories have been restored.",
+    "key": "P99 and sing-box have been removed. Original repositories have been restored.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:57"
     ]
   },
   {
@@ -3277,41 +3375,6 @@
     "key": "P99 Error",
     "places": [
       "src/p99/services/core.service.ts:52"
-    ]
-  },
-  {
-    "call": "P99 logs could not be collected.",
-    "key": "P99 logs could not be collected.",
-    "places": [
-      "src/p99/tabs/diagnostic/initController.ts:192"
-    ]
-  },
-  {
-    "call": "P99 manages ciadpi pid files itself, so pidfile options are not allowed here.",
-    "key": "P99 manages ciadpi pid files itself, so pidfile options are not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6216"
-    ]
-  },
-  {
-    "call": "P99 manages the ciadpi process lifecycle itself, so daemon mode is not allowed here.",
-    "key": "P99 manages the ciadpi process lifecycle itself, so daemon mode is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6213"
-    ]
-  },
-  {
-    "call": "P99 manages the nfqws process lifecycle itself, so daemon mode is not allowed here.",
-    "key": "P99 manages the nfqws process lifecycle itself, so daemon mode is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5360"
-    ]
-  },
-  {
-    "call": "P99 manages the nfqws2 process lifecycle itself, so daemon mode is not allowed here.",
-    "key": "P99 manages the nfqws2 process lifecycle itself, so daemon mode is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5811"
     ]
   },
   {
@@ -3332,14 +3395,14 @@
     "call": "P99 will not modify your DHCP configuration",
     "key": "P99 will not modify your DHCP configuration",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:657"
+      "src/p99/tabs/settings/settings.ts:538"
     ]
   },
   {
     "call": "P99 X Settings",
     "key": "P99 X Settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:288"
+      "src/p99/views/p99View.ts:174"
     ]
   },
   {
@@ -3416,7 +3479,7 @@
     "call": "Password cannot be empty",
     "key": "Password cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7743"
+      "src/p99/tabs/section/sectionContent.ts:1003"
     ]
   },
   {
@@ -3430,21 +3493,21 @@
     "call": "Path must be absolute (start with /)",
     "key": "Path must be absolute (start with /)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:696"
+      "src/p99/tabs/settings/settings.ts:581"
     ]
   },
   {
     "call": "Path must contain at least one directory (like /tmp/cache.db)",
     "key": "Path must contain at least one directory (like /tmp/cache.db)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:705"
+      "src/p99/tabs/settings/settings.ts:590"
     ]
   },
   {
     "call": "Path must end with cache.db",
     "key": "Path must end with cache.db",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:700"
+      "src/p99/tabs/settings/settings.ts:585"
     ]
   },
   {
@@ -3460,50 +3523,50 @@
     "call": "Pending",
     "key": "Pending",
     "places": [
-      "src/p99/tabs/diagnostic/diagnostic.store.ts:63"
+      "src/p99/tabs/diagnostic/diagnostic.store.ts:60"
     ]
   },
   {
     "call": "Periodically check the current level and switch to a faster server even when the current one works.",
     "key": "Periodically check the current level and switch to a faster server even when the current one works.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2938"
+      "src/p99/tabs/section/itemOptions.ts:2442"
     ]
   },
   {
     "call": "Pin on dashboard",
     "key": "Pin on dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2479",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2973"
+      "src/p99/tabs/section/itemOptions.ts:1956",
+      "src/p99/tabs/section/itemOptions.ts:2477"
     ]
   },
   {
     "call": "Pin Priority group to the top of the dashboard outbound list, before latency-sorted servers",
     "key": "Pin Priority group to the top of the dashboard outbound list, before latency-sorted servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2974"
+      "src/p99/tabs/section/itemOptions.ts:2478"
     ]
   },
   {
     "call": "Pin URLTest group to the top of the dashboard outbound list, before latency-sorted servers",
     "key": "Pin URLTest group to the top of the dashboard outbound list, before latency-sorted servers",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2480"
+      "src/p99/tabs/section/itemOptions.ts:1957"
     ]
   },
   {
     "call": "Pings all subscription proxy nodes once globally on a shared schedule instead of creating separate ping timers per section. Sections independently select their fastest alive node.",
     "key": "Pings all subscription proxy nodes once globally on a shared schedule instead of creating separate ping timers per section. Sections independently select their fastest alive node.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:586"
+      "src/p99/tabs/settings/settings.ts:464"
     ]
   },
   {
     "call": "Port cannot be empty",
     "key": "Port cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7662"
+      "src/p99/tabs/section/sectionContent.ts:922"
     ]
   },
   {
@@ -3517,56 +3580,56 @@
     "call": "Port for the local mixed proxy of this section",
     "key": "Port for the local mixed proxy of this section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7653"
+      "src/p99/tabs/section/sectionContent.ts:913"
     ]
   },
   {
     "call": "Port must be between 1 and 65535",
     "key": "Port must be between 1 and 65535",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5171"
+      "src/p99/tabs/section/conditionFields.ts:96"
     ]
   },
   {
     "call": "Port range start must be less than or equal to end",
     "key": "Port range start must be less than or equal to end",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5175"
+      "src/p99/tabs/section/conditionFields.ts:100"
     ]
   },
   {
     "call": "Ports",
     "key": "Ports",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7987"
+      "src/p99/tabs/section/sectionContent.ts:1271"
     ]
   },
   {
     "call": "Prefer IPv4",
     "key": "Prefer IPv4",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:241"
+      "src/p99/tabs/settings/settings.ts:120"
     ]
   },
   {
     "call": "Prefer IPv6",
     "key": "Prefer IPv6",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:243"
+      "src/p99/tabs/settings/settings.ts:122"
     ]
   },
   {
     "call": "Prefix text",
     "key": "Prefix text",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2339"
+      "src/p99/tabs/section/itemOptions.ts:1813"
     ]
   },
   {
     "call": "Priority",
     "key": "Priority",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7523"
+      "src/p99/tabs/section/sectionContent.ts:774"
     ]
   },
   {
@@ -3589,24 +3652,24 @@
     "call": "Priority level settings",
     "key": "Priority level settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3630",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3631"
+      "src/p99/tabs/section/settingsModals.ts:366",
+      "src/p99/tabs/section/settingsModals.ts:367"
     ]
   },
   {
     "call": "Priority levels",
     "key": "Priority levels",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2984"
+      "src/p99/tabs/section/itemOptions.ts:2488"
     ]
   },
   {
     "call": "Priority settings",
     "key": "Priority settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3688",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3693",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3694"
+      "src/p99/tabs/section/settingsModals.ts:433",
+      "src/p99/tabs/section/settingsModals.ts:438",
+      "src/p99/tabs/section/settingsModals.ts:439"
     ]
   },
   {
@@ -3620,7 +3683,14 @@
     "call": "Protocol",
     "key": "Protocol",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1963"
+      "src/p99/tabs/section/itemOptions.ts:1393"
+    ]
+  },
+  {
+    "call": "Proxy (sing-box)",
+    "key": "Proxy (sing-box)",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:120"
     ]
   },
   {
@@ -3648,36 +3718,78 @@
     "call": "Regular expression must not contain spaces or commas",
     "key": "Regular expression must not contain spaces or commas",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5057"
+      "src/p99/tabs/section/conditionFields.ts:218"
+    ]
+  },
+  {
+    "call": "Removal did not finish. See the removal log in /tmp/p99-uninstall.*/output.log.",
+    "key": "Removal did not finish. See the removal log in /tmp/p99-uninstall.*/output.log.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:71"
     ]
   },
   {
     "call": "Remove",
     "key": "Remove",
     "places": [
-      "src/p99/tabs/updates/initController.ts:800",
-      "src/p99/tabs/updates/initController.ts:874"
+      "src/p99/tabs/updates/initController.ts:819",
+      "src/p99/tabs/updates/initController.ts:904"
+    ]
+  },
+  {
+    "call": "Remove P99 and sing-box with their settings and restore the original device repositories.",
+    "key": "Remove P99 and sing-box with their settings and restore the original device repositories.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:128"
+    ]
+  },
+  {
+    "call": "Remove P99 completely",
+    "key": "Remove P99 completely",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:133"
+    ]
+  },
+  {
+    "call": "Remove P99, sing-box, their settings and cache, and restore the original device repositories?",
+    "key": "Remove P99, sing-box, their settings and cache, and restore the original device repositories?",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:99"
+    ]
+  },
+  {
+    "call": "Remove permanently",
+    "key": "Remove permanently",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:15"
     ]
   },
   {
     "call": "Remove servers from the specified countries from this level.",
     "key": "Remove servers from the specified countries from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2793"
+      "src/p99/tabs/section/itemOptions.ts:2285"
     ]
   },
   {
     "call": "Remove servers whose names match the expression from this level.",
     "key": "Remove servers whose names match the expression from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2809"
+      "src/p99/tabs/section/itemOptions.ts:2301"
     ]
   },
   {
     "call": "Remove the specified servers from this level.",
     "key": "Remove the specified servers from this level.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2801"
+      "src/p99/tabs/section/itemOptions.ts:2293"
+    ]
+  },
+  {
+    "call": "Removing P99…",
+    "key": "Removing P99…",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:21"
     ]
   },
   {
@@ -3691,49 +3803,21 @@
     "call": "Require a username and password for the local mixed proxy",
     "key": "Require a username and password for the local mixed proxy",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7678"
+      "src/p99/tabs/section/sectionContent.ts:938"
     ]
   },
   {
     "call": "Resolve domain names before routing so sing-box can use real destination IPs.",
     "key": "Resolve domain names before routing so sing-box can use real destination IPs.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7754"
+      "src/p99/tabs/section/sectionContent.ts:1014"
     ]
   },
   {
     "call": "Resolve real IP for routing",
     "key": "Resolve real IP for routing",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7753"
-    ]
-  },
-  {
-    "call": "Resource selection by hostname inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
-    "key": "Resource selection by hostname inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5345"
-    ]
-  },
-  {
-    "call": "Resource selection by hostname inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE.",
-    "key": "Resource selection by hostname inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5790"
-    ]
-  },
-  {
-    "call": "Resource selection by IP or CIDR inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
-    "key": "Resource selection by IP or CIDR inside nfqws is not supported here; sing-box selects resources before NFQUEUE.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5348"
-    ]
-  },
-  {
-    "call": "Resource selection by IP or CIDR inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE.",
-    "key": "Resource selection by IP or CIDR inside nfqws2 is not supported here; sing-box selects resources before NFQUEUE.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5793"
+      "src/p99/tabs/section/sectionContent.ts:1013"
     ]
   },
   {
@@ -3741,6 +3825,13 @@
     "key": "Restart P99",
     "places": [
       "src/p99/tabs/diagnostic/partials/renderAvailableActions.ts:52"
+    ]
+  },
+  {
+    "call": "Restore normal mode",
+    "key": "Restore normal mode",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1002"
     ]
   },
   {
@@ -3762,14 +3853,14 @@
     "call": "Route main DNS requests through the selected section.",
     "key": "Route main DNS requests through the selected section.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:252"
+      "src/p99/tabs/settings/settings.ts:131"
     ]
   },
   {
     "call": "Route requests to this DNS server through another section.",
     "key": "Route requests to this DNS server through another section.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7065"
+      "src/p99/tabs/section/sectionContent.ts:281"
     ]
   },
   {
@@ -3782,25 +3873,25 @@
     ]
   },
   {
-    "call": "Rule set must be an HTTP(S) URL or a local .srs / .json path",
-    "key": "Rule set must be an HTTP(S) URL or a local .srs / .json path",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6866"
-    ]
-  },
-  {
     "call": "Rule set settings",
     "key": "Rule set settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3858"
+      "src/p99/tabs/section/settingsModals.ts:580"
     ]
   },
   {
     "call": "Rule sets",
     "key": "Rule sets",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7863",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7898"
+      "src/p99/tabs/section/sectionContent.ts:1127",
+      "src/p99/tabs/section/sectionContent.ts:1162"
+    ]
+  },
+  {
+    "call": "Rules & Traffic",
+    "key": "Rules & Traffic",
+    "places": [
+      "src/p99/tabs/section/sectionContent.ts:184"
     ]
   },
   {
@@ -3856,8 +3947,8 @@
     "call": "Save",
     "key": "Save",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3451",
-      "src/p99/tabs/dashboard/initController.ts:1116"
+      "src/p99/tabs/dashboard/initController.ts:1116",
+      "src/p99/tabs/section/settingsModals.ts:171"
     ]
   },
   {
@@ -3878,170 +3969,170 @@
     "call": "Secret key for authenticating remote access to YACD when WAN access is enabled.",
     "key": "Secret key for authenticating remote access to YACD when WAN access is enabled.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:435"
+      "src/p99/tabs/settings/settings.ts:306"
     ]
   },
   {
     "call": "Section",
     "key": "Section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:340"
+      "src/p99/views/p99View.ts:280"
     ]
   },
   {
     "call": "Section name",
     "key": "Section name",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6998"
+      "src/p99/tabs/section/sectionContent.ts:214"
     ]
   },
   {
     "call": "Sections",
     "key": "Sections",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:334"
+      "src/p99/views/p99View.ts:274"
     ]
   },
   {
     "call": "Security",
     "key": "Security",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1975"
+      "src/p99/tabs/section/itemOptions.ts:1405"
     ]
   },
   {
     "call": "Select a network interface",
     "key": "Select a network interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7402"
+      "src/p99/tabs/section/sectionContent.ts:628"
     ]
   },
   {
     "call": "Select a predefined domain list",
     "key": "Select a predefined domain list",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7819"
+      "src/p99/tabs/section/sectionContent.ts:1079"
     ]
   },
   {
     "call": "Select a predefined IP rule set from b4geoip-p99",
     "key": "Select a predefined IP rule set from b4geoip-p99",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7839"
+      "src/p99/tabs/section/sectionContent.ts:1099"
     ]
   },
   {
     "call": "Select a section",
     "key": "Select a section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7086",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:84"
+      "src/p99/tabs/section/sectionContent.ts:302",
+      "src/p99/tabs/settings/downloadSection.ts:81"
     ]
   },
   {
     "call": "Select a section for downloading this subscription",
     "key": "Select a section for downloading this subscription",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2320"
+      "src/p99/tabs/section/itemOptions.ts:1794"
     ]
   },
   {
     "call": "Select a transit section",
     "key": "Select a transit section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7601"
+      "src/p99/tabs/section/sectionContent.ts:861"
     ]
   },
   {
     "call": "Select an existing network interface",
     "key": "Select an existing network interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1873"
+      "src/p99/tabs/section/itemOptions.ts:1281"
     ]
   },
   {
     "call": "Select an existing URLTest or Priority group",
     "key": "Select an existing URLTest or Priority group",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3086"
+      "src/p99/tabs/section/itemOptions.ts:2605"
     ]
   },
   {
     "call": "Select an intermediate section",
     "key": "Select an intermediate section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7614"
+      "src/p99/tabs/section/sectionContent.ts:874"
     ]
   },
   {
     "call": "Select DNS protocol to use",
     "key": "Select DNS protocol to use",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:161"
+      "src/p99/tabs/settings/settings.ts:40"
     ]
   },
   {
     "call": "Select network interface for VPN connection",
     "key": "Select network interface for VPN connection",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7397"
+      "src/p99/tabs/section/sectionContent.ts:623"
     ]
   },
   {
     "call": "Select or enter path for sing-box cache file. Change this ONLY if you know what you are doing",
     "key": "Select or enter path for sing-box cache file. Change this ONLY if you know what you are doing",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:679"
+      "src/p99/tabs/settings/settings.ts:560"
     ]
   },
   {
     "call": "Select path for sing-box config file. Change this ONLY if you know what you are doing",
     "key": "Select path for sing-box config file. Change this ONLY if you know what you are doing",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:666"
+      "src/p99/tabs/settings/settings.ts:547"
     ]
   },
   {
     "call": "Select pre-configured subscriptions from the Subscriptions tab (mutually exclusive with direct Subscription URLs above)",
     "key": "Select pre-configured subscriptions from the Subscriptions tab (mutually exclusive with direct Subscription URLs above)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7358"
+      "src/p99/tabs/section/sectionContent.ts:584"
     ]
   },
   {
     "call": "Select the fastest node",
     "key": "Select the fastest node",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2926",
-      "src/p99/tabs/dashboard/initController.ts:1257"
+      "src/p99/tabs/dashboard/initController.ts:1257",
+      "src/p99/tabs/section/itemOptions.ts:2430"
     ]
   },
   {
     "call": "Select the log level for sing-box",
     "key": "Select the log level for sing-box",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:715"
+      "src/p99/tabs/settings/settings.ts:600"
     ]
   },
   {
     "call": "Select the network interface from which the traffic will originate",
     "key": "Select the network interface from which the traffic will originate",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:268"
+      "src/p99/tabs/settings/settings.ts:147"
     ]
   },
   {
     "call": "Select the network interface to which the traffic will originate",
     "key": "Select the network interface to which the traffic will originate",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:314"
+      "src/p99/tabs/settings/settings.ts:189"
     ]
   },
   {
     "call": "Select the WAN interfaces to be monitored",
     "key": "Select the WAN interfaces to be monitored",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:375"
+      "src/p99/tabs/settings/settings.ts:243"
     ]
   },
   {
@@ -4063,22 +4154,22 @@
     "call": "Server filtering",
     "key": "Server filtering",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2490",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2702"
+      "src/p99/tabs/section/itemOptions.ts:1967",
+      "src/p99/tabs/section/itemOptions.ts:2194"
     ]
   },
   {
     "call": "Server group for automatic lowest-latency selection",
     "key": "Server group for automatic lowest-latency selection",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7465"
+      "src/p99/tabs/section/sectionContent.ts:695"
     ]
   },
   {
     "call": "Server group for priority failover",
     "key": "Server group for priority failover",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7524"
+      "src/p99/tabs/section/sectionContent.ts:775"
     ]
   },
   {
@@ -4106,24 +4197,24 @@
     "call": "Servers on dashboard",
     "key": "Servers on dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3102"
+      "src/p99/tabs/section/itemOptions.ts:2621"
     ]
   },
   {
     "call": "Service action failed",
     "key": "Service action failed",
     "places": [
-      "src/p99/methods/shell/index.ts:367",
-      "src/p99/methods/shell/index.ts:417",
-      "src/p99/tabs/diagnostic/initController.ts:645"
+      "src/p99/methods/shell/index.ts:375",
+      "src/p99/methods/shell/index.ts:425",
+      "src/p99/tabs/diagnostic/initController.ts:623"
     ]
   },
   {
     "call": "Service list",
     "key": "Service list",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7822",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7842"
+      "src/p99/tabs/section/sectionContent.ts:1082",
+      "src/p99/tabs/section/sectionContent.ts:1102"
     ]
   },
   {
@@ -4137,86 +4228,85 @@
     "call": "Settings",
     "key": "Settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:368",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1124",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6969"
+      "src/p99/views/p99View.ts:324",
+      "src/p99/tabs/section/itemOptions.ts:460"
     ]
   },
   {
     "call": "Shared latency pool for subscriptions",
     "key": "Shared latency pool for subscriptions",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:585"
+      "src/p99/tabs/settings/settings.ts:463"
     ]
   },
   {
     "call": "Shared latency test interval",
     "key": "Shared latency test interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:596"
+      "src/p99/tabs/settings/settings.ts:474"
     ]
   },
   {
     "call": "Show in dashboard",
     "key": "Show in dashboard",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:246"
+      "src/p99/tabs/subscriptions/subscriptions.ts:281"
     ]
   },
   {
     "call": "Show only selected servers.",
     "key": "Show only selected servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3175"
+      "src/p99/tabs/section/itemOptions.ts:2694"
     ]
   },
   {
     "call": "Show only servers with one of the selected protocols.",
     "key": "Show only servers with one of the selected protocols.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3134"
+      "src/p99/tabs/section/itemOptions.ts:2653"
     ]
   },
   {
     "call": "Show only servers with one of the selected security types.",
     "key": "Show only servers with one of the selected security types.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3140"
+      "src/p99/tabs/section/itemOptions.ts:2659"
     ]
   },
   {
     "call": "Show only servers with one of the selected transports.",
     "key": "Show only servers with one of the selected transports.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3137"
+      "src/p99/tabs/section/itemOptions.ts:2656"
     ]
   },
   {
     "call": "Show servers from selected groups without repeating their filtering criteria.",
     "key": "Show servers from selected groups without repeating their filtering criteria.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3248"
+      "src/p99/tabs/section/itemOptions.ts:2769"
     ]
   },
   {
     "call": "Show servers only from the specified countries.",
     "key": "Show servers only from the specified countries.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3167"
+      "src/p99/tabs/section/itemOptions.ts:2686"
     ]
   },
   {
     "call": "Show servers whose names match the expression.",
     "key": "Show servers whose names match the expression.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3183"
+      "src/p99/tabs/section/itemOptions.ts:2702"
     ]
   },
   {
     "call": "Show sing-box config",
     "key": "Show sing-box config",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:802",
+      "src/p99/tabs/diagnostic/initController.ts:780",
       "src/p99/tabs/diagnostic/partials/renderAvailableActions.ts:119"
     ]
   },
@@ -4287,7 +4377,7 @@
     "call": "Sort by latency",
     "key": "Sort by latency",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7626",
+      "src/p99/tabs/section/sectionContent.ts:886",
       "src/p99/tabs/dashboard/partials/renderSections.ts:454",
       "src/p99/tabs/dashboard/partials/renderSections.ts:455"
     ]
@@ -4296,7 +4386,7 @@
     "call": "Sorts servers in this section by lowest latency in the dashboard.",
     "key": "Sorts servers in this section by lowest latency in the dashboard.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7627"
+      "src/p99/tabs/section/sectionContent.ts:887"
     ]
   },
   {
@@ -4311,7 +4401,7 @@
     "call": "Source Network Interface",
     "key": "Source Network Interface",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:267"
+      "src/p99/tabs/settings/settings.ts:146"
     ]
   },
   {
@@ -4402,7 +4492,7 @@
     "call": "Stop checking when URLTest group is not used. Use sing-box duration format like 1d, 12h or 30m.",
     "key": "Stop checking when URLTest group is not used. Use sing-box duration format like 1d, 12h or 30m.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2457"
+      "src/p99/tabs/section/itemOptions.ts:1934"
     ]
   },
   {
@@ -4416,15 +4506,15 @@
     "call": "Subnets from the list will be extracted and added to nftables",
     "key": "Subnets from the list will be extracted and added to nftables",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3852"
+      "src/p99/tabs/section/settingsModals.ts:574"
     ]
   },
   {
     "call": "Subscription",
     "key": "Subscription",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:359",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:109",
+      "src/p99/views/p99View.ts:304",
+      "src/p99/tabs/subscriptions/subscriptions.ts:139",
       "src/p99/tabs/dashboard/partials/renderSections.ts:412"
     ]
   },
@@ -4432,7 +4522,7 @@
     "call": "Subscription auto update",
     "key": "Subscription auto update",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2274"
+      "src/p99/tabs/section/itemOptions.ts:1748"
     ]
   },
   {
@@ -4446,62 +4536,54 @@
     "call": "Subscription update failed",
     "key": "Subscription update failed",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:78",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:186",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:202",
-      "src/p99/methods/shell/index.ts:733",
-      "src/p99/methods/shell/index.ts:753"
+      "src/p99/methods/shell/index.ts:741",
+      "src/p99/methods/shell/index.ts:761",
+      "src/p99/tabs/subscriptions/subscriptions.ts:106",
+      "src/p99/tabs/subscriptions/subscriptions.ts:217"
     ]
   },
   {
     "call": "Subscription update interval",
     "key": "Subscription update interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2283"
+      "src/p99/tabs/section/itemOptions.ts:1757"
     ]
   },
   {
     "call": "Subscription updated successfully",
     "key": "Subscription updated successfully",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:192"
+      "src/p99/tabs/subscriptions/subscriptions.ts:223"
     ]
   },
   {
     "call": "Subscription URL",
     "key": "Subscription URL",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7246",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:147"
+      "src/p99/tabs/section/sectionContent.ts:462",
+      "src/p99/tabs/subscriptions/subscriptions.ts:178"
     ]
   },
   {
     "call": "Subscription URL cannot be empty",
     "key": "Subscription URL cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:17"
-    ]
-  },
-  {
-    "call": "Subscription URL must use HTTP or HTTPS",
-    "key": "Subscription URL must use HTTP or HTTPS",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4475"
+      "src/p99/tabs/subscriptions/subscriptions.ts:19"
     ]
   },
   {
     "call": "Subscription URL settings",
     "key": "Subscription URL settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3555"
+      "src/p99/tabs/section/settingsModals.ts:285"
     ]
   },
   {
     "call": "Subscriptions",
     "key": "Subscriptions",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:351",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7357"
+      "src/p99/views/p99View.ts:296",
+      "src/p99/tabs/section/sectionContent.ts:583"
     ]
   },
   {
@@ -4522,14 +4604,14 @@
     "call": "Support report downloaded",
     "key": "Support report downloaded",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:207"
+      "src/p99/tabs/diagnostic/initController.ts:185"
     ]
   },
   {
     "call": "Sync",
     "key": "Sync",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:161"
+      "src/p99/tabs/subscriptions/subscriptions.ts:192"
     ]
   },
   {
@@ -4573,42 +4655,42 @@
     "call": "Test only selected servers.",
     "key": "Test only selected servers.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2560"
+      "src/p99/tabs/section/itemOptions.ts:2037"
     ]
   },
   {
     "call": "Test only servers with one of the selected protocols.",
     "key": "Test only servers with one of the selected protocols.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2518"
+      "src/p99/tabs/section/itemOptions.ts:1995"
     ]
   },
   {
     "call": "Test only servers with one of the selected security types.",
     "key": "Test only servers with one of the selected security types.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2524"
+      "src/p99/tabs/section/itemOptions.ts:2001"
     ]
   },
   {
     "call": "Test only servers with one of the selected transports.",
     "key": "Test only servers with one of the selected transports.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2521"
+      "src/p99/tabs/section/itemOptions.ts:1998"
     ]
   },
   {
     "call": "Test servers only from the specified countries. E.g. DE, NL, US (2-letter ISO codes).",
     "key": "Test servers only from the specified countries. E.g. DE, NL, US (2-letter ISO codes).",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2550"
+      "src/p99/tabs/section/itemOptions.ts:2027"
     ]
   },
   {
     "call": "Test servers whose names match the expression. E.g. (?i)fast|direct|premium",
     "key": "Test servers whose names match the expression. E.g. (?i)fast|direct|premium",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2568"
+      "src/p99/tabs/section/itemOptions.ts:2045"
     ]
   },
   {
@@ -4620,26 +4702,10 @@
     ]
   },
   {
-    "call": "The desync fwmark is managed by P99 for loop prevention and must not be overridden here.",
-    "key": "The desync fwmark is managed by P99 for loop prevention and must not be overridden here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5357",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5802"
-    ]
-  },
-  {
-    "call": "The NFQUEUE number is assigned by P99 for each rule and must not be overridden here.",
-    "key": "The NFQUEUE number is assigned by P99 for each rule and must not be overridden here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5354",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5799"
-    ]
-  },
-  {
     "call": "The rule applies to the domain and all its subdomains. Use full:, keyword:, or regex: prefixes for exact match, keyword match, or regular expression.",
     "key": "The rule applies to the domain and all its subdomains. Use full:, keyword:, or regex: prefixes for exact match, keyword match, or regular expression.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7780"
+      "src/p99/tabs/section/sectionContent.ts:1040"
     ]
   },
   {
@@ -4664,54 +4730,26 @@
     ]
   },
   {
-    "call": "This field must start a working ciadpi strategy; help/version options exit immediately and are not allowed here.",
-    "key": "This field must start a working ciadpi strategy; help/version options exit immediately and are not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6219"
-    ]
-  },
-  {
-    "call": "This field must start a working nfqws strategy; --dry-run exits immediately and is not allowed here.",
-    "key": "This field must start a working nfqws strategy; --dry-run exits immediately and is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5363"
-    ]
-  },
-  {
-    "call": "This field must start a working nfqws strategy; --version exits immediately and is not allowed here.",
-    "key": "This field must start a working nfqws strategy; --version exits immediately and is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5366"
-    ]
-  },
-  {
-    "call": "This field must start a working nfqws2 strategy; --dry-run exits immediately and is not allowed here.",
-    "key": "This field must start a working nfqws2 strategy; --dry-run exits immediately and is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5814"
-    ]
-  },
-  {
-    "call": "This field must start a working nfqws2 strategy; --version exits immediately and is not allowed here.",
-    "key": "This field must start a working nfqws2 strategy; --version exits immediately and is not allowed here.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5817"
-    ]
-  },
-  {
     "call": "This flag does not accept a value.",
     "key": "This flag does not accept a value.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5535",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6009"
+      "src/p99/tabs/section/dpiValidation.ts:301",
+      "src/p99/tabs/section/dpiValidation.ts:634"
     ]
   },
   {
     "call": "This option requires a value.",
     "key": "This option requires a value.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5566",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6040"
+      "src/p99/tabs/section/dpiValidation.ts:332",
+      "src/p99/tabs/section/dpiValidation.ts:665"
+    ]
+  },
+  {
+    "call": "This permanently deletes saved sections and subscriptions. Other components remain installed.",
+    "key": "This permanently deletes saved sections and subscriptions. Other components remain installed.",
+    "places": [
+      "src/p99/tabs/updates/fullUninstall.ts:106"
     ]
   },
   {
@@ -4726,7 +4764,7 @@
     "call": "Time in seconds for DNS record caching (default: 60)",
     "key": "Time in seconds for DNS record caching (default: 60)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:223"
+      "src/p99/tabs/settings/settings.ts:98"
     ]
   },
   {
@@ -4740,16 +4778,30 @@
     "call": "Tolerance",
     "key": "Tolerance",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2429",
       "src/p99/tabs/dashboard/initController.ts:890",
-      "src/p99/tabs/dashboard/initController.ts:1131"
+      "src/p99/tabs/dashboard/initController.ts:1131",
+      "src/p99/tabs/section/itemOptions.ts:1906"
     ]
   },
   {
     "call": "Top level has the highest priority; lower levels are used as fallback",
     "key": "Top level has the highest priority; lower levels are used as fallback",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2985"
+      "src/p99/tabs/section/itemOptions.ts:2489"
+    ]
+  },
+  {
+    "call": "TorrServer Direct",
+    "key": "TorrServer Direct",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1045"
+    ]
+  },
+  {
+    "call": "TorrServer not found",
+    "key": "TorrServer not found",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1047"
     ]
   },
   {
@@ -4764,7 +4816,7 @@
     "call": "Traffic for this level goes directly.",
     "key": "Traffic for this level goes directly.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2694"
+      "src/p99/tabs/section/itemOptions.ts:2186"
     ]
   },
   {
@@ -4775,17 +4827,10 @@
     ]
   },
   {
-    "call": "Transparent proxy mode is incompatible with action=byedpi because P99 connects to ciadpi through SOCKS.",
-    "key": "Transparent proxy mode is incompatible with action=byedpi because P99 connects to ciadpi through SOCKS.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6210"
-    ]
-  },
-  {
     "call": "Transport",
     "key": "Transport",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1969"
+      "src/p99/tabs/section/itemOptions.ts:1399"
     ]
   },
   {
@@ -4799,14 +4844,14 @@
     "call": "TTL must be a positive number",
     "key": "TTL must be a positive number",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:234"
+      "src/p99/tabs/settings/settings.ts:113"
     ]
   },
   {
     "call": "TTL value cannot be empty",
     "key": "TTL value cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:229"
+      "src/p99/tabs/settings/settings.ts:108"
     ]
   },
   {
@@ -4821,39 +4866,39 @@
     "call": "UDP (Unprotected DNS)",
     "key": "UDP (Unprotected DNS)",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:165"
+      "src/p99/tabs/settings/settings.ts:44"
     ]
   },
   {
     "call": "Unable to validate the ByeDPI strategy through the backend parser.",
     "key": "Unable to validate the ByeDPI strategy through the backend parser.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6134"
+      "src/p99/tabs/section/dpiValidation.ts:757"
     ]
   },
   {
     "call": "Unable to validate the NFQWS strategy through the backend parser.",
     "key": "Unable to validate the NFQWS strategy through the backend parser.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5277",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6615",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7120"
+      "src/p99/tabs/section/dpiValidation.ts:159",
+      "src/p99/tabs/section/dpiValidation.ts:1152",
+      "src/p99/tabs/section/sectionContent.ts:336"
     ]
   },
   {
     "call": "Unable to validate the NFQWS2 strategy through the backend parser.",
     "key": "Unable to validate the NFQWS2 strategy through the backend parser.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5722",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6624"
+      "src/p99/tabs/section/dpiValidation.ts:496",
+      "src/p99/tabs/section/dpiValidation.ts:1164"
     ]
   },
   {
     "call": "Unavailability timeout",
     "key": "Unavailability timeout",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2900",
-      "src/p99/tabs/dashboard/initController.ts:1251"
+      "src/p99/tabs/dashboard/initController.ts:1251",
+      "src/p99/tabs/section/itemOptions.ts:2404"
     ]
   },
   {
@@ -4867,8 +4912,8 @@
     "call": "Unexpected ByeDPI strategy argument: %s",
     "key": "Unexpected ByeDPI strategy argument: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6351",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6400"
+      "src/p99/tabs/section/dpiValidation.ts:899",
+      "src/p99/tabs/section/dpiValidation.ts:948"
     ]
   },
   {
@@ -4896,15 +4941,15 @@
     "call": "Unexpected standalone token. Use explicit flags such as --name or --name=value.",
     "key": "Unexpected standalone token. Use explicit flags such as --name or --name=value.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5515",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5989"
+      "src/p99/tabs/section/dpiValidation.ts:281",
+      "src/p99/tabs/section/dpiValidation.ts:614"
     ]
   },
   {
     "call": "unique UCI identifier",
     "key": "unique UCI identifier",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/p99.js:53"
+      "src/p99/views/p99View.ts:81"
     ]
   },
   {
@@ -4919,9 +4964,9 @@
       "src/p99/services/systemInfo.service.ts:18",
       "src/p99/services/systemInfo.service.ts:20",
       "src/p99/services/systemInfo.service.ts:22",
-      "src/p99/services/systemInfo.service.ts:26",
-      "src/p99/services/systemInfo.service.ts:27",
-      "src/p99/tabs/updates/initController.ts:325",
+      "src/p99/services/systemInfo.service.ts:34",
+      "src/p99/services/systemInfo.service.ts:35",
+      "src/p99/tabs/updates/initController.ts:330",
       "src/p99/tabs/diagnostic/checks/runInboundsCheck.ts:25"
     ]
   },
@@ -4929,16 +4974,9 @@
     "call": "Unknown ByeDPI option: %s",
     "key": "Unknown ByeDPI option: %s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6320",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6342",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6393"
-    ]
-  },
-  {
-    "call": "Unknown country",
-    "key": "Unknown country",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:603"
+      "src/p99/tabs/section/dpiValidation.ts:868",
+      "src/p99/tabs/section/dpiValidation.ts:890",
+      "src/p99/tabs/section/dpiValidation.ts:941"
     ]
   },
   {
@@ -4952,14 +4990,14 @@
     "call": "Unknown NFQWS flag.",
     "key": "Unknown NFQWS flag.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5526"
+      "src/p99/tabs/section/dpiValidation.ts:292"
     ]
   },
   {
     "call": "Unknown NFQWS2 flag.",
     "key": "Unknown NFQWS2 flag.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6000"
+      "src/p99/tabs/section/dpiValidation.ts:625"
     ]
   },
   {
@@ -4973,59 +5011,60 @@
     "call": "Update",
     "key": "Update",
     "places": [
-      "src/p99/tabs/updates/initController.ts:755"
+      "src/p99/tabs/updates/initController.ts:774"
     ]
   },
   {
     "call": "Update all subscriptions",
     "key": "Update all subscriptions",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:99",
-      "src/p99/tabs/dashboard/initController.ts:1731"
+      "src/p99/tabs/dashboard/initController.ts:1731",
+      "src/p99/tabs/subscriptions/subscriptions.ts:127"
     ]
   },
   {
     "call": "Update failed",
     "key": "Update failed",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:67",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:93",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:176"
+      "src/p99/tabs/subscriptions/subscriptions.ts:95",
+      "src/p99/tabs/subscriptions/subscriptions.ts:121",
+      "src/p99/tabs/subscriptions/subscriptions.ts:207",
+      "src/p99/tabs/subscriptions/subscriptions.ts:233"
     ]
   },
   {
     "call": "Update interval",
     "key": "Update interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:222"
+      "src/p99/tabs/subscriptions/subscriptions.ts:253"
     ]
   },
   {
     "call": "Update interval is required",
     "key": "Update interval is required",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:235"
+      "src/p99/tabs/subscriptions/subscriptions.ts:270"
     ]
   },
   {
     "call": "Update is available",
     "key": "Update is available",
     "places": [
-      "src/p99/tabs/updates/initController.ts:283"
+      "src/p99/tabs/updates/initController.ts:288"
     ]
   },
   {
     "call": "Update is available:",
     "key": "Update is available:",
     "places": [
-      "src/p99/tabs/updates/initController.ts:996"
+      "src/p99/tabs/updates/initController.ts:1107"
     ]
   },
   {
     "call": "Update now",
     "key": "Update now",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:162"
+      "src/p99/tabs/subscriptions/subscriptions.ts:193"
     ]
   },
   {
@@ -5041,28 +5080,28 @@
     "call": "Update this subscription automatically",
     "key": "Update this subscription automatically",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2275"
+      "src/p99/tabs/section/itemOptions.ts:1749"
     ]
   },
   {
     "call": "Update this subscription automatically according to the interval",
     "key": "Update this subscription automatically according to the interval",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:213"
+      "src/p99/tabs/subscriptions/subscriptions.ts:244"
     ]
   },
   {
     "call": "Updating all subscriptions...",
     "key": "Updating all subscriptions...",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:62"
+      "src/p99/tabs/subscriptions/subscriptions.ts:90"
     ]
   },
   {
     "call": "Updating subscription...",
     "key": "Updating subscription...",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:171"
+      "src/p99/tabs/subscriptions/subscriptions.ts:202"
     ]
   },
   {
@@ -5099,21 +5138,21 @@
     "call": "URL used to check whether a server is alive",
     "key": "URL used to check whether a server is alive",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2876"
+      "src/p99/tabs/section/itemOptions.ts:2380"
     ]
   },
   {
     "call": "URL used to test server latency",
     "key": "URL used to test server latency",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2444"
+      "src/p99/tabs/section/itemOptions.ts:1921"
     ]
   },
   {
     "call": "URLTest",
     "key": "URLTest",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7464"
+      "src/p99/tabs/section/sectionContent.ts:694"
     ]
   },
   {
@@ -5136,8 +5175,8 @@
     "call": "URLTest settings",
     "key": "URLTest settings",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3587",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:3588"
+      "src/p99/tabs/section/settingsModals.ts:321",
+      "src/p99/tabs/section/settingsModals.ts:322"
     ]
   },
   {
@@ -5158,32 +5197,28 @@
     "call": "Use another section as an intermediate hop to connect to servers in this section. Does not apply to network interfaces or JSON outbounds.",
     "key": "Use another section as an intermediate hop to connect to servers in this section. Does not apply to network interfaces or JSON outbounds.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7563"
+      "src/p99/tabs/section/sectionContent.ts:823"
     ]
   },
   {
     "call": "Use sing-box duration format like 10s, 1m or 2m30s",
     "key": "Use sing-box duration format like 10s, 1m or 2m30s",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:149"
+      "src/p99/tabs/settings/dnsSettings.ts:80"
     ]
   },
   {
     "call": "Use sing-box duration format like 1d, 12h or 30m",
     "key": "Use sing-box duration format like 1d, 12h or 30m",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2284",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2418",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2949",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4423",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4430",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4437",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:466",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:488",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:495",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:511",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:539",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:223"
+      "src/p99/tabs/section/itemOptions.ts:1758",
+      "src/p99/tabs/section/itemOptions.ts:1895",
+      "src/p99/tabs/section/itemOptions.ts:2453",
+      "src/p99/tabs/settings/settings.ts:337",
+      "src/p99/tabs/settings/settings.ts:361",
+      "src/p99/tabs/settings/settings.ts:379",
+      "src/p99/tabs/settings/settings.ts:411",
+      "src/p99/tabs/subscriptions/subscriptions.ts:254"
     ]
   },
   {
@@ -5204,22 +5239,20 @@
     "call": "User-Agent",
     "key": "User-Agent",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/subscriptions.js:281"
+      "src/p99/tabs/subscriptions/subscriptions.ts:316"
     ]
   },
   {
     "call": "Username cannot be empty",
     "key": "Username cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7712"
+      "src/p99/tabs/section/sectionContent.ts:972"
     ]
   },
   {
     "call": "Valid",
     "key": "Valid",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5050",
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5063",
       "src/validators/validateDns.ts:25",
       "src/validators/validateDns.ts:29",
       "src/validators/validateDomain.ts:57",
@@ -5233,36 +5266,38 @@
       "src/validators/validateSubnet.ts:42",
       "src/validators/validateTrojanUrl.ts:70",
       "src/validators/validateUrl.ts:32",
-      "src/validators/validateVlessUrl.ts:115",
-      "src/validators/validateVmessUrl.ts:66"
+      "src/validators/validateVlessUrl.ts:119",
+      "src/validators/validateVmessUrl.ts:66",
+      "src/p99/tabs/section/conditionFields.ts:211",
+      "src/p99/tabs/section/conditionFields.ts:224"
     ]
   },
   {
     "call": "Validation errors:",
     "key": "Validation errors:",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:4505"
+      "src/p99/tabs/section/dpiValidation.ts:115"
     ]
   },
   {
     "call": "Value cannot be empty",
     "key": "Value cannot be empty",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5040"
+      "src/p99/tabs/section/conditionFields.ts:201"
     ]
   },
   {
     "call": "Via country.is",
     "key": "Via country.is",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:1910"
+      "src/p99/tabs/section/itemOptions.ts:1327"
     ]
   },
   {
     "call": "View logs",
     "key": "View logs",
     "places": [
-      "src/p99/tabs/diagnostic/initController.ts:768",
+      "src/p99/tabs/diagnostic/initController.ts:746",
       "src/p99/tabs/diagnostic/partials/renderAvailableActions.ts:110"
     ]
   },
@@ -5270,14 +5305,21 @@
     "call": "Visible name of this section",
     "key": "Visible name of this section",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:6999"
+      "src/p99/tabs/section/sectionContent.ts:215"
     ]
   },
   {
     "call": "vless://, vmess://, ss://, trojan://, socks4/5://, hy2/hysteria2:// links",
     "key": "vless://, vmess://, ss://, trojan://, socks4/5://, hy2/hysteria2:// links",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7222"
+      "src/p99/tabs/section/sectionContent.ts:438"
+    ]
+  },
+  {
+    "call": "Waiting for TorrServer",
+    "key": "Waiting for TorrServer",
+    "places": [
+      "src/p99/tabs/updates/initController.ts:1053"
     ]
   },
   {
@@ -5298,21 +5340,21 @@
     "call": "What P99 should do when this section matches",
     "key": "What P99 should do when this section matches",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:7012"
+      "src/p99/tabs/section/sectionContent.ts:228"
     ]
   },
   {
     "call": "When switching to another level, test every server and select the fastest instead of the first working one.",
     "key": "When switching to another level, test every server and select the fastest instead of the first working one.",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:2927"
+      "src/p99/tabs/section/itemOptions.ts:2431"
     ]
   },
   {
     "call": "YACD Secret Key",
     "key": "YACD Secret Key",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:434"
+      "src/p99/tabs/settings/settings.ts:305"
     ]
   },
   {
@@ -5326,14 +5368,7 @@
     "call": "You can select Output Network Interface, by default autodetect",
     "key": "You can select Output Network Interface, by default autodetect",
     "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/settings.js:305"
-    ]
-  },
-  {
-    "call": "Zapret hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS strategies.",
-    "key": "Zapret hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS strategies.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5351"
+      "src/p99/tabs/settings/settings.ts:180"
     ]
   },
   {
@@ -5376,13 +5411,6 @@
     "key": "Zapret sing-box outbound is not configured",
     "places": [
       "src/p99/tabs/diagnostic/checks/runZapretCheck.ts:104"
-    ]
-  },
-  {
-    "call": "Zapret2 hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS2 strategies.",
-    "key": "Zapret2 hostlist templates are not supported here because P99 does not expand them for per-rule NFQWS2 strategies.",
-    "places": [
-      "../luci-app-p99/htdocs/luci-static/resources/view/p99/section.js:5796"
     ]
   },
   {

@@ -30,6 +30,77 @@ export { DiagnosticTab } from './p99/tabs/diagnostic';
 export { MonitoringTab } from './p99/tabs/monitoring';
 export { UpdatesTab } from './p99/tabs/updates';
 export {
+  SubscriptionsTab,
+  configureSubscriptionsSection,
+  createSubscriptionsContent,
+} from './p99/tabs/subscriptions';
+export {
+  SettingsTab,
+  createSettingsContent,
+  isDownloadSectionAction,
+  refreshDownloadSectionChoices,
+  validateLatencyTestUrl,
+} from './p99/tabs/settings';
+export {
+  configureSectionSection,
+  createSectionContent,
+  setActionProvidersAvailabilityLoader,
+  ensureActionProvidersAvailabilityLoaded,
+  loadSectionTableOptions,
+  isZapretInstalledForUi,
+  isZapret2InstalledForUi,
+  isByedpiInstalledForUi,
+  getRuleConfiguredAction,
+  getRuleResolvedAction,
+  getActionOptionLabel,
+  getRuleActionDisplayValue,
+  getRuleActionDisplayMarkup,
+  populateActionOptionValues,
+  SettingsDynamicList,
+  ButtonAddSettingsDynamicList,
+  InterfaceSettingsDynamicList,
+  addUrlTestItemOptions,
+  addPriorityLevelItemOptions,
+  addPriorityGroupItemOptions,
+  addDashboardServerFilterOptions,
+  renderStackedJsonSettingsModal,
+  showChildItemSettingsModal,
+  showInterfaceSettingsModal,
+  validateNfqwsStrategyRemotely,
+  validateNfqws2StrategyRemotely,
+  validateByedpiStrategyRemotely,
+  analyzeNfqwsStrategy,
+  analyzeNfqws2Strategy,
+  analyzeByedpiStrategy,
+  dependsOnRoutingAction,
+  dependsOnRuleConditions,
+} from './p99/tabs/section';
+export {
+  createLocalDeviceDynamicListWidget,
+  hasSingleIpValue,
+  loadLocalDeviceChoices,
+  normalizeOptionValues,
+  preloadLocalDeviceChoicesForValues,
+  buildLocalDeviceChoices,
+  buildRouterIpMap,
+  sortLocalDeviceChoiceValues,
+  normalizeLocalDeviceName,
+} from './p99/helpers/localDevices';
+export {
+  uiCapabilitiesService,
+  getUiCapabilities,
+  loadUiCapabilities,
+  updateUiCapabilities,
+  applyUiCapabilities,
+  applyUiState,
+} from './p99/services/uiCapabilities.service';
+export {
+  renderP99View,
+  configureGridSection,
+  renderSectionAdd,
+  getRuleEditButtonText,
+} from './p99/views/p99View';
+export {
   BOOTSTRAP_DNS_SERVER_OPTIONS,
   DEFAULT_LATENCY_TEST_URL,
   DEFAULT_LATENCY_TEST_TIMEOUT,
@@ -95,3 +166,42 @@ export {
   uniqueDomainTextValues,
   parseDomainTokenPrefix,
 } from './p99/section/textListAnalysis';
+export {
+  COUNTRY_CODES,
+  REGION_NAME_FALLBACKS,
+  getLuciLanguage,
+  getRegionDisplayName,
+  getCountryFlagEmoji,
+  getCountryOptionLabel,
+  validateCountryCode,
+  countryChoices,
+  serverCountryDetectionChoices,
+} from './p99/section/geo';
+export {
+  getUciSectionName,
+  getUciSectionLabel,
+  isOutboundDetourTargetSection,
+  getOutboundDetourTargetSections,
+  getDefaultOutboundDetourSection,
+  refreshOutboundDetourSectionOptionValues,
+  isDnsDetourTargetSection,
+  refreshDnsDetourSectionOptionValues,
+} from './p99/section/detours';
+export {
+  formatDashboardGroupLabel,
+  buildOutboundChoices,
+  buildGroupChoices,
+  filterSignature,
+} from './p99/section/dashboardFilters';
+export {
+  stringArraysEqual,
+  removeMatchingValues,
+  makeDeviceOptionsExclusive,
+} from './p99/section/clientIsolation';
+export {
+  MODAL_TAB_IDS,
+  getModalTabs,
+  dnsTypeChoices,
+  STACKED_SETTINGS_VALIDATION_SUMMARY_CLASS,
+  formatStackedValidationMessages,
+} from './p99/section/modalTabs';

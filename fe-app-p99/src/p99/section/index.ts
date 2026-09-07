@@ -3,3 +3,8 @@ export * from './dpiStrategies';
 export * from './rulesets';
 export * from './childItems';
 export * from './textListAnalysis';
+export * from './geo';
+export * from './detours';
+export * from './dashboardFilters';
+export * from './clientIsolation';
+export * from './modalTabs';

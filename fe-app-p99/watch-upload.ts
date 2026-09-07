@@ -7,7 +7,12 @@ import { glob } from 'glob';
 
 const sftp = new SFTPClient();
 
-const config = {
+interface SyncDir {
+  local: string;
+  remote: string;
+}
+
+const config: SFTPClient.ConnectOptions = {
   host: process.env.SFTP_HOST,
   port: Number(process.env.SFTP_PORT || 22),
   username: process.env.SFTP_USER,
@@ -16,7 +21,7 @@ const config = {
     : { password: process.env.SFTP_PASS }),
 };
 
-const syncDirs = [
+const syncDirs: SyncDir[] = [
   {
     local: path.resolve(
       process.env.LOCAL_DIR_FE ??
@@ -45,33 +50,43 @@ const syncDirs = [
   },
 ];
 
-async function uploadFile(filePath, baseDir, remoteBase) {
+async function uploadFile(
+  filePath: string,
+  baseDir: string,
+  remoteBase: string,
+): Promise<void> {
   const relativePath = path.relative(baseDir, filePath);
-  const remotePath = path.posix.join(remoteBase, relativePath);
+  const remotePath = path.posix.join(remoteBase, relativePath.replaceAll('\\', '/'));
 
   console.log(`↑ Uploading: ${relativePath} -> ${remotePath}`);
   try {
     await sftp.fastPut(filePath, remotePath);
     console.log(`✓ Uploaded: ${relativePath}`);
-  } catch (err) {
-    console.error(`✗ Failed: ${relativePath}: ${err.message}`);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`✗ Failed: ${relativePath}: ${message}`);
   }
 }
 
-async function deleteFile(filePath, baseDir, remoteBase) {
+async function deleteFile(
+  filePath: string,
+  baseDir: string,
+  remoteBase: string,
+): Promise<void> {
   const relativePath = path.relative(baseDir, filePath);
-  const remotePath = path.posix.join(remoteBase, relativePath);
+  const remotePath = path.posix.join(remoteBase, relativePath.replaceAll('\\', '/'));
 
   console.log(`⨯ Removing: ${relativePath}`);
   try {
     await sftp.delete(remotePath);
     console.log(`✓ Removed: ${relativePath}`);
-  } catch (err) {
-    console.warn(`⚠ Could not delete ${relativePath}: ${err.message}`);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`⚠ Could not delete ${relativePath}: ${message}`);
   }
 }
 
-async function uploadAllFiles() {
+async function uploadAllFiles(): Promise<void> {
   for (const { local, remote } of syncDirs) {
     console.log(`📂 Uploading all from ${local}`);
     const files = await glob(`${local}/**/*`, { nodir: true });
@@ -82,7 +97,7 @@ async function uploadAllFiles() {
   console.log('✅ Initial upload complete!');
 }
 
-async function main() {
+async function main(): Promise<void> {
   await sftp.connect(config);
   console.log(`🔌 Connected to ${config.host}`);
 

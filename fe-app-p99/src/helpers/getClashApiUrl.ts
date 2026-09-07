@@ -13,19 +13,19 @@ export function canUseDirectClashApi(): boolean {
 }
 
 export function getClashWsUrl(): string {
-  const { hostname } = window.location;
+  const hostname = getWindowLocation()?.hostname || '127.0.0.1';
 
   return `ws://${hostname}:9090`;
 }
 
 export function getClashHttpUrl(): string {
-  const { hostname } = window.location;
+  const hostname = getWindowLocation()?.hostname || '127.0.0.1';
 
   return `http://${hostname}:9090`;
 }
 
 export function getClashUIUrl(): string {
-  const { hostname } = window.location;
+  const hostname = getWindowLocation()?.hostname || '127.0.0.1';
 
   return `http://${hostname}:9090/ui`;
 }

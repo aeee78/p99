@@ -1,5 +1,8 @@
 "use strict";
 "require baseclass";
+"require form";
+"require uci";
+"require ui";
 "require view.p99.main as main";
 
 function isSingBoxDuration(value) {

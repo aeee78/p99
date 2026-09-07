@@ -1,6 +1,9 @@
 'use strict';
 'require baseclass';
+'require form';
 'require fs';
+'require network';
+'require tools.widgets as widgets';
 'require uci';
 'require ui';
 
